@@ -17,9 +17,14 @@ public class CreatePlayer : MonoBehaviour
 	}
 
 	// Update is called once per frame
-	/*void Update () {
-		
-	}*/
+	void Update () {
+		if (captureRequested)
+		{
+			Debug.Log("We want to capture image!");
+			captureRequested = false;
+			StartCoroutine(CaptureImage());
+		}
+	}
 
 	public void OnCaptureClick()
 	{
@@ -31,7 +36,8 @@ public class CreatePlayer : MonoBehaviour
 		}
 		else
 		{
-			CaptureImage();
+			//CaptureImage();
+			captureRequested = true;
 		}
 	}
 	
@@ -44,7 +50,8 @@ public class CreatePlayer : MonoBehaviour
 		// Create a texture the size of the screen, RGB24 format
 		int width = Screen.width;
 		int height = Screen.height;
-		Texture2D tex = new Texture2D(width, height, TextureFormat.RGB24, false);
+		//Texture2D tex = new Texture2D(width, height, TextureFormat.RGB24, false);
+		Texture2D tex = new Texture2D(width, height);
 
 		// Read screen contents into the texture
 		tex.SetPixels(webCamTexture.GetPixels());
@@ -97,6 +104,7 @@ public class CreatePlayer : MonoBehaviour
 	private string buttonTextCapture = "Capture";
 	private string buttonTextRetry = "Retry";
 	private bool buttonHasCaptured = false;
+	private bool captureRequested = false;
 	private WebCamTexture webCamTexture;
 	private string deviceName;
 	private WaitForEndOfFrame frameEnd = new WaitForEndOfFrame();
