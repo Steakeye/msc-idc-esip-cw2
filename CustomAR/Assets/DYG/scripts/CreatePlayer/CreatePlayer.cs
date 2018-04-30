@@ -39,22 +39,22 @@ public class CreatePlayer : MonoBehaviour
 	{
 		Debug.Log("Capturing Image!");
 		// We should only read the screen buffer after rendering is complete
-		yield return new WaitForEndOfFrame();
-
+		yield return frameEnd;
+		
 		// Create a texture the size of the screen, RGB24 format
 		int width = Screen.width;
 		int height = Screen.height;
 		Texture2D tex = new Texture2D(width, height, TextureFormat.RGB24, false);
 
 		// Read screen contents into the texture
-		tex.ReadPixels(new Rect(0, 0, width, height), 0, 0);
+		tex.SetPixels(webCamTexture.GetPixels());
 		tex.Apply();
 
 		// Encode texture into PNG
 		byte[] bytes = tex.EncodeToPNG();
 		Destroy(tex);
 
-		File.WriteAllBytes(Application.dataPath + "/../SavedScreen.png", bytes);
+		File.WriteAllBytes(Application.dataPath + "/test.png", bytes);
 	}
 	
 	public void ResetImage()
@@ -99,4 +99,6 @@ public class CreatePlayer : MonoBehaviour
 	private bool buttonHasCaptured = false;
 	private WebCamTexture webCamTexture;
 	private string deviceName;
+	private WaitForEndOfFrame frameEnd = new WaitForEndOfFrame();
+
 }
