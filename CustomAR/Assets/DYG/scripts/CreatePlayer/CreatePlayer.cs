@@ -64,6 +64,11 @@ public class CreatePlayer : MonoBehaviour
 	{
 		webCamTexture.Pause();
 
+		SaveImage();
+	}
+
+	private void SaveImage()
+	{
 		Texture2D tex = new Texture2D(webCamTexture.width, webCamTexture.height);
 		Color[] pixels = webCamTexture.GetPixels();
 		// Set webcam data to texture into the texture
