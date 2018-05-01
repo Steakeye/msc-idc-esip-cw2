@@ -7,10 +7,16 @@ using UnityEngine.Experimental.UIElements;
 using UnityEngine.UI;
 using Button = UnityEngine.UI.Button;
 
-public class CreatePlayer : MonoBehaviour
+public class CameraCapture : MonoBehaviour
 {
 	public GameObject CaptureButton;
-	
+
+	private void Awake()
+	{
+		Debug.Log("Awake called.");
+		Renderer rdr = GetComponent<Renderer>();
+	}
+
 	// Use this for initialization
 	void Start ()
 	{
@@ -73,7 +79,7 @@ public class CreatePlayer : MonoBehaviour
 		finally
 		{
 
-			if (noError)
+			if (noError && rdr != null)
 			{
 				WebCamDevice[] devices = WebCamTexture.devices;
 				deviceName = devices[0].name;
@@ -93,8 +99,9 @@ public class CreatePlayer : MonoBehaviour
 		//Texture2D tex = new Texture2D(width, height, TextureFormat.RGB24, false);
 		Texture2D tex = new Texture2D(width, height);
 
+		Color[] pixels = webCamTexture.GetPixels();
 		// Read screen contents into the texture
-		tex.SetPixels(webCamTexture.GetPixels());
+		tex.SetPixels(pixels);
 		tex.Apply();
 
 		// Encode texture into PNG
