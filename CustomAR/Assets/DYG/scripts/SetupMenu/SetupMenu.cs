@@ -17,11 +17,14 @@ public class SetupMenu : MonoBehaviour {
 
 	public void goToScene(string sceneName)
 	{
-		Scene foundScene = SceneManager.GetSceneByName(sceneName);
-
-		if (foundScene.IsValid())
+		//Scene foundScene = SceneManager.GetSceneByName(sceneName);
+		
+		SceneManager.LoadScene(sceneName);
+		//SceneManager.LoadScene("1-About");
+		
+		/*if (foundScene.IsValid())
 		{
 			Application.LoadLevel(foundScene.buildIndex);
-		}
+		}*/
 	}
 }
