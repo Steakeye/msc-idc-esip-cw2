@@ -10,6 +10,7 @@ using Button = UnityEngine.UI.Button;
 public class CameraCapture : MonoBehaviour
 {
 	public GameObject CaptureButton;
+	public GameObject RawImgGO;
 
 	private void Awake()
 	{
@@ -20,20 +21,28 @@ public class CameraCapture : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
+		Debug.Log("Start called.");
+		initRawImg();
 		initCam();
+		initCamTexture();
 	}
 
 	// Update is called once per frame
 	void Update () {
-		if (captureRequested)
+		/*if (captureRequested)
 		{
 			Debug.Log("We want to capture image!");
 			captureRequested = false;
 			//StartCoroutine(CaptureImage());
 			CaptureImage();
-		}
+		}*/
 	}
 
+	void OnBecameVisible() {
+		Debug.Log("OnBecameVisible called.");
+		Renderer rdr = GetComponent<Renderer>();
+	}
+	
 	public void OnCaptureClick()
 	{
 		Debug.Log("On Capture Click!");
@@ -44,8 +53,9 @@ public class CameraCapture : MonoBehaviour
 		}
 		else
 		{
-			//CaptureImage();
-			captureRequested = true;
+			CaptureImage();
+			//captureRequested = true;
+			//CaptureImageCoroutine();
 		}
 	}
 	
@@ -63,9 +73,15 @@ public class CameraCapture : MonoBehaviour
 		Debug.Log("Reset Image!");
 	}
 
-	private void initCam()
+	private void initRawImg()
 	{
-		Renderer rdr = null;
+		rawImg = RawImgGO.GetComponent<RawImage>();
+		Renderer rdr = rawImg.GetComponent<Renderer>();
+	}
+
+	private void initCamTexture()
+	{
+		/*Renderer rdr = null;
 		bool noError = true;	
 		
 		try
@@ -78,36 +94,52 @@ public class CameraCapture : MonoBehaviour
 		}
 		finally
 		{
-
 			if (noError && rdr != null)
 			{
-				WebCamDevice[] devices = WebCamTexture.devices;
-				deviceName = devices[0].name;
-				webCamTexture = new WebCamTexture(deviceName, Screen.width, Screen.width, 12);
-
 				rdr.material.mainTexture = webCamTexture;
-				webCamTexture.Play();
 			}
-		}
+		}*/
+		rawImg.material.mainTexture = webCamTexture;
+	}
+
+	private void initCam()
+	{
+		WebCamDevice[] devices = WebCamTexture.devices;
+		deviceName = devices[0].name;
+		webCamTexture = new WebCamTexture(deviceName, Screen.width, Screen.height, 24);
+		webCamTexture.Play();		
 	}
 
 	private void CaptureImage()
 	{
 		// Create a texture the size of the screen, RGB24 format
-		int width = Screen.width;
-		int height = Screen.height;
+		/*int width = Screen.width;
+		int height = Screen.height;*/
 		//Texture2D tex = new Texture2D(width, height, TextureFormat.RGB24, false);
-		Texture2D tex = new Texture2D(width, height);
+		//Texture2D tex = new Texture2D(width, height);
 
-		Color[] pixels = webCamTexture.GetPixels();
+		//Color[] pixels = webCamTexture.GetPixels();
 		// Read screen contents into the texture
-		tex.SetPixels(pixels);
-		tex.Apply();
+		/*tex.SetPixels(pixels);
+		tex.Apply();*/
 
 		// Encode texture into PNG
+		//byte[] bytes = tex.EncodeToPNG();
+		//Destroy(tex);
+
+		webCamTexture.Pause();
+		//rawImg.texture.enc
+
+		Texture2D tex = new Texture2D(webCamTexture.width, webCamTexture.height);
+		Color[] pixels = webCamTexture.GetPixels();
+		// Set webcam data to texture into the texture
+		tex.SetPixels(pixels);
+		tex.Apply();
+		
+		//texture to PNG data
 		byte[] bytes = tex.EncodeToPNG();
 		Destroy(tex);
-
+		
 		File.WriteAllBytes(Application.dataPath + "/test.png", bytes);
 	}
 	
@@ -139,5 +171,6 @@ public class CameraCapture : MonoBehaviour
 	private WebCamTexture webCamTexture;
 	private string deviceName;
 	private WaitForEndOfFrame frameEnd = new WaitForEndOfFrame();
+	private RawImage rawImg;
 
 }
