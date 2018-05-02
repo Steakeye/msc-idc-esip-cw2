@@ -39,6 +39,7 @@ public class CreatePlayer : MonoBehaviour
 		}
 		
 		toggleCaptureButtonText();
+		captureRequested = !captureRequested;
 	}
 	
 	public void OnProcessClick()
@@ -54,11 +55,13 @@ public class CreatePlayer : MonoBehaviour
 			processImage();
 		}
 		toggleCaptureButtonText();
+		processRequested = !processRequested;
 	}
 
 	public void ResetImage()
 	{
 		Debug.Log("Reset Image!");
+		webCamTexture.Play();
 	}
 
 	private void initRawImg()
@@ -107,31 +110,29 @@ public class CreatePlayer : MonoBehaviour
 
 	private void toggleCaptureButtonText()
 	{
-		toggleButtonText(CaptureButtonGO, buttonTextCapture, buttonTextRetry, ref captureRequested);
+		toggleButtonText(CaptureButtonGO, buttonTextCapture, buttonTextRetry, captureRequested);
 	}
 	
 	private void toggleProcessButtonText()
 	{
-		toggleButtonText(ProcessButtonGO, buttonTextProcess, buttonTextSave, ref processRequested);
+		toggleButtonText(ProcessButtonGO, buttonTextProcess, buttonTextSave, processRequested);
 	}
 	
-	private void toggleButtonText(GameObject buttonGO, string textOne, string textTwo, ref bool toggle)
+	private void toggleButtonText(GameObject buttonGO, string textOne, string textTwo, bool toggle)
 	{
-		Button buttonToChange = buttonGO.GetComponent<Button>();
+		//Button buttonToChange = buttonGO.GetComponent<Button>();
 		Debug.Log("Toggle Text!");
 
-		Text txt = buttonToChange.GetComponent<Text>();
+		Text txt = buttonGO.GetComponentInChildren<Text>();
 		
 		if (toggle)
 		{
-			txt.text = textTwo;
+			txt.text = textOne;
 		}
 		else
 		{
-			txt.text = textOne;
+			txt.text = textTwo;
 		}
-
-		toggle = !toggle;
 	}
 
 	private void showProcessButton(bool show)
