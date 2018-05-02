@@ -30,11 +30,30 @@ public class CreatePlayer : MonoBehaviour
 		if (captureRequested)
 		{
 			ResetImage(); 
+			showProcessButton(false);
 		}
 		else
 		{
-			CaptureImage();
+			captureImage();
+			showProcessButton(true);
 		}
+		
+		toggleCaptureButtonText();
+	}
+	
+	public void OnProcessClick()
+	{
+		Debug.Log("On Process Click!");
+
+		if (processRequested)
+		{
+			saveImage(); 
+		}
+		else
+		{
+			processImage();
+		}
+		toggleCaptureButtonText();
 	}
 
 	public void ResetImage()
@@ -61,14 +80,17 @@ public class CreatePlayer : MonoBehaviour
 		webCamTexture.Play();		
 	}
 
-	private void CaptureImage()
+	private void captureImage()
 	{
 		webCamTexture.Pause();
-
-		SaveImage();
+	}
+	
+	private void processImage()
+	{
+		Debug.Log("ProcessImage!");
 	}
 
-	private void SaveImage()
+	private void saveImage()
 	{
 		Texture2D tex = new Texture2D(webCamTexture.width, webCamTexture.height);
 		Color[] pixels = webCamTexture.GetPixels();
@@ -83,17 +105,17 @@ public class CreatePlayer : MonoBehaviour
 		File.WriteAllBytes(Application.dataPath + "/test.png", bytes);
 	}
 
-	private void ToggleCaptureButtonText()
+	private void toggleCaptureButtonText()
 	{
-		ToggleButtonText(CaptureButtonGO, buttonTextCapture, buttonTextRetry, ref captureRequested);
+		toggleButtonText(CaptureButtonGO, buttonTextCapture, buttonTextRetry, ref captureRequested);
 	}
 	
-	private void ToggleProcessButtonText()
+	private void toggleProcessButtonText()
 	{
-		ToggleButtonText(ProcessButtonGO, buttonTextProcess, buttonTextSave, ref captureRequested);
+		toggleButtonText(ProcessButtonGO, buttonTextProcess, buttonTextSave, ref processRequested);
 	}
 	
-	private void ToggleButtonText(GameObject buttonGO, string textOne, string textTwo, ref bool toggle)
+	private void toggleButtonText(GameObject buttonGO, string textOne, string textTwo, ref bool toggle)
 	{
 		Button buttonToChange = buttonGO.GetComponent<Button>();
 		Debug.Log("Toggle Text!");
@@ -111,12 +133,18 @@ public class CreatePlayer : MonoBehaviour
 
 		toggle = !toggle;
 	}
+
+	private void showProcessButton(bool show)
+	{
+		ProcessButtonGO.SetActive(show);
+	}
 	
 	private string buttonTextCapture = "Capture";
 	private string buttonTextRetry = "Retry";
 	private string buttonTextProcess = "Process";
 	private string buttonTextSave = "Save";
 	private bool captureRequested = false;
+	private bool processRequested = false;
 	private WebCamTexture webCamTexture;
 	private string deviceName;
 	//private WaitForEndOfFrame frameEnd = new WaitForEndOfFrame();
