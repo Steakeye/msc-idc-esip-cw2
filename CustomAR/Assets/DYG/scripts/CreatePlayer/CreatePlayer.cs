@@ -82,6 +82,25 @@ public class CreatePlayer : MonoBehaviour
 		File.WriteAllBytes(Application.dataPath + "/test.png", bytes);
 	}
 	
+	private void ToggleButtonText(GameObject buttonGO, string textOne, string textTwo, out bool toggle)
+	{
+		Button buttonToChange = buttonGO.GetComponent<Button>();
+		Debug.Log("Toggle Text!");
+
+		Text txt = buttonToChange.GetComponent<Text>();
+		
+		if (toggle)
+		{
+			txt.text = textTwo;
+		}
+		else
+		{
+			txt.text = textOne;
+		}
+
+		toggle = !toggle;
+	}
+	
 	private string buttonTextCapture = "Capture";
 	private string buttonTextRetry = "Retry";
 	private bool buttonHasCaptured = false;
