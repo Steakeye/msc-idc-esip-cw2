@@ -10,6 +10,7 @@ using Button = UnityEngine.UI.Button;
 public class CreatePlayer : MonoBehaviour
 {
 	public GameObject CaptureButtonGO;
+	public GameObject ProcessButtonGO;
 	public GameObject RawImgGO;
 
 
@@ -26,7 +27,7 @@ public class CreatePlayer : MonoBehaviour
 	{
 		Debug.Log("On Capture Click!");
 
-		if (buttonHasCaptured)
+		if (captureRequested)
 		{
 			ResetImage(); 
 		}
@@ -81,8 +82,18 @@ public class CreatePlayer : MonoBehaviour
 		
 		File.WriteAllBytes(Application.dataPath + "/test.png", bytes);
 	}
+
+	private void ToggleCaptureButtonText()
+	{
+		ToggleButtonText(CaptureButtonGO, buttonTextCapture, buttonTextRetry, ref captureRequested);
+	}
 	
-	private void ToggleButtonText(GameObject buttonGO, string textOne, string textTwo, out bool toggle)
+	private void ToggleProcessButtonText()
+	{
+		ToggleButtonText(ProcessButtonGO, buttonTextProcess, buttonTextSave, ref captureRequested);
+	}
+	
+	private void ToggleButtonText(GameObject buttonGO, string textOne, string textTwo, ref bool toggle)
 	{
 		Button buttonToChange = buttonGO.GetComponent<Button>();
 		Debug.Log("Toggle Text!");
@@ -103,7 +114,8 @@ public class CreatePlayer : MonoBehaviour
 	
 	private string buttonTextCapture = "Capture";
 	private string buttonTextRetry = "Retry";
-	private bool buttonHasCaptured = false;
+	private string buttonTextProcess = "Process";
+	private string buttonTextSave = "Save";
 	private bool captureRequested = false;
 	private WebCamTexture webCamTexture;
 	private string deviceName;
