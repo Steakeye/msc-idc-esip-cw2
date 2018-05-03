@@ -98,15 +98,24 @@ public class CreatePlayer : MonoBehaviour
 
 	private void saveImage()
 	{
-		Texture2D tex = new Texture2D(webCamTexture.width, webCamTexture.height);
+		int width = webCamTexture.width;
+		int height = webCamTexture.height;
+		Texture2D sourceTex = new Texture2D(width, height);
+		Texture2D outTex = new Texture2D(width, height);
+		RenderTexture renderTex = new RenderTexture(width, height, 0);
 		Color[] pixels = webCamTexture.GetPixels();
 		// Set webcam data to texture into the texture
-		tex.SetPixels(pixels);
-		tex.Apply();
+		sourceTex.SetPixels(pixels);
+		sourceTex.Apply();
+		
+		Graphics.Blit(sourceTex, renderTex, rawImg.material);
+		
+		outTex.ReadPixels(0, 0, renderTex.width, renderTex.height);
+		//outTex
 		
 		//texture to PNG data
-		byte[] bytes = tex.EncodeToPNG();
-		Destroy(tex);
+		byte[] bytes = sourceTex.EncodeToPNG();
+		Destroy(sourceTex);
 		
 		File.WriteAllBytes(Application.dataPath + "/test.png", bytes);
 	}
