@@ -12,7 +12,7 @@ public class CreatePlayer : MonoBehaviour
 	public GameObject CaptureButtonGO;
 	public GameObject ProcessButtonGO;
 	public GameObject RawImgGO;
-
+	public ImageProcessor ProcessImage;
 
 	// Use this for initialization
 	void Start ()
@@ -91,6 +91,8 @@ public class CreatePlayer : MonoBehaviour
 	private void processImage()
 	{
 		Debug.Log("ProcessImage!");
+		
+		ProcessImage.ApplyThreshold();
 	}
 
 	private void saveImage()

@@ -28,6 +28,7 @@ public class ImageProcessor : MonoBehaviour {
 	void OnGUI()
 	{
 		//Graphics.Blit(source, destination, material);
+		//This get's called
 		Debug.Log("OnGUI!");
 	}
 
@@ -51,6 +52,7 @@ public class ImageProcessor : MonoBehaviour {
 	void OnRenderObject()
 	{
 		//Graphics.Blit(source, destination, material);
+		//This get's called
 		Debug.Log("OnRenderObject!");
 	}
 }

@@ -719,6 +719,7 @@ MonoBehaviour:
   CaptureButtonGO: {fileID: 384097926}
   ProcessButtonGO: {fileID: 1149012422}
   RawImgGO: {fileID: 959971213}
+  ProcessImage: {fileID: 959971217}
 --- !u!1 &1149012422
 GameObject:
   m_ObjectHideFlags: 0
@@ -796,7 +797,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1015303756}
-        m_MethodName: OnCaptureClick
+        m_MethodName: OnProcessClick
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
