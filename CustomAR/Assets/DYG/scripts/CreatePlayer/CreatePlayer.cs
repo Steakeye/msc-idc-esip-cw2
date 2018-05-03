@@ -54,7 +54,7 @@ public class CreatePlayer : MonoBehaviour
 		{
 			processImage();
 		}
-		toggleCaptureButtonText();
+		toggleProcessButtonText();
 		processRequested = !processRequested;
 	}
 
