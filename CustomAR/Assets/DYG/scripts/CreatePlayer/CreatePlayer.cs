@@ -72,7 +72,8 @@ public class CreatePlayer : MonoBehaviour
 
 	private void initCamTexture()
 	{
-		rawImg.material.mainTexture = webCamTexture;
+		//rawImg.material.mainTexture = webCamTexture;
+		rawImg.texture = webCamTexture;
 	}
 
 	private void initCam()
