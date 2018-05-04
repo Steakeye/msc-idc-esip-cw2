@@ -123,6 +123,10 @@ public class CreatePlayer : MonoBehaviour
 		
 		outTex.ReadPixels(new Rect(0, 0, width, height), 0, 0, false);
 
+		outTex.FloodFillArea(10,10,Color.blue);
+		
+		outTex.alphaIsTransparency = true;
+
 		//texture to PNG data
 		byte[] bytes = outTex.EncodeToPNG();
 		Destroy(sourceTex);
@@ -178,8 +182,7 @@ public class CreatePlayer : MonoBehaviour
 	
 	private void showProcessSlider(bool show = true)
 	{
-		GameObject processSlider = ProcessButtonGO.GetComponentInChildren<GameObject>();
-		processSlider.SetActive(show);
+		ProcessSlider.gameObject.SetActive(show);
 	}
 	
 	private string buttonTextCapture = "Capture";
