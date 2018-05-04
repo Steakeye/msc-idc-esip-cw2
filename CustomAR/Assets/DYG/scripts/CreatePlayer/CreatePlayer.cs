@@ -109,13 +109,16 @@ public class CreatePlayer : MonoBehaviour
 		sourceTex.Apply();
 		
 		Graphics.Blit(sourceTex, renderTex, rawImg.material);
+
+		RenderTexture.active = renderTex;
 		
-		outTex.ReadPixels(0, 0, renderTex.width, renderTex.height);
+		outTex.ReadPixels(new Rect(0, 0, width, height), 0, 0, false);
 		//outTex
-		
+
 		//texture to PNG data
-		byte[] bytes = sourceTex.EncodeToPNG();
+		byte[] bytes = outTex.EncodeToPNG();
 		Destroy(sourceTex);
+		Destroy(outTex);
 		
 		File.WriteAllBytes(Application.dataPath + "/test.png", bytes);
 	}
