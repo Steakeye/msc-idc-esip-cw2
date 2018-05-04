@@ -113,7 +113,6 @@ public class CreatePlayer : MonoBehaviour
 		RenderTexture.active = renderTex;
 		
 		outTex.ReadPixels(new Rect(0, 0, width, height), 0, 0, false);
-		//outTex
 
 		//texture to PNG data
 		byte[] bytes = outTex.EncodeToPNG();
