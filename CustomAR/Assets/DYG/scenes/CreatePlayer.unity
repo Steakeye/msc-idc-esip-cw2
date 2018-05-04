@@ -719,6 +719,7 @@ MonoBehaviour:
   CaptureButtonGO: {fileID: 384097926}
   ProcessButtonGO: {fileID: 1149012422}
   RawImgGO: {fileID: 959971213}
+  ProcessSlider: {fileID: 1655261300}
   ProcessImage: {fileID: 959971217}
 --- !u!1 &1092199511
 GameObject:
@@ -1055,7 +1056,18 @@ MonoBehaviour:
   m_Value: 0.5
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1015303756}
+        m_MethodName: OnSliderMove
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Slider+SliderEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!1 &1794908804

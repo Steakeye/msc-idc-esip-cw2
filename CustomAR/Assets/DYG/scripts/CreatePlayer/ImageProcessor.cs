@@ -6,31 +6,27 @@ using UnityEngine.UI;
 public class ImageProcessor : MonoBehaviour {
 
 	public Material material;
-   
-	void Start() 
-	{
-		//
-	}
 
 	public void ApplyThreshold() {
-		Debug.Log("TODO: ApplyThreshold!");
-
 		RawImage img = GetComponent<RawImage>();
 
 		img.material = material;
 	}
 
-	void OnGUI()
-	{
-		//Graphics.Blit(source, destination, material);
-		//This get's called
-		Debug.Log("OnGUI!");
+	public void RemoveThreshold() {
+		Debug.Log("TODO: RemoveThreshold!");
+
+		RawImage img = GetComponent<RawImage>();
+	
+		img.material = new Material(new Shader());
+	}
+	
+	public void AdjustThreshold(float changeToVal) {
+		Debug.Log("TODO: AdjustThreshold!");
+
+		RawImage img = GetComponent<RawImage>();
+		
+		img.material.SetFloat("_ThresholdPoint", changeToVal);
 	}
 
-	void OnRenderObject()
-	{
-		//Graphics.Blit(source, destination, material);
-		//This get's called
-		Debug.Log("OnRenderObject!");
-	}
 }

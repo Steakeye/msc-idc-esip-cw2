@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Experimental.UIElements;
 using UnityEngine.UI;
+using Slider = UnityEngine.UI.Slider;
 using Button = UnityEngine.UI.Button;
 
 public class CreatePlayer : MonoBehaviour
@@ -12,6 +13,7 @@ public class CreatePlayer : MonoBehaviour
 	public GameObject CaptureButtonGO;
 	public GameObject ProcessButtonGO;
 	public GameObject RawImgGO;
+	public Slider ProcessSlider;
 	public ImageProcessor ProcessImage;
 
 	// Use this for initialization
@@ -56,6 +58,13 @@ public class CreatePlayer : MonoBehaviour
 		}
 		toggleProcessButtonText();
 		processRequested = !processRequested;
+	}
+	
+	public void OnSliderMove()
+	{
+		Debug.Log("On OnSliderMove!");
+
+		ProcessImage.AdjustThreshold(ProcessSlider.value);
 	}
 
 	public void ResetImage()
