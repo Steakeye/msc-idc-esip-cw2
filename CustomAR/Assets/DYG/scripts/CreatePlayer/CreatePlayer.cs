@@ -31,13 +31,13 @@ public class CreatePlayer : MonoBehaviour
 
 		if (captureRequested)
 		{
-			ResetImage(); 
-			showProcessButton(false);
+			resetImage();
+			hideProcessUI();
 		}
 		else
 		{
 			captureImage();
-			showProcessButton(true);
+			showProcessButton();
 		}
 		
 		toggleCaptureButtonText();
@@ -55,6 +55,7 @@ public class CreatePlayer : MonoBehaviour
 		else
 		{
 			processImage();
+			showProcessSlider();
 		}
 		toggleProcessButtonText();
 		processRequested = !processRequested;
@@ -62,12 +63,12 @@ public class CreatePlayer : MonoBehaviour
 	
 	public void OnSliderMove()
 	{
-		Debug.Log("On OnSliderMove!");
+		//Debug.Log("On OnSliderMove!");
 
 		ProcessImage.AdjustThreshold(ProcessSlider.value);
 	}
 
-	public void ResetImage()
+	private void resetImage()
 	{
 		Debug.Log("Reset Image!");
 		webCamTexture.Play();
@@ -76,12 +77,10 @@ public class CreatePlayer : MonoBehaviour
 	private void initRawImg()
 	{
 		rawImg = RawImgGO.GetComponent<RawImage>();
-		Renderer rdr = rawImg.GetComponent<Renderer>();
 	}
 
 	private void initCamTexture()
 	{
-		//rawImg.material.mainTexture = webCamTexture;
 		rawImg.texture = webCamTexture;
 	}
 
@@ -100,9 +99,10 @@ public class CreatePlayer : MonoBehaviour
 	
 	private void processImage()
 	{
-		Debug.Log("ProcessImage!");
+		//Debug.Log("ProcessImage!");
 		
 		ProcessImage.ApplyThreshold();
+		showProcessSlider(true);
 	}
 
 	private void saveImage()
@@ -131,6 +131,20 @@ public class CreatePlayer : MonoBehaviour
 		File.WriteAllBytes(Application.dataPath + "/test.png", bytes);
 	}
 
+	private void hideProcessUI()
+	{
+		showProcessButton(false);
+		showProcessSlider(false);
+		toggleProcessButtonText();
+		
+		if (processRequested)
+		{
+			toggleProcessButtonText();
+		}
+		
+		processRequested = false;
+	}
+	
 	private void toggleCaptureButtonText()
 	{
 		toggleButtonText(CaptureButtonGO, buttonTextCapture, buttonTextRetry, captureRequested);
@@ -143,7 +157,6 @@ public class CreatePlayer : MonoBehaviour
 	
 	private void toggleButtonText(GameObject buttonGO, string textOne, string textTwo, bool toggle)
 	{
-		//Button buttonToChange = buttonGO.GetComponent<Button>();
 		Debug.Log("Toggle Text!");
 
 		Text txt = buttonGO.GetComponentInChildren<Text>();
@@ -158,9 +171,15 @@ public class CreatePlayer : MonoBehaviour
 		}
 	}
 
-	private void showProcessButton(bool show)
+	private void showProcessButton(bool show = true)
 	{
 		ProcessButtonGO.SetActive(show);
+	}
+	
+	private void showProcessSlider(bool show = true)
+	{
+		GameObject processSlider = ProcessButtonGO.GetComponentInChildren<GameObject>();
+		processSlider.SetActive(show);
 	}
 	
 	private string buttonTextCapture = "Capture";
@@ -171,7 +190,6 @@ public class CreatePlayer : MonoBehaviour
 	private bool processRequested = false;
 	private WebCamTexture webCamTexture;
 	private string deviceName;
-	//private WaitForEndOfFrame frameEnd = new WaitForEndOfFrame();
 	private RawImage rawImg;
 
 }
