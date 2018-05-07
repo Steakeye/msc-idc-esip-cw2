@@ -107,34 +107,54 @@ public class CreatePlayer : MonoBehaviour
 
 	private void saveImage()
 	{
+		Texture2D processedTexture = makeProcessedTexture();
+
+		//texture to PNG data
+		byte[] bytes = processedTexture.EncodeToPNG();
+		Destroy(processedTexture);
+		
+		File.WriteAllBytes(Application.dataPath + "/test.png", bytes);
+	}
+
+	private Texture2D makeProcessedTexture()
+	{
+		const int borderMargin = 10;
 		int width = webCamTexture.width;
 		int height = webCamTexture.height;
 		Texture2D sourceTex = new Texture2D(width, height);
 		Texture2D outTex = new Texture2D(width, height);
 		RenderTexture renderTex = new RenderTexture(width, height, 0);
 		Color[] pixels = webCamTexture.GetPixels();
+
 		// Set webcam data to texture into the texture
 		sourceTex.SetPixels(pixels);
 		sourceTex.Apply();
 		
+		//Apply material (and child shader) to the texture to mimic webcam effect
 		Graphics.Blit(sourceTex, renderTex, rawImg.material);
 
+		Destroy(sourceTex);
+		
+		//Set this texture as the active texture in order to set this data onto another texture
 		RenderTexture.active = renderTex;
 		
 		outTex.ReadPixels(new Rect(0, 0, width, height), 0, 0, false);
 
-		outTex.FloodFillArea(10,10,Color.blue);
+		//Try to cut out the image from all corners (expensive but thorough
+		//Top left
+		outTex.FloodFillArea(borderMargin, borderMargin, Color.clear);
+		//Top right
+		outTex.FloodFillArea(width - borderMargin, borderMargin, Color.clear);
+		//Botton left
+		outTex.FloodFillArea(borderMargin, height - borderMargin, Color.clear);
+		//Botton right
+		outTex.FloodFillArea(width - borderMargin, height - borderMargin, Color.clear);
 		
 		outTex.alphaIsTransparency = true;
 
-		//texture to PNG data
-		byte[] bytes = outTex.EncodeToPNG();
-		Destroy(sourceTex);
-		Destroy(outTex);
-		
-		File.WriteAllBytes(Application.dataPath + "/test.png", bytes);
+		return outTex;
 	}
-
+	
 	private void hideProcessUI()
 	{
 		showProcessButton(false);
