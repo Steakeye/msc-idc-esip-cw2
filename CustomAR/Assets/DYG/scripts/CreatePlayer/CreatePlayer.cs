@@ -13,6 +13,7 @@ public class CreatePlayer : MonoBehaviour
 	public GameObject CaptureButtonGO;
 	public GameObject ProcessButtonGO;
 	public GameObject RawImgGO;
+	public Material CutoutMaterial;
 	public Slider ProcessSlider;
 	public ImageProcessor ProcessImage;
 
@@ -154,6 +155,26 @@ public class CreatePlayer : MonoBehaviour
 
 		return outTex;
 	}
+
+	private Texture2D makeThresholdTexture(Texture2D original)
+	{
+		int width = original.width;
+		int height = original.height;
+
+		RenderTexture renderTex = new RenderTexture(width, height, 0);
+		Texture2D outTex = new Texture2D(width, height);
+
+		//Apply material (and child shader) to the texture to mimic webcam effect
+		Graphics.Blit(original, renderTex, rawImg.material);
+		
+		//Set this texture as the active texture in order to set this data onto another texture
+		RenderTexture.active = renderTex;
+		
+		outTex.ReadPixels(new Rect(0, 0, width, height), 0, 0, false);
+
+		return outTex;
+	}
+
 	
 	private void hideProcessUI()
 	{
