@@ -46,6 +46,9 @@
 				fixed4 texturePixel = tex2D(_MainTex, i.uv);
 				fixed4 cutoutPixel = tex2D(_CutoutTex, i.uv);
                 
+                // Make is compatible with clear                
+                // TODO: Could make this based on an input parameter
+                texturePixel.rgb = cutoutPixel.a == 0.0f ? (0, 0, 0) : texturePixel.rgb;
                 texturePixel.a = cutoutPixel.a;
                 
 				return texturePixel;
