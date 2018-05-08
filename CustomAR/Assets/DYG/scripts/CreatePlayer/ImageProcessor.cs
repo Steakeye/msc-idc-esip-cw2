@@ -22,6 +22,8 @@ public class ImageProcessor : MonoBehaviour {
 
 	public void RemoveThreshold() {
 		RawImage img = GetComponent<RawImage>();
+		
+		img.material.SetFloat("_ThresholdPoint", midPoint);
 	
 		//img.material = new Material(Shader.Find("Standard"));
 		img.material = null;
@@ -33,4 +35,5 @@ public class ImageProcessor : MonoBehaviour {
 		img.material.SetFloat("_ThresholdPoint", changeToVal);
 	}
 
+	private float midPoint = 0.5f;
 }

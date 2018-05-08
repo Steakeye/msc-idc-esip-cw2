@@ -109,7 +109,9 @@ public class CreatePlayer : MonoBehaviour
 
 	private void saveImage()
 	{
-		Texture2D processedTexture = makeProcessedTexture();
+		Texture2D camTexture = getTextureFromCam(); 
+		
+		Texture2D processedTexture = makeProcessedTexture(camTexture);
 
 		//texture to PNG data
 		byte[] bytes = processedTexture.EncodeToPNG();
@@ -117,16 +119,47 @@ public class CreatePlayer : MonoBehaviour
 
 		File.WriteAllBytes(Application.dataPath + "/test.png", bytes);
 
-		Texture2D croppedTexture = createCroppedTexture(processedTexture);
+		Texture2D updateCamTexture = cutoutCamTextureWithProcessed(camTexture, processedTexture);
 
 		Destroy(processedTexture);
-
-		bytes = croppedTexture.EncodeToPNG();
 		
+		Texture2D croppedTexture = createCroppedTexture(updateCamTexture);
+
+		Destroy(updateCamTexture);
+		
+		bytes = croppedTexture.EncodeToPNG();
+
 		Destroy(croppedTexture);
 
 		File.WriteAllBytes(Application.dataPath + "/test-cropped.png", bytes);
+	}
 
+	private Texture2D cutoutCamTextureWithProcessed(Texture2D camTex, Texture2D cutoutTex)
+	{
+		int width = camTex.width;
+		int height = camTex.height;
+
+		RenderTexture renderTex = new RenderTexture(width, height, 0);
+		Texture2D outTex = new Texture2D(width, height);
+
+		//img.material.SetFloat("_ThresholdPoint", changeToVal);
+
+		//camTex.mate
+		
+		CutoutMaterial.SetTexture("_MainTex", camTex);
+		CutoutMaterial.SetTexture("_CutoutTex", cutoutTex);
+			
+		//Apply material (and child shader) to the texture to mimic webcam effect
+		Graphics.Blit(camTex, renderTex, CutoutMaterial);
+		
+		//Set this texture as the active texture in order to set this data onto another texture
+		RenderTexture.active = renderTex;
+		
+		outTex.ReadPixels(new Rect(0, 0, width, height), 0, 0, false);
+		
+		outTex.Apply();
+
+		return outTex;
 	}
 
 	private Texture2D createCroppedTexture(Texture2D tex)
@@ -141,14 +174,14 @@ public class CreatePlayer : MonoBehaviour
 		Color[] croppedPixels = tex.GetPixels((int) cropCoords[0].x, (int)cropCoords[0].y, cropWidth, cropHeight);
 		
 		cropTex.SetPixels(croppedPixels);
+		
 		cropTex.Apply();
 
 		return cropTex;
 	}
-	
-	private Texture2D makeProcessedTexture()
+
+	private Texture2D getTextureFromCam()
 	{
-		const int borderMargin = 10;
 		int width = webCamTexture.width;
 		int height = webCamTexture.height;
 		Texture2D sourceTex = new Texture2D(width, height);
@@ -156,8 +189,19 @@ public class CreatePlayer : MonoBehaviour
 
 		// Set webcam data to texture into the texture
 		sourceTex.SetPixels(pixels);
+		
 		sourceTex.Apply();
 
+		return sourceTex;
+	}
+	
+	private Texture2D makeProcessedTexture(Texture2D sourceTex)
+	{
+		const int borderMargin = 10;
+
+		int width = sourceTex.width;
+		int height = sourceTex.height;
+		
 		Texture2D outTex = makeThresholdTexture(sourceTex);
 
 		Destroy(sourceTex);
@@ -174,6 +218,8 @@ public class CreatePlayer : MonoBehaviour
 		
 		outTex.alphaIsTransparency = true;
 
+		outTex.Apply();
+		
 		return outTex;
 	}
 
@@ -193,6 +239,8 @@ public class CreatePlayer : MonoBehaviour
 		
 		outTex.ReadPixels(new Rect(0, 0, width, height), 0, 0, false);
 
+		outTex.Apply();
+		
 		return outTex;
 	}
 	
