@@ -46,7 +46,7 @@
 				fixed4 texturePixel = tex2D(_MainTex, i.uv);
 				fixed4 cutoutPixel = tex2D(_CutoutTex, i.uv);
                 
-                texturePixel.a = cutoutPixel.a
+                texturePixel.a = cutoutPixel.a;
                 
 				return texturePixel;
 			}
