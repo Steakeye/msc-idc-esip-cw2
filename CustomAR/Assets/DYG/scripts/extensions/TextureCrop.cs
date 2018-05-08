@@ -18,15 +18,15 @@ public static class TextureCrop
         int width = aTex.width;
         int height = aTex.height;
 
-        short xOne = findXCoord(pixels, width, height, numOfPixels, cropColor);
-        short yOne = findYCoord(pixels, width, numOfPixels, cropColor);
-        short xTwo = findXCoord(pixels, width, height, numOfPixels, cropColor, Coords.CoordsTwo);
-        short yTwo = findYCoord(pixels, width, numOfPixels, cropColor, Coords.CoordsTwo);
+        int xOne = findXCoord(pixels, width, height, numOfPixels, cropColor);
+        int yOne = findYCoord(pixels, width, numOfPixels, cropColor);
+        int xTwo = findXCoord(pixels, width, height, numOfPixels, cropColor, Coords.CoordsTwo);
+        int yTwo = findYCoord(pixels, width, numOfPixels, cropColor, Coords.CoordsTwo);
         
         return new [] { new TextureExtension.Point(xOne, yOne), new TextureExtension.Point(xTwo, yTwo) };
     }
 
-    private static short findXCoord(Color[] pixels, int width, int height, int pixelCount, Color cropColor, Coords side = Coords.CoordsOne)
+    private static int findXCoord(Color[] pixels, int width, int height, int pixelCount, Color cropColor, Coords side = Coords.CoordsOne)
     {
         bool isSideOne = side == Coords.CoordsOne;
         int rowCountVal = isSideOne ? width : -width;
@@ -35,7 +35,7 @@ public static class TextureCrop
         int lastIdx = pixelCount - 1;
         int lastLineIdx = isSideOne ? (height - 1) * width : width;
         int idx = isSideOne ? startIdx : pixelCount - 1; 
-        short xCoord = (short)(isSideOne ? 0 : width - 1);
+        int xCoord = (short)(isSideOne ? 0 : width - 1);
 
         Func<bool> predicateUp = () => idx < pixelCount;
 
@@ -75,7 +75,7 @@ public static class TextureCrop
         return xCoord;
     }
 
-    private static short findYCoord(Color[] pixels, int width, int pixelCount, Color cropColor, Coords side = Coords.CoordsOne)
+    private static int findYCoord(Color[] pixels, int width, int pixelCount, Color cropColor, Coords side = Coords.CoordsOne)
     {
         int countVal = side == Coords.CoordsOne ? 1 : -1;
         int startIdx = width; // We're getting a 1 pixel black line at the top
@@ -97,6 +97,6 @@ public static class TextureCrop
             }
         }
 
-        return (short)(idx / width);
+        return (idx / width);
     }
 }

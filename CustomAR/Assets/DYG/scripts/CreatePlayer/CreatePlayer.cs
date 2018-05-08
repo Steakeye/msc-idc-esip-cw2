@@ -112,11 +112,39 @@ public class CreatePlayer : MonoBehaviour
 
 		//texture to PNG data
 		byte[] bytes = processedTexture.EncodeToPNG();
-		Destroy(processedTexture);
-		
+		//Destroy(processedTexture);
+
 		File.WriteAllBytes(Application.dataPath + "/test.png", bytes);
+
+		Texture2D croppedTexture = createCroppedTexture(processedTexture);
+
+		Destroy(processedTexture);
+
+		bytes = croppedTexture.EncodeToPNG();
+		
+		Destroy(croppedTexture);
+
+		File.WriteAllBytes(Application.dataPath + "/test-cropped.png", bytes);
+
 	}
 
+	private Texture2D createCroppedTexture(Texture2D tex)
+	{
+		TextureExtension.Point[] cropCoords = tex.FindCropCoordinates(Color.clear);
+
+		int cropWidth = (int) cropCoords[1].x - cropCoords[0].x;
+		int cropHeight = (int) cropCoords[1].y - cropCoords[0].y;
+		
+		Texture2D cropTex = new Texture2D(cropWidth, cropHeight);
+
+		Color[] croppedPixels = tex.GetPixels((int) cropCoords[0].x, (int)cropCoords[0].y, cropWidth, cropHeight);
+		
+		cropTex.SetPixels(croppedPixels);
+		cropTex.Apply();
+
+		return cropTex;
+	}
+	
 	private Texture2D makeProcessedTexture()
 	{
 		const int borderMargin = 10;
@@ -145,8 +173,6 @@ public class CreatePlayer : MonoBehaviour
 		
 		outTex.alphaIsTransparency = true;
 
-		TextureExtension.Point[] cropCoords = outTex.FindCropCoordinates(Color.clear);
-
 		return outTex;
 	}
 
@@ -168,7 +194,6 @@ public class CreatePlayer : MonoBehaviour
 
 		return outTex;
 	}
-
 	
 	private void hideProcessUI()
 	{
