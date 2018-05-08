@@ -28,18 +28,34 @@ public static class TextureCrop
 
     private static short findXCoord(Color[] pixels, int width, int height, int pixelCount, Color cropColor, Coords side = Coords.CoordsOne)
     {
-        int rowCountVal = side == Coords.CoordsOne ? width : -width;
-        short xCountVal = (short)(side == Coords.CoordsOne ? 1 : -1);
-        int startIdx = width;
-        int lastLineIdx = (height - 1) * width;
-        int idx = side == Coords.CoordsOne ? startIdx : pixelCount - 1; // We're getting a 1 pixel black line at the top
-        short xCoord = (short)(side == Coords.CoordsOne ? 0 : width - 1);
+        bool isSideOne = side == Coords.CoordsOne;
+        int rowCountVal = isSideOne ? width : -width;
+        short xCountVal = (short)(isSideOne ? 1 : -1);
+        int startIdx = width; // We're getting a 1 pixel black line at the top
+        int lastIdx = pixelCount - 1;
+        int lastLineIdx = isSideOne ? (height - 1) * width : width;
+        int idx = isSideOne ? startIdx : pixelCount - 1; 
+        short xCoord = (short)(isSideOne ? 0 : width - 1);
 
         Func<bool> predicateUp = () => idx < pixelCount;
 
-        Func<bool> predicateDown = () => idx > -1;
+        Func<bool> predicateDown = () => idx > startIdx;
 
         Func<bool> predicate = side == Coords.CoordsOne ? predicateUp: predicateDown;
+        
+        Action assignIdxUp = () =>
+        {
+            xCoord += xCountVal;
+            idx = xCoord;            
+        };
+        
+        Action assignIdxDown = () =>
+        {
+            idx = lastIdx + xCoord;
+            xCoord += xCountVal;
+        };
+
+        Action assignIdx = side == Coords.CoordsOne ? assignIdxUp: assignIdxDown;
         
         for (; predicate(); idx += rowCountVal)
         {
@@ -52,8 +68,7 @@ public static class TextureCrop
 
             if ((lastLineIdx + xCoord) == idx)
             {
-                xCoord += xCountVal;
-                idx = xCoord;
+                assignIdx();
             }
         }
 
@@ -63,7 +78,8 @@ public static class TextureCrop
     private static short findYCoord(Color[] pixels, int width, int pixelCount, Color cropColor, Coords side = Coords.CoordsOne)
     {
         int countVal = side == Coords.CoordsOne ? 1 : -1;
-        int idx = side == Coords.CoordsOne ? 0 : pixelCount - 1;
+        int startIdx = width; // We're getting a 1 pixel black line at the top
+        int idx = side == Coords.CoordsOne ? startIdx : pixelCount - 1;
 
         Func<bool> predicateUp = () => idx < pixelCount;
 
