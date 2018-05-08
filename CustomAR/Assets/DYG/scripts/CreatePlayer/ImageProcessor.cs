@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,7 +23,8 @@ public class ImageProcessor : MonoBehaviour {
 	public void RemoveThreshold() {
 		RawImage img = GetComponent<RawImage>();
 	
-		img.material = new Material(new Shader());
+		//img.material = new Material(Shader.Find("Standard"));
+		img.material = null;
 	}
 	
 	public void AdjustThreshold(float changeToVal) {

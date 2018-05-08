@@ -72,6 +72,7 @@ public class CreatePlayer : MonoBehaviour
 	private void resetImage()
 	{
 		Debug.Log("Reset Image!");
+		ProcessImage.RemoveThreshold();
 		webCamTexture.Play();
 	}
 
