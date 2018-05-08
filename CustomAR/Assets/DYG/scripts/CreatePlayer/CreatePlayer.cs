@@ -123,24 +123,16 @@ public class CreatePlayer : MonoBehaviour
 		int width = webCamTexture.width;
 		int height = webCamTexture.height;
 		Texture2D sourceTex = new Texture2D(width, height);
-		Texture2D outTex = new Texture2D(width, height);
-		RenderTexture renderTex = new RenderTexture(width, height, 0);
 		Color[] pixels = webCamTexture.GetPixels();
 
 		// Set webcam data to texture into the texture
 		sourceTex.SetPixels(pixels);
 		sourceTex.Apply();
-		
-		//Apply material (and child shader) to the texture to mimic webcam effect
-		Graphics.Blit(sourceTex, renderTex, rawImg.material);
+
+		Texture2D outTex = makeThresholdTexture(sourceTex);
 
 		Destroy(sourceTex);
 		
-		//Set this texture as the active texture in order to set this data onto another texture
-		RenderTexture.active = renderTex;
-		
-		outTex.ReadPixels(new Rect(0, 0, width, height), 0, 0, false);
-
 		//Try to cut out the image from all corners (expensive but thorough
 		//Top left
 		outTex.FloodFillArea(borderMargin, borderMargin, Color.clear);
@@ -152,6 +144,8 @@ public class CreatePlayer : MonoBehaviour
 		outTex.FloodFillArea(width - borderMargin, height - borderMargin, Color.clear);
 		
 		outTex.alphaIsTransparency = true;
+
+		TextureExtension.Point[] cropCoords = outTex.FindCropCoordinates(Color.clear);
 
 		return outTex;
 	}
