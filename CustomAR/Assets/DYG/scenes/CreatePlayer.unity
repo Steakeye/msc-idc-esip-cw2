@@ -808,6 +808,7 @@ MonoBehaviour:
   CaptureButtonGO: {fileID: 384097926}
   ProcessButtonGO: {fileID: 1149012422}
   RawImgGO: {fileID: 959971213}
+  CutoutMaterial: {fileID: 2100000, guid: cbeda594cdbc63b42b46b6c17fc856d3, type: 2}
   ProcessSlider: {fileID: 1655261300}
   ProcessImage: {fileID: 959971217}
 --- !u!1 &1092199511
