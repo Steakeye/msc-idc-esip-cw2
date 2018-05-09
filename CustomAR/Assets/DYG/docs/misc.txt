@@ -1,0 +1,3 @@
+# Project info
+
+Application.persistentDataPath: C:\Users\<user>\AppData\LocalLow\DefaultCompany\CustomAR

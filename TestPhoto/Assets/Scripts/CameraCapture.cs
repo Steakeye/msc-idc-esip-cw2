@@ -143,10 +143,10 @@ public class CameraCapture : MonoBehaviour
 		File.WriteAllBytes(Application.dataPath + "/test.png", bytes);
 	}
 	
-	private void ToogleText()
+	private void ToggleText()
 	{
 		Button captureButton = CaptureButton.GetComponent<Button>();
-		Debug.Log("Toogle Text!");
+		Debug.Log("Toggle Text!");
 
 		Text txt = captureButton.GetComponent<Text>();
 		
