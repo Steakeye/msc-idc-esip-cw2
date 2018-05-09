@@ -4,36 +4,39 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ImageProcessor : MonoBehaviour {
+namespace DYG
+{
+	public class ImageProcessor : MonoBehaviour {
 
-	public Material material;
+		public Material material;
 
-	void Start()
-	{
-		RawImage img = GetComponent<RawImage>();
-		img.color = Color.white;
-	}
+		void Start()
+		{
+			RawImage img = GetComponent<RawImage>();
+			img.color = Color.white;
+		}
 	
-	public void ApplyThreshold() {
-		RawImage img = GetComponent<RawImage>();
+		public void ApplyThreshold() {
+			RawImage img = GetComponent<RawImage>();
 
-		img.material = material;
-	}
+			img.material = material;
+		}
 
-	public void RemoveThreshold() {
-		RawImage img = GetComponent<RawImage>();
+		public void RemoveThreshold() {
+			RawImage img = GetComponent<RawImage>();
 		
-		img.material.SetFloat("_ThresholdPoint", midPoint);
+			img.material.SetFloat("_ThresholdPoint", midPoint);
 	
-		//img.material = new Material(Shader.Find("Standard"));
-		img.material = null;
-	}
+			//img.material = new Material(Shader.Find("Standard"));
+			img.material = null;
+		}
 	
-	public void AdjustThreshold(float changeToVal) {
-		RawImage img = GetComponent<RawImage>();
+		public void AdjustThreshold(float changeToVal) {
+			RawImage img = GetComponent<RawImage>();
 		
-		img.material.SetFloat("_ThresholdPoint", changeToVal);
-	}
+			img.material.SetFloat("_ThresholdPoint", changeToVal);
+		}
 
-	private float midPoint = 0.5f;
+		private float midPoint = 0.5f;
+	}
 }
