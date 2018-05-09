@@ -137,6 +137,8 @@ namespace DYG
 			File.WriteAllBytes(Application.dataPath + "/test-cropped.png", bytes);*/
 
 			DataLayer.PlayerTexture = croppedTexture;
+			
+			DataLayer.SaveData();
 		}
 
 		private Texture2D cutoutCamTextureWithProcessed(Texture2D camTex, Texture2D cutoutTex)

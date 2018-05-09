@@ -16,32 +16,42 @@ namespace DYG
 		private const string PLAYER_H_KEY = "playerH";
 		private const string PLAYER_W_KEY = "playerW";
 		
+		private static Data findLocalInstanceOrSceneInstance()
+		{
+			return _instance != null ? _instance : FindObjectOfType<Data>(); 
+		}
+		
 		public static Data Instance
 		{
 			get
 			{
-				// If the instance of this class doesn't exist
-				if (_instance == null)
+				// Check if the instance of this class doesn't exist either as a member or in the scene
+				if (findLocalInstanceOrSceneInstance() == null)
 				{
-					// Check the scene for a Game Object with this class
-					_instance = FindObjectOfType<Data>();
-
-					// If none is found in the scene then create a new Game Object
-					// and add this class to it.
-					if (_instance == null)
-					{
-						GameObject go = new GameObject(typeof(Data).ToString());
-						_instance = go.AddComponent<Data>();
-					}
+					//Create anew instance if one doesn't exist
+					GameObject go = new GameObject(typeof(Data).ToString());
+					_instance = go.AddComponent<Data>();
 				}
+
 
 				return _instance;
 			}
 		}
 	
 		// Use this for one-time only initialization
-		void Awake() {
-			if (Instance != this)
+		void Awake() 
+		{
+			if (playerTexPath == null)
+			{
+				playerTexPath = Application.persistentDataPath + "/player.png";
+			}
+
+			Data existingInstance = findLocalInstanceOrSceneInstance(); 
+			
+			if (existingInstance == null)
+			{
+				_instance = this;
+			} else if (existingInstance != this)
 			{
 				Destroy(this);
 			}
@@ -72,7 +82,7 @@ namespace DYG
 		{
 			savePlayerIfPresent();
 		}
-	
+
 		private void loadSavedData()
 		{
 			loadPlayerIfPresent();
@@ -80,7 +90,6 @@ namespace DYG
 	
 		private void loadPlayerIfPresent()
 		{
-			//PlayerPrefs.
 			if (File.Exists(playerTexPath))
 			{
 				byte[] bytes = File.ReadAllBytes(playerTexPath);
@@ -99,8 +108,8 @@ namespace DYG
 		{
 			if (PlayerTexture != null)
 			{
-				PlayerPrefs.SetInt(PLAYER_W_KEY, PlayerTexture.width);
-				PlayerPrefs.SetInt(PLAYER_H_KEY, PlayerTexture.height);
+				/*PlayerPrefs.SetInt(PLAYER_W_KEY, PlayerTexture.width);
+				PlayerPrefs.SetInt(PLAYER_H_KEY, PlayerTexture.height);*/
 
 				byte[] bytes = PlayerTexture.EncodeToPNG();
 
@@ -109,6 +118,6 @@ namespace DYG
 		}
 
 		//private Texture2D playerTex = null;
-		private string playerTexPath = Application.persistentDataPath + "/player.png";
-}
+		private string playerTexPath = null;
+	}
 }
