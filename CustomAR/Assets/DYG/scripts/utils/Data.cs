@@ -75,7 +75,16 @@ namespace DYG
 
 		public Texture2D PlayerTexture
 		{
-			get; set;
+			get { return playerTex; }
+			set
+			{
+				if (playerTex != null && playerTex.imageContentsHash != value.imageContentsHash)
+				{
+					playerTexUpdated = true;
+				}
+				playerTex = value; 
+				
+			}
 		}
 
 		public void SaveData()
@@ -106,18 +115,19 @@ namespace DYG
 	
 		private void savePlayerIfPresent()
 		{
-			if (PlayerTexture != null)
+			if (playerTex != null && playerTexUpdated)
 			{
 				/*PlayerPrefs.SetInt(PLAYER_W_KEY, PlayerTexture.width);
 				PlayerPrefs.SetInt(PLAYER_H_KEY, PlayerTexture.height);*/
 
-				byte[] bytes = PlayerTexture.EncodeToPNG();
+				byte[] bytes = playerTex.EncodeToPNG();
 
 				File.WriteAllBytes(playerTexPath, bytes);
 			}
 		}
 
-		//private Texture2D playerTex = null;
+		private Texture2D playerTex = null;
+		private bool playerTexUpdated = false;
 		private string playerTexPath = null;
 	}
 }

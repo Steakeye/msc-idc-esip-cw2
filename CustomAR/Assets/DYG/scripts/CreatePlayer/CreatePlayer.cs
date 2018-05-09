@@ -116,12 +116,6 @@ namespace DYG
 		
 			Texture2D processedTexture = makeProcessedTexture(camTexture);
 
-			//texture to PNG data
-			/*byte[] bytes = processedTexture.EncodeToPNG();
-			//Destroy(processedTexture);
-
-			File.WriteAllBytes(Application.dataPath + "/test.png", bytes);*/
-
 			Texture2D updateCamTexture = cutoutCamTextureWithProcessed(camTexture, processedTexture);
 
 			Destroy(processedTexture);
@@ -130,15 +124,7 @@ namespace DYG
 
 			Destroy(updateCamTexture);
 		
-			/*bytes = croppedTexture.EncodeToPNG();
-
-			Destroy(croppedTexture);
-
-			File.WriteAllBytes(Application.dataPath + "/test-cropped.png", bytes);*/
-
 			DataLayer.PlayerTexture = croppedTexture;
-			
-			DataLayer.SaveData();
 		}
 
 		private Texture2D cutoutCamTextureWithProcessed(Texture2D camTex, Texture2D cutoutTex)
