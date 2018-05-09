@@ -13,7 +13,7 @@ public class History : MonoBehaviour {
 	{
 		string currentSceneName = SceneManager.GetActiveScene().name;
 
-		//Don'ty allow repeat entries into history
+		// Don't allow repeat entries into history
 		if (history.Count == 0 || history.Peek() != currentSceneName)
 		{
 			history.Push(currentSceneName);
@@ -27,7 +27,7 @@ public class History : MonoBehaviour {
 
 	public void GoBack()
 	{
-		//Let's make sure we cna actually go back tosomething
+		// Let's make sure we cna actually go back tosomething
 		if (history.Count > 1) 
 		{
 			history.Pop();
