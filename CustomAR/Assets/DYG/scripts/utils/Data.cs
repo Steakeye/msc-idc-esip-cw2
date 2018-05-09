@@ -113,9 +113,6 @@ namespace DYG
 		{
 			if (playerTex != null && playerTexUpdated)
 			{
-				/*PlayerPrefs.SetInt(PLAYER_W_KEY, PlayerTexture.width);
-				PlayerPrefs.SetInt(PLAYER_H_KEY, PlayerTexture.height);*/
-
 				byte[] bytes = playerTex.EncodeToPNG();
 
 				File.WriteAllBytes(playerTexPath, bytes);

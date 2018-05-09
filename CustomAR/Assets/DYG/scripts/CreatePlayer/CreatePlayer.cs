@@ -37,7 +37,7 @@ namespace DYG
 			if (captureRequested)
 			{
 				resetImage();
-				hideProcessUI();
+				resetProcessUI();
 			}
 			else
 			{
@@ -56,7 +56,7 @@ namespace DYG
 			if (processRequested)
 			{
 				saveImage();
-				hideProcessUI();
+				resetProcessUI();
 				showProcessedImage();
 			}
 			else
@@ -77,7 +77,7 @@ namespace DYG
 
 		private void resetImage()
 		{
-			Debug.Log("Reset Image!");
+			// Debug.Log("Reset Image!");
 			ProcessImage.RemoveThreshold();
 			
 			rawImg.color = Color.white;
@@ -258,12 +258,11 @@ namespace DYG
 			return outTex;
 		}
 	
-		private void hideProcessUI()
+		private void resetProcessUI()
 		{
 			showProcessButton(false);
 			showProcessSlider(false);
-			toggleProcessButtonText();
-		
+			
 			if (processRequested)
 			{
 				toggleProcessButtonText();
@@ -306,6 +305,11 @@ namespace DYG
 		private void showProcessSlider(bool show = true)
 		{
 			ProcessSlider.gameObject.SetActive(show);
+
+			if (!show)
+			{
+				ProcessSlider.value = thresholdStart;
+			}
 		}
 	
 		private string buttonTextCapture = "Capture";
@@ -317,6 +321,7 @@ namespace DYG
 		private WebCamTexture webCamTexture;
 		private string deviceName;
 		private RawImage rawImg;
+		private const float thresholdStart = 0.5f;
 
 	}
 }
