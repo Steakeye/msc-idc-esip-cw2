@@ -78,7 +78,7 @@ namespace DYG
 			get { return playerTex; }
 			set
 			{
-				if (playerTex != null && playerTex.imageContentsHash != value.imageContentsHash)
+				if (playerTex == null || playerTex.imageContentsHash != value.imageContentsHash)
 				{
 					playerTexUpdated = true;
 				}
@@ -103,10 +103,6 @@ namespace DYG
 			{
 				byte[] bytes = File.ReadAllBytes(playerTexPath);
 				
-				int texW = PlayerPrefs.GetInt(PLAYER_W_KEY);
-				int texH = PlayerPrefs.GetInt(PLAYER_H_KEY);
-				
-				//PlayerTexture = new Texture2D(texW, texH);
 				PlayerTexture = new Texture2D(0, 0);
 				
 				PlayerTexture.LoadImage(bytes);

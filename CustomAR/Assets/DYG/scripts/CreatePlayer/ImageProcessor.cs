@@ -24,11 +24,15 @@ namespace DYG
 
 		public void RemoveThreshold() {
 			RawImage img = GetComponent<RawImage>();
-		
-			img.material.SetFloat("_ThresholdPoint", midPoint);
+
+			ResetThreshold();
 	
-			//img.material = new Material(Shader.Find("Standard"));
 			img.material = null;
+		}
+
+		public void ResetThreshold()
+		{
+			material.SetFloat("_ThresholdPoint", midPoint);
 		}
 	
 		public void AdjustThreshold(float changeToVal) {
@@ -37,6 +41,6 @@ namespace DYG
 			img.material.SetFloat("_ThresholdPoint", changeToVal);
 		}
 
-		private float midPoint = 0.5f;
+		private const float midPoint = 0.5f;
 	}
 }

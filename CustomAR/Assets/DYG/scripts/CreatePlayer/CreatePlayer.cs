@@ -15,6 +15,7 @@ namespace DYG
 		public GameObject CaptureButtonGO;
 		public GameObject ProcessButtonGO;
 		public GameObject RawImgGO;
+		public RawImage FinalImage;
 		public Material CutoutMaterial;
 		public Slider ProcessSlider;
 		public ImageProcessor ProcessImage;
@@ -54,15 +55,17 @@ namespace DYG
 
 			if (processRequested)
 			{
-				saveImage(); 
+				saveImage();
+				hideProcessUI();
+				showProcessedImage();
 			}
 			else
 			{
 				processImage();
 				showProcessSlider();
+				toggleProcessButtonText();
+				processRequested = !processRequested;
 			}
-			toggleProcessButtonText();
-			processRequested = !processRequested;
 		}
 	
 		public void OnSliderMove()
@@ -76,6 +79,12 @@ namespace DYG
 		{
 			Debug.Log("Reset Image!");
 			ProcessImage.RemoveThreshold();
+			
+			rawImg.color = Color.white;
+			rawImg.texture = webCamTexture;				
+			
+			FinalImage.gameObject.SetActive(false);
+			
 			webCamTexture.Play();
 		}
 
@@ -127,6 +136,22 @@ namespace DYG
 			DataLayer.PlayerTexture = croppedTexture;
 		}
 
+		private void showProcessedImage()
+		{
+			Texture2D displayTex = DataLayer.PlayerTexture;
+
+			if (displayTex != null)
+			{
+				ProcessImage.RemoveThreshold();
+				rawImg.color = Color.gray;
+				rawImg.texture = null;
+
+				FinalImage.texture = displayTex;
+				FinalImage.rectTransform.sizeDelta = new Vector2(displayTex.width, displayTex.height);
+				FinalImage.gameObject.SetActive(true);
+			}
+		}
+		
 		private Texture2D cutoutCamTextureWithProcessed(Texture2D camTex, Texture2D cutoutTex)
 		{
 			int width = camTex.width;
@@ -135,10 +160,6 @@ namespace DYG
 			RenderTexture renderTex = new RenderTexture(width, height, 0);
 			Texture2D outTex = new Texture2D(width, height);
 
-			//img.material.SetFloat("_ThresholdPoint", changeToVal);
-
-			//camTex.mate
-		
 			CutoutMaterial.SetTexture("_MainTex", camTex);
 			CutoutMaterial.SetTexture("_CutoutTex", cutoutTex);
 			
@@ -263,7 +284,7 @@ namespace DYG
 	
 		private void toggleButtonText(GameObject buttonGO, string textOne, string textTwo, bool toggle)
 		{
-			Debug.Log("Toggle Text!");
+			//Debug.Log("Toggle Text!");
 
 			Text txt = buttonGO.GetComponentInChildren<Text>();
 		
