@@ -21,6 +21,11 @@ namespace DYG
 		public ImageProcessor ProcessImage;
 		public Data DataLayer;
 
+		private void Awake()
+		{
+			DataLayer = Data.Instance;
+		}
+
 		// Use this for initialization
 		void Start ()
 		{

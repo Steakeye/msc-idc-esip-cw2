@@ -190,7 +190,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 278650931}
+      - m_Target: {fileID: 1058616863}
         m_MethodName: goToScene
         m_Mode: 5
         m_Arguments:
@@ -429,6 +429,48 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 342240289}
+--- !u!1001 &480192765
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4753097822133368, guid: 60d7d61caf655744b90ca28e9288eead, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 296.09042
+      objectReference: {fileID: 0}
+    - target: {fileID: 4753097822133368, guid: 60d7d61caf655744b90ca28e9288eead, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 43.926506
+      objectReference: {fileID: 0}
+    - target: {fileID: 4753097822133368, guid: 60d7d61caf655744b90ca28e9288eead, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 7.167175
+      objectReference: {fileID: 0}
+    - target: {fileID: 4753097822133368, guid: 60d7d61caf655744b90ca28e9288eead, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4753097822133368, guid: 60d7d61caf655744b90ca28e9288eead, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4753097822133368, guid: 60d7d61caf655744b90ca28e9288eead, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4753097822133368, guid: 60d7d61caf655744b90ca28e9288eead, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4753097822133368, guid: 60d7d61caf655744b90ca28e9288eead, type: 2}
+      propertyPath: m_RootOrder
+      value: 4
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: 60d7d61caf655744b90ca28e9288eead, type: 2}
+  m_IsPrefabParent: 0
 --- !u!1001 &668892433
 Prefab:
   m_ObjectHideFlags: 0
@@ -466,7 +508,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4506499957058422, guid: a1c941a5818397347a63357a0c1a1ef8, type: 2}
       propertyPath: m_RootOrder
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: a1c941a5818397347a63357a0c1a1ef8, type: 2}
@@ -839,6 +881,7 @@ GameObject:
   - component: {fileID: 1058616861}
   - component: {fileID: 1058616860}
   - component: {fileID: 1058616859}
+  - component: {fileID: 1058616863}
   m_Layer: 5
   m_Name: Buttons
   m_TagString: Untagged
@@ -946,6 +989,17 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &1058616863
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1058616857}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea99429780d444619e539ce596a05f23, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1540200344
 GameObject:
   m_ObjectHideFlags: 0
@@ -1023,7 +1077,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 278650931}
+      - m_Target: {fileID: 1058616863}
         m_MethodName: goToScene
         m_Mode: 5
         m_Arguments:
@@ -1231,7 +1285,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 278650931}
+      - m_Target: {fileID: 1058616863}
         m_MethodName: goToScene
         m_Mode: 5
         m_Arguments:

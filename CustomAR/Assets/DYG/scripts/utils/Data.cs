@@ -18,7 +18,7 @@ namespace DYG
 		
 		private static Data findLocalInstanceOrSceneInstance()
 		{
-			return _instance != null ? _instance : FindObjectOfType<Data>(); 
+			return _instance ?? FindObjectOfType<Data>(); 
 		}
 		
 		public static Data Instance
@@ -53,10 +53,12 @@ namespace DYG
 				_instance = this;
 			} else if (existingInstance != this)
 			{
+				//gameObject.AddComponent(this);
 				Destroy(this);
 			}
 			else
 			{
+				_instance = existingInstance;
 				DontDestroyOnLoad(gameObject);
 
 				loadSavedData();
