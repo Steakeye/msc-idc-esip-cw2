@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace DYG
+namespace DYG.utils
 {
 	public class History : MonoBehaviour {
 

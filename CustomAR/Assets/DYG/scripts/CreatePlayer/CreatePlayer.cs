@@ -10,6 +10,8 @@ using Button = UnityEngine.UI.Button;
 
 namespace DYG
 {
+	using utils;
+	
 	public class CreatePlayer : MonoBehaviour
 	{
 		public GameObject CaptureButtonGO;

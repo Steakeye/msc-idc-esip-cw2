@@ -7,7 +7,7 @@ using UnityEngine;
  * Inspired by http://naplandgames.com/blog/2016/11/27/saving-data-in-unity-3d-serialization-for-beginners/
  */
 
-namespace DYG
+namespace DYG.utils
 {
 	public class Data : MonoBehaviour {
 
