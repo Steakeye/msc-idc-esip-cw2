@@ -21,18 +21,6 @@ namespace DYG
 		{
 			populateButtons();
 		}
-
-		/*void OnEnable()
-		{
-			Debug.Log("OnEnable called");
-			// SceneManager.sceneLoaded += OnSceneLoaded;
-			populateButtons();
-		}*/
-
-		/*void Start ()
-		{
-			populateButtons();
-		}*/
 		
 		public void goToScene(string sceneName)
 		{
@@ -74,6 +62,7 @@ namespace DYG
 				playerImage.gameObject.layer = playerButton.gameObject.layer; //5
 
 				setPlayerImageSizeAndPos(playerButton, playerImage);
+				repositionPlayerButtonText(playerButton);
 			}
 		}
 
@@ -90,8 +79,6 @@ namespace DYG
 			int playerImgW = playerTex.width;
 			int playerImgH = playerTex.height;
 			Rect buttonRect = playerButtonRT.rect;
-			//float buttonW = playerButtonRT.rect.width;
-			//float buttonH = playerButtonRT.rect.height;
 			float maxImageW = buttonRect.width - PLAYER_IMAGE_MARGIN * 2; 
 			float maxImageH = (buttonRect.height - PLAYER_IMAGE_MARGIN * 2) / 2; 
 
@@ -102,15 +89,12 @@ namespace DYG
 			
 			AspectRatio aspectRatio = Dimensions.GetAspectRatio(playerImgW, playerImgH);
 
-			//Func<float, int, float> scaleBy = (outer, inner) => (float)inner/outer;
-
 			switch (aspectRatio)
 			{
 				case AspectRatio.Portrait:
 				case AspectRatio.Square:
 				{
 					//We know that we want to scale by height
-					//scaleAmount = scaleBy(maxImageH, playerImgH);
 					imgDimension = playerImgH;
 					maxDimension = maxImageH;
 				}
@@ -122,13 +106,11 @@ namespace DYG
 					// If AR of the original texture is greater than button image area then scale by width
 					if (Dimensions.GetAspectRatioFloat(playerImgW, playerImgH) > Dimensions.GetAspectRatioFloat(maxImageW, maxImageH))
 					{
-						//scaleAmount = scaleBy(maxImageW, playerImgW);
 						imgDimension = playerImgW;
 						maxDimension = maxImageW;
 					}
 					else
 					{
-						//scaleAmount = scaleBy(maxImageH, playerImgH);
 						imgDimension = playerImgH;
 						maxDimension = maxImageH;
 
@@ -142,11 +124,6 @@ namespace DYG
 			int scaledImgW = (int)(playerImgW / scaleAmount);
 			int scaledImgH = (int)(playerImgH / scaleAmount);
 			
-			//playerImageRT.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, 0, 10);
-
-			//playerImageRT.SetSizeWithCurrentAnchors();
-			//playerImageRT.rect.size = new Vector2(scaledImgW, scaledImgH);
-			//.GetComponent<Rect>().size = new Vector2(scaledImgW, scaledImgH);
 			playerImageRT.sizeDelta = new Vector2(scaledImgW, scaledImgH);
 		}
 
@@ -159,6 +136,12 @@ namespace DYG
 			playerImage.texture = playerYexture;
 
 			return playerImage;
+		}
+
+		private void repositionPlayerButtonText(Button playerButton)
+		{
+			Text buttonText = playerButton.GetComponentInChildren<Text>();
+
 		}
 
 	}
