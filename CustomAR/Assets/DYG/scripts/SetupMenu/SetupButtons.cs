@@ -14,6 +14,7 @@ namespace DYG
 	{
 
 		private const string PLAYER_BUTTON_NAME = "SetPlayerButton"; 
+		private const string PLAYER_BUTTON_TEXT_MESSAGE_UPDATE = "Update Player"; 
 		private const string PLAYER_IMAGE_NAME = "PlayerImage"; 
 		private const int PLAYER_IMAGE_MARGIN = 10; 
 		
@@ -62,7 +63,8 @@ namespace DYG
 				playerImage.gameObject.layer = playerButton.gameObject.layer; //5
 
 				setPlayerImageSizeAndPos(playerButton, playerImage);
-				repositionPlayerButtonText(playerButton);
+				
+				updatePlayerButtonText(playerButton);
 			}
 		}
 
@@ -113,7 +115,6 @@ namespace DYG
 					{
 						imgDimension = playerImgH;
 						maxDimension = maxImageH;
-
 					}
 				}
 					break;
@@ -138,11 +139,28 @@ namespace DYG
 			return playerImage;
 		}
 
-		private void repositionPlayerButtonText(Button playerButton)
+		private void updatePlayerButtonText(Button playerButton)
 		{
 			Text buttonText = playerButton.GetComponentInChildren<Text>();
 
+			repositionPlayerButtonText(buttonText);
+			updatePlayerButtonTextMessage(buttonText);
 		}
-
+		
+		private void updatePlayerButtonTextMessage(Text buttonText)
+		{
+			buttonText.text = PLAYER_BUTTON_TEXT_MESSAGE_UPDATE;
+		}
+		
+		private void repositionPlayerButtonText(Text buttonText)
+		{
+			//buttonText.alignment = TextAnchor.UpperCenter;
+			Vector3 oldTextPos = buttonText.transform.position;
+			float updatedTextHeight = buttonText.rectTransform.rect.height / 2;
+			buttonText.rectTransform.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Top, updatedTextHeight, updatedTextHeight);
+			buttonText.rectTransform.anchoredPosition = new Vector2(0, -updatedTextHeight/2);
+			//buttonText.transform.position = new Vector3(oldTextPos.x, updatedTextHeight, oldTextPos.z);
+			//buttonText.transform.SetAsLastSibling();
+		}
 	}
 }
