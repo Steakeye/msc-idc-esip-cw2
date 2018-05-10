@@ -11,22 +11,21 @@ namespace DYG
 		// Use this for initialization
 		void Awake ()
 		{
-			populateButtons();
 		}
-	
+
+		void OnEnable()
+		{
+			Debug.Log("OnEnable called");
+			// SceneManager.sceneLoaded += OnSceneLoaded;
+		}
+		
 		void Start ()
 		{
-			populateButtons();
 		}
 	
 		// Update is called once per frame
 		/*void Update () {
 		
 		}*/
-
-		private void populateButtons()
-		{
-			Button[] viewButtons = GetComponentsInChildren<Button>();
-		}
 	}
 }
