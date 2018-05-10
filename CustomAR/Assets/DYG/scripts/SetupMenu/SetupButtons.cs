@@ -89,16 +89,20 @@ namespace DYG
 			Texture playerTex = playerImage.texture; 
 			int playerImgW = playerTex.width;
 			int playerImgH = playerTex.height;
-			float buttonW = playerButtonRT.rect.width;
-			float buttonH = playerButtonRT.rect.height;
-			float maxImageW = buttonW - PLAYER_IMAGE_MARGIN * 2; 
-			float maxImageH = (buttonH - PLAYER_IMAGE_MARGIN * 2) / 2; 
+			Rect buttonRect = playerButtonRT.rect;
+			//float buttonW = playerButtonRT.rect.width;
+			//float buttonH = playerButtonRT.rect.height;
+			float maxImageW = buttonRect.width - PLAYER_IMAGE_MARGIN * 2; 
+			float maxImageH = (buttonRect.height - PLAYER_IMAGE_MARGIN * 2) / 2; 
 
 			float scaleAmount = 0f;
 			
+			int imgDimension = 0;
+			float maxDimension = 0;
+			
 			AspectRatio aspectRatio = Dimensions.GetAspectRatio(playerImgW, playerImgH);
 
-			Func<float, int, float> scaleBy = (outer, inner) => (float)inner/outer;
+			//Func<float, int, float> scaleBy = (outer, inner) => (float)inner/outer;
 
 			switch (aspectRatio)
 			{
@@ -106,9 +110,9 @@ namespace DYG
 				case AspectRatio.Square:
 				{
 					//We know that we want to scale by height
-					//scaleAmount = (float)playerImgH/(float)((buttonH - PLAYER_IMAGE_MARGIN * 2) / 2);
-					//scaleAmount = scaleByH(buttonH, playerImgH);
-					scaleAmount = scaleBy(maxImageH, playerImgH);
+					//scaleAmount = scaleBy(maxImageH, playerImgH);
+					imgDimension = playerImgH;
+					maxDimension = maxImageH;
 				}
 					break;
 				case AspectRatio.LandScape:
@@ -118,24 +122,32 @@ namespace DYG
 					// If AR of the original texture is greater than button image area then scale by width
 					if (Dimensions.GetAspectRatioFloat(playerImgW, playerImgH) > Dimensions.GetAspectRatioFloat(maxImageW, maxImageH))
 					{
-						//scaleAmount = (float)playerImgW/(float)(buttonW - PLAYER_IMAGE_MARGIN * 2);
-						scaleAmount = scaleBy(maxImageW, playerImgW);
+						//scaleAmount = scaleBy(maxImageW, playerImgW);
+						imgDimension = playerImgW;
+						maxDimension = maxImageW;
 					}
 					else
 					{
-						//scaleAmount = scaleByH(buttonH, playerImgH);
-						scaleAmount = scaleBy(maxImageH, playerImgH);
+						//scaleAmount = scaleBy(maxImageH, playerImgH);
+						imgDimension = playerImgH;
+						maxDimension = maxImageH;
+
 					}
 				}
 					break;
 			}
 
-			int scaledImgW = (int)((float) playerImgW / scaleAmount);
-			int scaledImgH = (int)((float) playerImgH / scaleAmount);
+			scaleAmount = (float)imgDimension/maxDimension;
+			
+			int scaledImgW = (int)(playerImgW / scaleAmount);
+			int scaledImgH = (int)(playerImgH / scaleAmount);
 			
 			//playerImageRT.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, 0, 10);
 
 			//playerImageRT.SetSizeWithCurrentAnchors();
+			//playerImageRT.rect.size = new Vector2(scaledImgW, scaledImgH);
+			//.GetComponent<Rect>().size = new Vector2(scaledImgW, scaledImgH);
+			playerImageRT.sizeDelta = new Vector2(scaledImgW, scaledImgH);
 		}
 
 		private RawImage createPlayerImage(Texture2D playerYexture)
