@@ -6,6 +6,10 @@
 using UnityEngine;
 using System.Collections;
 
-public class QualityDialog : MonoBehaviour
+namespace VuforiaUDT
 {
+ public class QualityDialog : MonoBehaviour
+ {
+  
+ }
 }

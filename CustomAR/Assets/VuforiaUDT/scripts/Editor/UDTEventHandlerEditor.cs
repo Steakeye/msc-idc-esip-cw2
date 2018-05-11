@@ -7,35 +7,38 @@ All Rights Reserved.
 using UnityEditor;
 using Vuforia;
 
-/// <summary>
-/// This editor class renders the custom inspector for the UDTEventHandler MonoBehaviour
-/// </summary>
-[CustomEditor(typeof(UDTEventHandler))]
-public class UDTEventHandlerEditor : Editor
+namespace VuforiaUDT
 {
-    #region UNITY_EDITOR_METHODS
-
-    // Draws a custom UI for the user defined target event handler inspector
-    public override void OnInspectorGUI()
+    /// <summary>
+    /// This editor class renders the custom inspector for the UDTEventHandler MonoBehaviour
+    /// </summary>
+    [CustomEditor(typeof(UDTEventHandler))]
+    public class UDTEventHandlerEditor : Editor
     {
-        UDTEventHandler m_UDTEventHandler = (UDTEventHandler)target;
+        #region UNITY_EDITOR_METHODS
 
-        EditorGUILayout.HelpBox(
-            "Here you can set the ImageTargetBehaviour from the scene " +
-            "that will be used to augment user created targets.",
-            MessageType.Info
-        );
+        // Draws a custom UI for the user defined target event handler inspector
+        public override void OnInspectorGUI()
+        {
+            UDTEventHandler m_UDTEventHandler = (UDTEventHandler)target;
 
-        bool allowSceneObjects = !EditorUtility.IsPersistent(target);
-
-        m_UDTEventHandler.ImageTargetTemplate =
-            (ImageTargetBehaviour)EditorGUILayout.ObjectField(
-                "Image Target Template",
-                m_UDTEventHandler.ImageTargetTemplate,
-                typeof(ImageTargetBehaviour),
-                allowSceneObjects
+            EditorGUILayout.HelpBox(
+                "Here you can set the ImageTargetBehaviour from the scene " +
+                "that will be used to augment user created targets.",
+                MessageType.Info
             );
-    }
 
-    #endregion // UNITY_EDITOR_METHODS
+            bool allowSceneObjects = !EditorUtility.IsPersistent(target);
+
+            m_UDTEventHandler.ImageTargetTemplate =
+                (ImageTargetBehaviour)EditorGUILayout.ObjectField(
+                    "Image Target Template",
+                    m_UDTEventHandler.ImageTargetTemplate,
+                    typeof(ImageTargetBehaviour),
+                    allowSceneObjects
+                );
+        }
+
+        #endregion // UNITY_EDITOR_METHODS
+    }
 }
