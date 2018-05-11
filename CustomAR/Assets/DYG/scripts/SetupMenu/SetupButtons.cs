@@ -25,20 +25,13 @@ namespace DYG
 		
 		public void goToScene(string sceneName)
 		{
-			Scene foundScene = SceneManager.GetSceneByName(sceneName);
-
-			if (foundScene.IsValid())
-			{
-				SceneManager.LoadScene(sceneName);
-			}
+			SceneManager.LoadScene(sceneName);
 		}
 		
 		private void populateButtons()
 		{
 			Button[] viewButtons = GetComponentsInChildren<Button>();
 			
-			//viewButtons.Select()
-
 			foreach (Button viewButton in viewButtons)
 			{
 				switch (viewButton.name)
