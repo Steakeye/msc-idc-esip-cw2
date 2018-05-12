@@ -18,23 +18,12 @@ namespace DYG.udt
     public class FrameQualityMeter : MonoBehaviour
     {
 
-        public void OnClick()
+        private void Start()
         {
-            Debug.Log("calling OnClick");
+            ColorBlock buttonColors = GetComponent<Button>().colors;
+            defaultButtonColor = buttonColors.normalColor;
+            defaultButtonTextColor = GetComponentInChildren<Text>().color;
         }
-        
-        /*void SetMeter(Color low, Color med, Color high)
-        {
-            if (LowMedHigh.Length == 3)
-            {
-                if (LowMedHigh[0])
-                    LowMedHigh[0].color = low;
-                if (LowMedHigh[1])
-                    LowMedHigh[1].color = med;
-                if (LowMedHigh[2])
-                    LowMedHigh[2].color = high;
-            }
-        }*/
 
         public void SetQuality(Vuforia.ImageTargetBuilder.FrameQuality quality)
         {
@@ -53,8 +42,30 @@ namespace DYG.udt
 
         private void setButtonQuality(ButtonQuality quality)
         {
+            ColorBlock buttonColors = GetComponent<Button>().colors;
+            Color textColor;
+            
             Debug.Log("calling setButtonQuality");
+            if (quality == ButtonQuality.Good)
+            {
+                buttonColors.normalColor = buttonColor;
+                textColor = buttonTextColor;
+            }
+            else
+            {
+                buttonColors.normalColor = defaultButtonColor;
+                textColor = defaultButtonTextColor;
+            }
+            
+            GetComponent<Button>().colors = buttonColors;
+            GetComponentInChildren<Text>().color = textColor;
         }
+
+        private Color defaultButtonColor;
+        private Color defaultButtonTextColor;
+        
+        private Color buttonColor = Color.green;
+        private Color buttonTextColor = Color.white;
 
     }
 }
