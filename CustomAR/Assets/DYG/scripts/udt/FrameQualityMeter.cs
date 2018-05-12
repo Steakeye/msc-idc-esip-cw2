@@ -9,11 +9,15 @@ using UnityEngine.UI;
 
 namespace DYG.udt
 {
+    enum ButtonQuality
+    {
+        Bad,
+        Good
+    }
+
     public class FrameQualityMeter : MonoBehaviour
     {
-        public Image[] LowMedHigh;
-
-        void SetMeter(Color low, Color med, Color high)
+        /*void SetMeter(Color low, Color med, Color high)
         {
             if (LowMedHigh.Length == 3)
             {
@@ -24,25 +28,31 @@ namespace DYG.udt
                 if (LowMedHigh[2])
                     LowMedHigh[2].color = high;
             }
-        }
+        }*/
 
         public void SetQuality(Vuforia.ImageTargetBuilder.FrameQuality quality)
         {
             switch (quality)
             {
                 case (Vuforia.ImageTargetBuilder.FrameQuality.FRAME_QUALITY_NONE):
-                    SetMeter(Color.gray, Color.gray, Color.gray);
-                    break;
                 case (Vuforia.ImageTargetBuilder.FrameQuality.FRAME_QUALITY_LOW):
-                    SetMeter(Color.red, Color.gray, Color.gray);
+                    setButtonQuality(ButtonQuality.Bad);
                     break;
                 case (Vuforia.ImageTargetBuilder.FrameQuality.FRAME_QUALITY_MEDIUM):
-                    SetMeter(Color.red, Color.yellow, Color.gray);
-                    break;
                 case (Vuforia.ImageTargetBuilder.FrameQuality.FRAME_QUALITY_HIGH):
-                    SetMeter(Color.red, Color.yellow, Color.green);
+                    setButtonQuality(ButtonQuality.Good);
                     break;
             }
+        }
+
+        private void setButtonQuality(ButtonQuality quality)
+        {
+            Debug.Log("calling setButtonQuality");
+        }
+
+        private void OnClick()
+        {
+            Debug.Log("calling OnClick");
         }
     }
 }

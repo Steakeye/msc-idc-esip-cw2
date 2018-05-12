@@ -12,6 +12,8 @@ using Vuforia;
 
 namespace DYG.udt
 {
+    using Quality = ImageTargetBuilder.FrameQuality;
+    
     public class UDTEventHandler : MonoBehaviour, IUserDefinedTargetEventHandler
     {
         #region PUBLIC_MEMBERS
@@ -20,6 +22,8 @@ namespace DYG.udt
         /// that is instantiated for augmentations of new User-Defined Targets.
         /// </summary>
         public ImageTargetBehaviour ImageTargetTemplate;
+
+        public FrameQualityMeter QualityMeter;
 
         public int LastTargetIndex
         {
@@ -34,7 +38,7 @@ namespace DYG.udt
         QualityDialog m_QualityDialog;
         ObjectTracker m_ObjectTracker;
         TrackableSettings m_TrackableSettings;
-        FrameQualityMeter m_FrameQualityMeter;
+        //FrameQualityMeter m_FrameQualityMeter;
 
         // DataSet that newly defined targets are added to
         DataSet m_UDT_DataSet;
@@ -58,13 +62,14 @@ namespace DYG.udt
                 Debug.Log("Registering User Defined Target event handler.");
             }
 
-            m_FrameQualityMeter = FindObjectOfType<FrameQualityMeter>();
+            //m_FrameQualityMeter = FindObjectOfType<FrameQualityMeter>();
             m_TrackableSettings = FindObjectOfType<TrackableSettings>();
             m_QualityDialog = FindObjectOfType<QualityDialog>();
 
             if (m_QualityDialog)
             {
-                m_QualityDialog.GetComponent<CanvasGroup>().alpha = 0;
+                CanvasGroup qualityMsgWrapper = m_QualityDialog.GetComponent<CanvasGroup>();
+                qualityMsgWrapper.alpha = 0;
             }
         }
         #endregion //MONOBEHAVIOUR_METHODS
@@ -92,12 +97,12 @@ namespace DYG.udt
         {
             Debug.Log("Frame quality changed: " + frameQuality.ToString());
             m_FrameQuality = frameQuality;
-            if (m_FrameQuality == ImageTargetBuilder.FrameQuality.FRAME_QUALITY_LOW)
+            /*if (m_FrameQuality == ImageTargetBuilder.FrameQuality.FRAME_QUALITY_LOW)
             {
                 Debug.Log("Low camera image quality");
-            }
+            }*/
 
-            m_FrameQualityMeter.SetQuality(frameQuality);
+            QualityMeter.SetQuality(frameQuality);
         }
 
         /// <summary>
@@ -161,8 +166,8 @@ namespace DYG.udt
         /// </summary>
         public void BuildNewTarget()
         {
-            if (m_FrameQuality == ImageTargetBuilder.FrameQuality.FRAME_QUALITY_MEDIUM ||
-                m_FrameQuality == ImageTargetBuilder.FrameQuality.FRAME_QUALITY_HIGH)
+            if (m_FrameQuality == Quality.FRAME_QUALITY_MEDIUM ||
+                m_FrameQuality == Quality.FRAME_QUALITY_HIGH)
             {
                 // create the name of the next target.
                 // the TrackableName of the original, linked ImageTargetBehaviour is extended with a continuous number to ensure unique names
