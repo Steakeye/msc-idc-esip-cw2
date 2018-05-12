@@ -58,7 +58,7 @@ namespace DYG.udt
             }
             
             GetComponent<Button>().colors = buttonColors;
-            GetComponentInChildren<Text>().color = textColor;
+            //GetComponentInChildren<Text>().color = textColor;
         }
 
         private Color defaultButtonColor;

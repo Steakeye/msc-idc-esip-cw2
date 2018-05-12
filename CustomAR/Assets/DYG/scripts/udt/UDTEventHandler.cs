@@ -9,6 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Vuforia;
+using Vufo
 
 namespace DYG.udt
 {
@@ -38,6 +39,7 @@ namespace DYG.udt
         QualityDialog m_QualityDialog;
         ObjectTracker m_ObjectTracker;
         TrackableSettings m_TrackableSettings;
+        CameraDevice m_Cam;
         //FrameQualityMeter m_FrameQualityMeter;
 
         // DataSet that newly defined targets are added to
@@ -63,6 +65,7 @@ namespace DYG.udt
             }
 
             //m_FrameQualityMeter = FindObjectOfType<FrameQualityMeter>();
+            m_Cam = CameraDevice.Instance;
             m_TrackableSettings = FindObjectOfType<TrackableSettings>();
             m_QualityDialog = findQualityDialog();
 
