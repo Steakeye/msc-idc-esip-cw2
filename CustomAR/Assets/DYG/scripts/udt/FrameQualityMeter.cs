@@ -17,6 +17,12 @@ namespace DYG.udt
 
     public class FrameQualityMeter : MonoBehaviour
     {
+
+        public void OnClick()
+        {
+            Debug.Log("calling OnClick");
+        }
+        
         /*void SetMeter(Color low, Color med, Color high)
         {
             if (LowMedHigh.Length == 3)
@@ -50,9 +56,5 @@ namespace DYG.udt
             Debug.Log("calling setButtonQuality");
         }
 
-        private void OnClick()
-        {
-            Debug.Log("calling OnClick");
-        }
     }
 }

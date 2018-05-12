@@ -64,7 +64,7 @@ namespace DYG.udt
 
             //m_FrameQualityMeter = FindObjectOfType<FrameQualityMeter>();
             m_TrackableSettings = FindObjectOfType<TrackableSettings>();
-            m_QualityDialog = FindObjectOfType<QualityDialog>();
+            m_QualityDialog = findQualityDialog();
 
             if (m_QualityDialog)
             {
@@ -182,6 +182,7 @@ namespace DYG.udt
                 if (m_QualityDialog)
                 {
                     StopAllCoroutines();
+                    m_QualityDialog.gameObject.SetActive(true);
                     m_QualityDialog.GetComponent<CanvasGroup>().alpha = 1;
                     StartCoroutine(FadeOutQualityDialog());
                 }
@@ -193,6 +194,18 @@ namespace DYG.udt
 
         #region PRIVATE_METHODS
 
+        private QualityDialog findQualityDialog()
+        {
+            QualityDialog[] dialogs = Resources.FindObjectsOfTypeAll<QualityDialog>();
+
+            if (dialogs.Length > 0)
+            {
+                return dialogs[0];
+            }
+
+            return null;
+        } 
+        
         IEnumerator FadeOutQualityDialog()
         {
             yield return new WaitForSeconds(1f);
@@ -205,6 +218,8 @@ namespace DYG.udt
                 canvasGroup.alpha = (float)Math.Round(f, 1);
                 yield return null;
             }
+            
+            m_QualityDialog.gameObject.SetActive(false);
         }
 
         /// <summary>
