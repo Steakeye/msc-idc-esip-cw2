@@ -9,6 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using DYG.utils;
+using UnityEngine.XR.WSA.WebCam;
 using Vuforia;
 
 namespace DYG.udt
@@ -40,6 +41,7 @@ namespace DYG.udt
         ObjectTracker m_ObjectTracker;
         TrackableSettings m_TrackableSettings;
         CameraDevice m_Cam;
+        private Image.PIXEL_FORMAT udtPixelFormat;
         private Image udtImage;
 
         // DataSet that newly defined targets are added to
@@ -69,8 +71,9 @@ namespace DYG.udt
 
             if (m_Cam != null)
             {
+                setUDTPixelFormat();
                 //Allow the Vugforia camera to be used to take a snapshot image  
-                m_Cam.SetFrameFormat(Image.PIXEL_FORMAT.RGB888, true);
+                bool camFormatSet = m_Cam.SetFrameFormat(udtPixelFormat, true);
             }
             m_TrackableSettings = FindObjectOfType<TrackableSettings>();
             m_QualityDialog = findQualityDialog();
@@ -159,6 +162,8 @@ namespace DYG.udt
 
             // Make sure TargetBuildingBehaviour keeps scanning...
             m_TargetBuildingBehaviour.StartScanning();
+
+            persistUDTSnapshot();
         }
         #endregion IUserDefinedTargetEventHandler implementation
 
@@ -180,6 +185,8 @@ namespace DYG.udt
                 // generate a new target:
                 m_TargetBuildingBehaviour.BuildNewTarget(targetName, ImageTargetTemplate.GetSize().x);
 
+                //m_Cam.Stop();
+                
                 captureUDTSnapshot();
             }
             else
@@ -212,9 +219,22 @@ namespace DYG.udt
             return null;
         }
 
+        private void setUDTPixelFormat()
+        {
+            #if UNITY_EDITOR
+            udtPixelFormat = Image.PIXEL_FORMAT.GRAYSCALE;        //Need Grayscale for Editor
+            #else
+            udtPixelFormat = Image.PIXEL_FORMAT.RGB888;               //Need RGB888 for mobile
+            #endif       
+            
+            //VuforiaARController.Instance.RegisterVuforiaStartedCallback (OnVuforiaStarted);
+        }
+
         private void captureUDTSnapshot()
         {
-            udtImage = m_Cam.GetCameraImage(Image.PIXEL_FORMAT.RGB888);
+            //bool camFormatSet = m_Cam.SetFrameFormat(udtPixelFormat, true);
+
+            udtImage = m_Cam.GetCameraImage(udtPixelFormat);
         }
 
         private void persistUDTSnapshot()
@@ -223,9 +243,7 @@ namespace DYG.udt
             Texture2D udtTex = new Texture2D(0, 0);
             udtImage.CopyToTexture(udtTex);
             
-            //udtTex.Apply();
-            Data.Instance.PlayerTexture
-            
+            Data.Instance.UDTTextureLeft = udtTex;
         }
 
         IEnumerator FadeOutQualityDialog()
