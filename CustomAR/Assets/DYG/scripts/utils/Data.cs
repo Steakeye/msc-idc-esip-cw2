@@ -89,6 +89,20 @@ namespace DYG.utils
 			}
 		}
 
+		public Texture2D UDTTextureLeft
+		{
+			get { return udtLeftTex; }
+			set
+			{
+				if (udtLeftTex == null || udtLeftTex.imageContentsHash != value.imageContentsHash)
+				{
+					udtLeftTexUpdated = true;
+				}
+				udtLeftTex = value; 
+				
+			}
+		}
+
 		public void SaveData()
 		{
 			savePlayerIfPresent();
@@ -122,7 +136,11 @@ namespace DYG.utils
 		}
 
 		private Texture2D playerTex = null;
+		private Texture2D udtLeftTex = null;
+		private Texture2D udtRightTex = null;
 		private bool playerTexUpdated = false;
+		private bool udtLeftTexUpdated = false;
+		private bool udtRightTexUpdated = false;
 		private string playerTexPath = null;
 	}
 }

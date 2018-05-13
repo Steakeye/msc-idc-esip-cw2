@@ -8,8 +8,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using DYG.utils;
 using Vuforia;
-using Vufo
 
 namespace DYG.udt
 {
@@ -40,7 +40,7 @@ namespace DYG.udt
         ObjectTracker m_ObjectTracker;
         TrackableSettings m_TrackableSettings;
         CameraDevice m_Cam;
-        //FrameQualityMeter m_FrameQualityMeter;
+        private Image udtImage;
 
         // DataSet that newly defined targets are added to
         DataSet m_UDT_DataSet;
@@ -66,6 +66,12 @@ namespace DYG.udt
 
             //m_FrameQualityMeter = FindObjectOfType<FrameQualityMeter>();
             m_Cam = CameraDevice.Instance;
+
+            if (m_Cam != null)
+            {
+                //Allow the Vugforia camera to be used to take a snapshot image  
+                m_Cam.SetFrameFormat(Image.PIXEL_FORMAT.RGB888, true);
+            }
             m_TrackableSettings = FindObjectOfType<TrackableSettings>();
             m_QualityDialog = findQualityDialog();
 
@@ -98,13 +104,8 @@ namespace DYG.udt
         /// </summary>
         public void OnFrameQualityChanged(ImageTargetBuilder.FrameQuality frameQuality)
         {
-            Debug.Log("Frame quality changed: " + frameQuality.ToString());
             m_FrameQuality = frameQuality;
-            /*if (m_FrameQuality == ImageTargetBuilder.FrameQuality.FRAME_QUALITY_LOW)
-            {
-                Debug.Log("Low camera image quality");
-            }*/
-
+            
             QualityMeter.SetQuality(frameQuality);
         }
 
@@ -178,6 +179,8 @@ namespace DYG.udt
 
                 // generate a new target:
                 m_TargetBuildingBehaviour.BuildNewTarget(targetName, ImageTargetTemplate.GetSize().x);
+
+                captureUDTSnapshot();
             }
             else
             {
@@ -207,8 +210,24 @@ namespace DYG.udt
             }
 
             return null;
-        } 
-        
+        }
+
+        private void captureUDTSnapshot()
+        {
+            udtImage = m_Cam.GetCameraImage(Image.PIXEL_FORMAT.RGB888);
+        }
+
+        private void persistUDTSnapshot()
+        {
+            //udtImage = m_Cam.GetCameraImage(Image.PIXEL_FORMAT.RGB888);
+            Texture2D udtTex = new Texture2D(0, 0);
+            udtImage.CopyToTexture(udtTex);
+            
+            //udtTex.Apply();
+            Data.Instance.PlayerTexture
+            
+        }
+
         IEnumerator FadeOutQualityDialog()
         {
             yield return new WaitForSeconds(1f);
