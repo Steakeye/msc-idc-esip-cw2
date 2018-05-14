@@ -20,9 +20,16 @@ namespace DYG.udt
 
         private void Start()
         {
-            ColorBlock buttonColors = GetComponent<Button>().colors;
+            button = GetComponent<Button>();
+            ColorBlock buttonColors = button.colors;
             defaultButtonColor = buttonColors.normalColor;
-            defaultButtonTextColor = GetComponentInChildren<Text>().color;
+            buttonText = GetComponentInChildren<Text>();
+            defaultButtonTextColor = buttonText.color;
+        }
+
+        public bool IsRetry
+        {
+            get { return isRetry; }
         }
 
         public void SetQuality(Vuforia.ImageTargetBuilder.FrameQuality quality)
@@ -40,9 +47,18 @@ namespace DYG.udt
             }
         }
 
+        public void ToggleToRetry(bool toRetry = true)
+        {
+            setButtonQuality(ButtonQuality.Bad);
+
+            buttonText.text = toRetry ? retryMsg : captureMsg;
+
+            isRetry = toRetry;
+        }
+        
         private void setButtonQuality(ButtonQuality quality)
         {
-            ColorBlock buttonColors = GetComponent<Button>().colors;
+            ColorBlock buttonColors = button.colors;
             Color textColor;
             
             Debug.Log("calling setButtonQuality");
@@ -57,15 +73,23 @@ namespace DYG.udt
                 textColor = defaultButtonTextColor;
             }
             
-            GetComponent<Button>().colors = buttonColors;
+            button.colors = buttonColors;
             //GetComponentInChildren<Text>().color = textColor;
         }
 
+        private Button button;
+        private Text buttonText;
+        
+        private bool isRetry = false;
+        
         private Color defaultButtonColor;
         private Color defaultButtonTextColor;
         
         private Color buttonColor = Color.green;
         private Color buttonTextColor = Color.white;
+
+        private const string captureMsg = "Capture";
+        private const string retryMsg = "Retry";
 
     }
 }

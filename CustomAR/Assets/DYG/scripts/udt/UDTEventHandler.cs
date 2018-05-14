@@ -15,10 +15,11 @@ using Vuforia;
 namespace DYG.udt
 {
     using Quality = ImageTargetBuilder.FrameQuality;
-    
+
     public class UDTEventHandler : MonoBehaviour, IUserDefinedTargetEventHandler
     {
         #region PUBLIC_MEMBERS
+
         /// <summary>
         /// Can be set in the Unity inspector to reference an ImageTargetBehaviour 
         /// that is instantiated for augmentations of new User-Defined Targets.
@@ -31,16 +32,19 @@ namespace DYG.udt
         {
             get { return (m_TargetCounter - 1) % MAX_TARGETS; }
         }
+
         #endregion PUBLIC_MEMBERS
 
 
         #region PRIVATE_MEMBERS
+
         const int MAX_TARGETS = 5;
         UserDefinedTargetBuildingBehaviour m_TargetBuildingBehaviour;
         QualityDialog m_QualityDialog;
         ObjectTracker m_ObjectTracker;
         TrackableSettings m_TrackableSettings;
         CameraDevice m_Cam;
+        private TrackableSource udtTS;
         private Image.PIXEL_FORMAT udtPixelFormat;
         private Image udtImage;
 
@@ -52,10 +56,12 @@ namespace DYG.udt
 
         // Counter used to name newly created targets
         int m_TargetCounter;
+
         #endregion //PRIVATE_MEMBERS
 
 
         #region MONOBEHAVIOUR_METHODS
+
         void Start()
         {
             m_TargetBuildingBehaviour = GetComponent<UserDefinedTargetBuildingBehaviour>();
@@ -75,6 +81,7 @@ namespace DYG.udt
                 //Allow the Vugforia camera to be used to take a snapshot image  
                 bool camFormatSet = m_Cam.SetFrameFormat(udtPixelFormat, true);
             }
+
             m_TrackableSettings = FindObjectOfType<TrackableSettings>();
             m_QualityDialog = findQualityDialog();
 
@@ -84,10 +91,12 @@ namespace DYG.udt
                 qualityMsgWrapper.alpha = 0;
             }
         }
+
         #endregion //MONOBEHAVIOUR_METHODS
 
 
         #region IUserDefinedTargetEventHandler Implementation
+
         /// <summary>
         /// Called when UserDefinedTargetBuildingBehaviour has been initialized successfully
         /// </summary>
@@ -108,7 +117,7 @@ namespace DYG.udt
         public void OnFrameQualityChanged(ImageTargetBuilder.FrameQuality frameQuality)
         {
             m_FrameQuality = frameQuality;
-            
+
             QualityMeter.SetQuality(frameQuality);
         }
 
@@ -118,6 +127,25 @@ namespace DYG.udt
         /// </summary>
         public void OnNewTrackableSource(TrackableSource trackableSource)
         {
+            udtTS = trackableSource;
+
+            m_Cam.Stop();
+            //VuforiaRenderer.Instance.Pause(true);
+        }
+
+        public void ResetView()
+        {
+            m_Cam.Start();
+            
+        }
+        
+        public void SaveTrackableSource()
+        {
+            if (udtTS == null)
+            {
+                return;
+            }
+
             m_TargetCounter++;
 
             // Deactivates the dataset first
@@ -147,7 +175,7 @@ namespace DYG.udt
             imageTargetCopy.gameObject.name = "UserDefinedTarget-" + m_TargetCounter;
 
             // Add the duplicated trackable to the data set and activate it
-            m_UDT_DataSet.CreateTrackable(trackableSource, imageTargetCopy.gameObject);
+            m_UDT_DataSet.CreateTrackable(udtTS, imageTargetCopy.gameObject);
 
             // Activate the dataset again
             m_ObjectTracker.ActivateDataSet(m_UDT_DataSet);
@@ -184,9 +212,7 @@ namespace DYG.udt
 
                 // generate a new target:
                 m_TargetBuildingBehaviour.BuildNewTarget(targetName, ImageTargetTemplate.GetSize().x);
-
-                //m_Cam.Stop();
-                
+               
                 captureUDTSnapshot();
             }
             else
