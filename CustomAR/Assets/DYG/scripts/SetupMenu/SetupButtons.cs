@@ -23,11 +23,6 @@ namespace DYG
 			populateButtons();
 		}
 
-		/*public void goToScene(string sceneName)
-		{
-			SceneManager.LoadScene(sceneName);
-		}*/
-
 		public void GoToButtonScene(string direction)
 		{
 			LoadArgs.setArgs(buttonSceneName, new Dictionary<string, string>()

@@ -196,7 +196,7 @@ namespace DYG.udt
 
         private QualityDialog findQualityDialog()
         {
-            QualityDialog[] dialogs = findAllElements<QualityDialog>();
+            QualityDialog[] dialogs = GO.findAllElements<QualityDialog>();
 
             if (dialogs.Length > 0)
             {
@@ -208,7 +208,7 @@ namespace DYG.udt
 
         private Button findSaveButton()
         {
-            Button[] buttons = findAllElements<Button>();
+            Button[] buttons = GO.findAllElements<Button>();
             Button saveButton;
 
             saveButton = buttons.FirstOrDefault((Button but) => but.name == "ButtonSave");
@@ -265,10 +265,6 @@ namespace DYG.udt
             targetBuildingBehaviour.StartScanning();
         }
         
-        private T[] findAllElements<T>() where T : Object {
-            return Resources.FindObjectsOfTypeAll<T>();
-        }
-
         private void setUDTPixelFormat()
         {
             #if UNITY_EDITOR
