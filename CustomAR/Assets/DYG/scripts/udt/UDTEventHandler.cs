@@ -8,9 +8,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using DYG.utils;
+using System.Runtime.Remoting.Messaging;
 using UnityEngine.XR.WSA.WebCam;
+using Button = UnityEngine.UI.Button;
 using Vuforia;
+using DYG.utils;
+using Object = UnityEngine.Object;
 
 namespace DYG.udt
 {
@@ -18,8 +21,6 @@ namespace DYG.udt
 
     public class UDTEventHandler : MonoBehaviour, IUserDefinedTargetEventHandler
     {
-        #region PUBLIC_MEMBERS
-
         /// <summary>
         /// Can be set in the Unity inspector to reference an ImageTargetBehaviour 
         /// that is instantiated for augmentations of new User-Defined Targets.
@@ -33,17 +34,14 @@ namespace DYG.udt
             get { return (m_TargetCounter - 1) % MAX_TARGETS; }
         }
 
-        #endregion PUBLIC_MEMBERS
 
-
-        #region PRIVATE_MEMBERS
-
-        const int MAX_TARGETS = 5;
-        UserDefinedTargetBuildingBehaviour m_TargetBuildingBehaviour;
-        QualityDialog m_QualityDialog;
-        ObjectTracker m_ObjectTracker;
-        TrackableSettings m_TrackableSettings;
-        CameraDevice m_Cam;
+        private const int MAX_TARGETS = 5;
+        private UserDefinedTargetBuildingBehaviour targetBuildingBehaviour;
+        private QualityDialog qualityDialog;
+        private ObjectTracker objectTracker;
+        private TrackableSettings trackableSettings;
+        private Button saveButton;
+        private CameraDevice cam;
         private TrackableSource udtTS;
         private Image.PIXEL_FORMAT udtPixelFormat;
         private Image udtImage;
@@ -57,57 +55,49 @@ namespace DYG.udt
         // Counter used to name newly created targets
         int m_TargetCounter;
 
-        #endregion //PRIVATE_MEMBERS
-
-
-        #region MONOBEHAVIOUR_METHODS
 
         void Start()
         {
-            m_TargetBuildingBehaviour = GetComponent<UserDefinedTargetBuildingBehaviour>();
+            targetBuildingBehaviour = GetComponent<UserDefinedTargetBuildingBehaviour>();
 
-            if (m_TargetBuildingBehaviour)
+            if (targetBuildingBehaviour)
             {
-                m_TargetBuildingBehaviour.RegisterEventHandler(this);
+                targetBuildingBehaviour.RegisterEventHandler(this);
                 Debug.Log("Registering User Defined Target event handler.");
             }
 
-            //m_FrameQualityMeter = FindObjectOfType<FrameQualityMeter>();
-            m_Cam = CameraDevice.Instance;
+            cam = CameraDevice.Instance;
 
-            if (m_Cam != null)
+            if (cam != null)
             {
                 setUDTPixelFormat();
                 //Allow the Vugforia camera to be used to take a snapshot image  
-                bool camFormatSet = m_Cam.SetFrameFormat(udtPixelFormat, true);
+                bool camFormatSet = cam.SetFrameFormat(udtPixelFormat, true);
             }
 
-            m_TrackableSettings = FindObjectOfType<TrackableSettings>();
-            m_QualityDialog = findQualityDialog();
+            trackableSettings = FindObjectOfType<TrackableSettings>();
+            qualityDialog = findQualityDialog();
+            saveButton = findSaveButton();
 
-            if (m_QualityDialog)
+            if (qualityDialog)
             {
-                CanvasGroup qualityMsgWrapper = m_QualityDialog.GetComponent<CanvasGroup>();
+                CanvasGroup qualityMsgWrapper = qualityDialog.GetComponent<CanvasGroup>();
                 qualityMsgWrapper.alpha = 0;
             }
         }
 
-        #endregion //MONOBEHAVIOUR_METHODS
-
-
-        #region IUserDefinedTargetEventHandler Implementation
 
         /// <summary>
         /// Called when UserDefinedTargetBuildingBehaviour has been initialized successfully
         /// </summary>
         public void OnInitialized()
         {
-            m_ObjectTracker = TrackerManager.Instance.GetTracker<ObjectTracker>();
-            if (m_ObjectTracker != null)
+            objectTracker = TrackerManager.Instance.GetTracker<ObjectTracker>();
+            if (objectTracker != null)
             {
                 // Create a new dataset
-                m_UDT_DataSet = m_ObjectTracker.CreateDataSet();
-                m_ObjectTracker.ActivateDataSet(m_UDT_DataSet);
+                m_UDT_DataSet = objectTracker.CreateDataSet();
+                objectTracker.ActivateDataSet(m_UDT_DataSet);
             }
         }
 
@@ -118,7 +108,10 @@ namespace DYG.udt
         {
             m_FrameQuality = frameQuality;
 
-            QualityMeter.SetQuality(frameQuality);
+            if (!QualityMeter.IsRetry)
+            {
+                QualityMeter.SetQuality(frameQuality);
+            }
         }
 
         /// <summary>
@@ -129,14 +122,26 @@ namespace DYG.udt
         {
             udtTS = trackableSource;
 
-            m_Cam.Stop();
+            cam.Stop();
             //VuforiaRenderer.Instance.Pause(true);
+            QualityMeter.ToggleToRetry();
+            saveButton.gameObject.SetActive(true);
         }
 
-        public void ResetView()
+        public void Capture()
         {
-            m_Cam.Start();
-            
+            if (QualityMeter.IsRetry)
+            {
+                cam.Start();
+                targetBuildingBehaviour.StartScanning();
+                QualityMeter.ToggleToRetry(false);
+                saveButton.gameObject.SetActive(false);
+            }
+            else
+            {
+                buildNewTarget();
+            }
+
         }
         
         public void SaveTrackableSource()
@@ -146,10 +151,78 @@ namespace DYG.udt
                 return;
             }
 
+            createTrackableFromSource();
+            persistUDTSnapshot();
+            
+            History historyInstance = FindObjectOfType<History>();
+
+            if (historyInstance)
+            {
+                historyInstance.GoBack();
+            }
+        }
+
+
+        /// <summary>
+        /// Instantiates a new user-defined target and is also responsible for dispatching callback to 
+        /// IUserDefinedTargetEventHandler::OnNewTrackableSource
+        /// </summary>
+        private void buildNewTarget()
+        {
+            if (m_FrameQuality == Quality.FRAME_QUALITY_MEDIUM ||
+                m_FrameQuality == Quality.FRAME_QUALITY_HIGH)
+            {
+                // create the name of the next target.
+                // the TrackableName of the original, linked ImageTargetBehaviour is extended with a continuous number to ensure unique names
+                string targetName = string.Format("{0}-{1}", ImageTargetTemplate.TrackableName, m_TargetCounter);
+
+                // generate a new target:
+                targetBuildingBehaviour.BuildNewTarget(targetName, ImageTargetTemplate.GetSize().x);
+               
+                captureUDTSnapshot();
+            }
+            else
+            {
+                Debug.Log("Cannot build new target, due to poor camera image quality");
+                if (qualityDialog)
+                {
+                    StopAllCoroutines();
+                    qualityDialog.gameObject.SetActive(true);
+                    qualityDialog.GetComponent<CanvasGroup>().alpha = 1;
+                    StartCoroutine(FadeOutQualityDialog());
+                }
+            }
+        }
+
+        private QualityDialog findQualityDialog()
+        {
+            QualityDialog[] dialogs = findAllElements<QualityDialog>();
+
+            if (dialogs.Length > 0)
+            {
+                return dialogs[0];
+            }
+
+            return null;
+        }
+
+        private Button findSaveButton()
+        {
+            Button[] buttons = findAllElements<Button>();
+            Button saveButton;
+
+            saveButton = buttons.FirstOrDefault((Button but) => but.name == "ButtonSave");
+            
+            return saveButton;
+
+        }
+
+        private void createTrackableFromSource()
+        {
             m_TargetCounter++;
 
             // Deactivates the dataset first
-            m_ObjectTracker.DeactivateDataSet(m_UDT_DataSet);
+            objectTracker.DeactivateDataSet(m_UDT_DataSet);
 
             // Destroy the oldest target if the dataset is full or the dataset 
             // already contains five user-defined targets.
@@ -178,71 +251,22 @@ namespace DYG.udt
             m_UDT_DataSet.CreateTrackable(udtTS, imageTargetCopy.gameObject);
 
             // Activate the dataset again
-            m_ObjectTracker.ActivateDataSet(m_UDT_DataSet);
+            objectTracker.ActivateDataSet(m_UDT_DataSet);
 
             // Extended Tracking with user defined targets only works with the most recently defined target.
             // If tracking is enabled on previous target, it will not work on newly defined target.
             // Don't need to call this if you don't care about extended tracking.
             StopExtendedTracking();
-            m_ObjectTracker.Stop();
-            m_ObjectTracker.ResetExtendedTracking();
-            m_ObjectTracker.Start();
+            objectTracker.Stop();
+            objectTracker.ResetExtendedTracking();
+            objectTracker.Start();
 
             // Make sure TargetBuildingBehaviour keeps scanning...
-            m_TargetBuildingBehaviour.StartScanning();
-
-            persistUDTSnapshot();
+            targetBuildingBehaviour.StartScanning();
         }
-        #endregion IUserDefinedTargetEventHandler implementation
-
-
-        #region PUBLIC_METHODS
-        /// <summary>
-        /// Instantiates a new user-defined target and is also responsible for dispatching callback to 
-        /// IUserDefinedTargetEventHandler::OnNewTrackableSource
-        /// </summary>
-        public void BuildNewTarget()
-        {
-            if (m_FrameQuality == Quality.FRAME_QUALITY_MEDIUM ||
-                m_FrameQuality == Quality.FRAME_QUALITY_HIGH)
-            {
-                // create the name of the next target.
-                // the TrackableName of the original, linked ImageTargetBehaviour is extended with a continuous number to ensure unique names
-                string targetName = string.Format("{0}-{1}", ImageTargetTemplate.TrackableName, m_TargetCounter);
-
-                // generate a new target:
-                m_TargetBuildingBehaviour.BuildNewTarget(targetName, ImageTargetTemplate.GetSize().x);
-               
-                captureUDTSnapshot();
-            }
-            else
-            {
-                Debug.Log("Cannot build new target, due to poor camera image quality");
-                if (m_QualityDialog)
-                {
-                    StopAllCoroutines();
-                    m_QualityDialog.gameObject.SetActive(true);
-                    m_QualityDialog.GetComponent<CanvasGroup>().alpha = 1;
-                    StartCoroutine(FadeOutQualityDialog());
-                }
-            }
-        }
-
-        #endregion //PUBLIC_METHODS
-
-
-        #region PRIVATE_METHODS
-
-        private QualityDialog findQualityDialog()
-        {
-            QualityDialog[] dialogs = Resources.FindObjectsOfTypeAll<QualityDialog>();
-
-            if (dialogs.Length > 0)
-            {
-                return dialogs[0];
-            }
-
-            return null;
+        
+        private T[] findAllElements<T>() where T : Object {
+            return Resources.FindObjectsOfTypeAll<T>();
         }
 
         private void setUDTPixelFormat()
@@ -260,7 +284,7 @@ namespace DYG.udt
         {
             //bool camFormatSet = m_Cam.SetFrameFormat(udtPixelFormat, true);
 
-            udtImage = m_Cam.GetCameraImage(udtPixelFormat);
+            udtImage = cam.GetCameraImage(udtPixelFormat);
         }
 
         private void persistUDTSnapshot()
@@ -275,7 +299,7 @@ namespace DYG.udt
         IEnumerator FadeOutQualityDialog()
         {
             yield return new WaitForSeconds(1f);
-            CanvasGroup canvasGroup = m_QualityDialog.GetComponent<CanvasGroup>();
+            CanvasGroup canvasGroup = qualityDialog.GetComponent<CanvasGroup>();
 
             for (float f = 1f; f >= 0; f -= 0.1f)
             {
@@ -285,7 +309,7 @@ namespace DYG.udt
                 yield return null;
             }
             
-            m_QualityDialog.gameObject.SetActive(false);
+            qualityDialog.gameObject.SetActive(false);
         }
 
         /// <summary>
@@ -296,7 +320,7 @@ namespace DYG.udt
         {
             // If Extended Tracking is enabled, we first disable it for all the trackables
             // and then enable it only for the newly created target
-            bool extTrackingEnabled = m_TrackableSettings && m_TrackableSettings.IsExtendedTrackingEnabled();
+            bool extTrackingEnabled = trackableSettings && trackableSettings.IsExtendedTrackingEnabled();
             if (extTrackingEnabled)
             {
                 StateManager stateManager = TrackerManager.Instance.GetStateManager();
@@ -321,7 +345,5 @@ namespace DYG.udt
                 }
             }
         }
-
-        #endregion //PRIVATE_METHODS
     }
 }
