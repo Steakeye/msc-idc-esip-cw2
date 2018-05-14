@@ -13,15 +13,12 @@ namespace VuforiaUDT
 {
     public class FrameRateSettings : MonoBehaviour
     {
-        #region MONOBEHAVIOUR_METHODS
         void Start()
         {
             VuforiaARController.Instance.RegisterVuforiaStartedCallback(OnVuforiaStarted);
         }
-        #endregion
 
 
-        #region PRIVATE_METHODS
         private void OnVuforiaStarted()
         {
             // Query Vuforia for recommended frame rate and set it in Unity
@@ -38,6 +35,5 @@ namespace VuforiaUDT
                 Application.targetFrameRate = targetFps;
             }
         }
-        #endregion
     }
 }

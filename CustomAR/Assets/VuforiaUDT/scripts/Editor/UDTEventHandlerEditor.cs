@@ -15,8 +15,6 @@ namespace VuforiaUDT
     [CustomEditor(typeof(UDTEventHandler))]
     public class UDTEventHandlerEditor : Editor
     {
-        #region UNITY_EDITOR_METHODS
-
         // Draws a custom UI for the user defined target event handler inspector
         public override void OnInspectorGUI()
         {
@@ -38,7 +36,5 @@ namespace VuforiaUDT
                     allowSceneObjects
                 );
         }
-
-        #endregion // UNITY_EDITOR_METHODS
     }
 }

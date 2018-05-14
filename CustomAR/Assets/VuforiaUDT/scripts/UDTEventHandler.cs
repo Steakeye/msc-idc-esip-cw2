@@ -14,7 +14,6 @@ namespace VuforiaUDT
 {
     public class UDTEventHandler : MonoBehaviour, IUserDefinedTargetEventHandler
     {
-        #region PUBLIC_MEMBERS
         /// <summary>
         /// Can be set in the Unity inspector to reference an ImageTargetBehaviour 
         /// that is instantiated for augmentations of new User-Defined Targets.
@@ -25,10 +24,8 @@ namespace VuforiaUDT
         {
             get { return (m_TargetCounter - 1) % MAX_TARGETS; }
         }
-        #endregion PUBLIC_MEMBERS
 
 
-        #region PRIVATE_MEMBERS
         const int MAX_TARGETS = 5;
         UserDefinedTargetBuildingBehaviour m_TargetBuildingBehaviour;
         QualityDialog m_QualityDialog;
@@ -44,10 +41,8 @@ namespace VuforiaUDT
 
         // Counter used to name newly created targets
         int m_TargetCounter;
-        #endregion //PRIVATE_MEMBERS
 
 
-        #region MONOBEHAVIOUR_METHODS
         void Start()
         {
             m_TargetBuildingBehaviour = GetComponent<UserDefinedTargetBuildingBehaviour>();
@@ -67,10 +62,8 @@ namespace VuforiaUDT
                 m_QualityDialog.GetComponent<CanvasGroup>().alpha = 0;
             }
         }
-        #endregion //MONOBEHAVIOUR_METHODS
 
 
-        #region IUserDefinedTargetEventHandler Implementation
         /// <summary>
         /// Called when UserDefinedTargetBuildingBehaviour has been initialized successfully
         /// </summary>
@@ -151,10 +144,8 @@ namespace VuforiaUDT
             // Make sure TargetBuildingBehaviour keeps scanning...
             m_TargetBuildingBehaviour.StartScanning();
         }
-        #endregion IUserDefinedTargetEventHandler implementation
 
 
-        #region PUBLIC_METHODS
         /// <summary>
         /// Instantiates a new user-defined target and is also responsible for dispatching callback to 
         /// IUserDefinedTargetEventHandler::OnNewTrackableSource
@@ -183,10 +174,6 @@ namespace VuforiaUDT
             }
         }
 
-        #endregion //PUBLIC_METHODS
-
-
-        #region PRIVATE_METHODS
 
         IEnumerator FadeOutQualityDialog()
         {
@@ -235,7 +222,5 @@ namespace VuforiaUDT
                 }
             }
         }
-
-        #endregion //PRIVATE_METHODS
     }
 }

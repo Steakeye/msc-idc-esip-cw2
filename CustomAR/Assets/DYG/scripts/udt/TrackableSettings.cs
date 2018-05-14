@@ -16,12 +16,9 @@ namespace DYG.udt
 {
     public class TrackableSettings : MonoBehaviour
     {
-        #region PROTECTED_MEMBERS
         protected bool mExtTrackingEnabled = false;
-        #endregion //PROTECTED_MEMBERS
 
 
-        #region PUBLIC_METHODS
         public bool IsExtendedTrackingEnabled()
         {
             return mExtTrackingEnabled;
@@ -111,6 +108,5 @@ namespace DYG.udt
             // 4. Finally, restart the object tracker.
             objectTracker.Start();
         }
-        #endregion //PUBLIC_METHODS
     }
 }

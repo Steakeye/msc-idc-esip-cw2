@@ -14,8 +14,6 @@ using Vuforia;
 /// </summary>
 public class DefaultInitializationErrorHandler : MonoBehaviour
 {
-    #region Vuforia_lifecycle_events
-
     public void OnVuforiaInitializationError(VuforiaUnity.InitError initError)
     {
         if (initError != VuforiaUnity.InitError.INIT_SUCCESS)
@@ -24,10 +22,6 @@ public class DefaultInitializationErrorHandler : MonoBehaviour
             SetErrorOccurred(true);
         }
     }
-
-    #endregion // Vuforia_lifecycle_events
-
-    #region PRIVATE_MEMBER_VARIABLES
 
     string mErrorText = "";
     bool mErrorOccurred;
@@ -41,10 +35,6 @@ public class DefaultInitializationErrorHandler : MonoBehaviour
     Texture2D bodyTexture;
     Texture2D headerTexture;
     Texture2D footerTexture;
-
-    #endregion // PRIVATE_MEMBER_VARIABLES
-
-    #region UNTIY_MONOBEHAVIOUR_METHODS
 
     void Awake()
     {
@@ -71,10 +61,6 @@ public class DefaultInitializationErrorHandler : MonoBehaviour
     {
         VuforiaRuntime.Instance.UnregisterVuforiaInitErrorCallback(OnVuforiaInitializationError);
     }
-
-    #endregion // UNTIY_MONOBEHAVIOUR_METHODS
-
-    #region PRIVATE_METHODS
 
     void DrawWindowContent(int id)
     {
@@ -232,6 +218,4 @@ public class DefaultInitializationErrorHandler : MonoBehaviour
         texture.Apply();
         return texture;
     }
-
-    #endregion // PRIVATE_METHODS
 }

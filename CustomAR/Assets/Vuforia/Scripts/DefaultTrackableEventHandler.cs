@@ -14,13 +14,7 @@ using Vuforia;
 /// </summary>
 public class DefaultTrackableEventHandler : MonoBehaviour, ITrackableEventHandler
 {
-    #region PRIVATE_MEMBER_VARIABLES
-
     protected TrackableBehaviour mTrackableBehaviour;
-
-    #endregion // PRIVATE_MEMBER_VARIABLES
-
-    #region UNTIY_MONOBEHAVIOUR_METHODS
 
     protected virtual void Start()
     {
@@ -28,10 +22,6 @@ public class DefaultTrackableEventHandler : MonoBehaviour, ITrackableEventHandle
         if (mTrackableBehaviour)
             mTrackableBehaviour.RegisterTrackableEventHandler(this);
     }
-
-    #endregion // UNTIY_MONOBEHAVIOUR_METHODS
-
-    #region PUBLIC_METHODS
 
     /// <summary>
     ///     Implementation of the ITrackableEventHandler function called when the
@@ -62,10 +52,6 @@ public class DefaultTrackableEventHandler : MonoBehaviour, ITrackableEventHandle
             OnTrackingLost();
         }
     }
-
-    #endregion // PUBLIC_METHODS
-
-    #region PRIVATE_METHODS
 
     protected virtual void OnTrackingFound()
     {
@@ -105,6 +91,4 @@ public class DefaultTrackableEventHandler : MonoBehaviour, ITrackableEventHandle
         foreach (var component in canvasComponents)
             component.enabled = false;
     }
-
-    #endregion // PRIVATE_METHODS
 }

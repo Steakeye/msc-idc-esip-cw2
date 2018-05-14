@@ -19,11 +19,8 @@ namespace VuforiaUDT
     /// </summary>
     public class UDTSettings : TrackableSettings
     {
-        #region PRIVATE_MEMBERS
         UDTEventHandler m_UDTEventHandler;
-        #endregion //PRIVATE_MEMBERS
 
-        #region PUBLIC_METHODS
         /// <summary>
         /// Overrides base class implementation of SwitchExtendedTracking,
         /// so to only enable Extended Tracking on the most recently added UDT target,
@@ -67,6 +64,5 @@ namespace VuforiaUDT
                 }
             }
         }
-        #endregion //PUBLIC_METHODS
     }
 }
