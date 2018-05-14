@@ -9,22 +9,46 @@ using UnityEngine.UI;
 namespace DYG
 {
 	using utils;
-	
+
 	public class SetupButtons : MonoBehaviour
 	{
 
-		private const string PLAYER_BUTTON_NAME = "SetPlayerButton"; 
-		private const string PLAYER_BUTTON_TEXT_MESSAGE_UPDATE = "Update Player"; 
-		private const string PLAYER_IMAGE_NAME = "PlayerImage"; 
-		private const int PLAYER_IMAGE_MARGIN = 10; 
-		
-		void Awake ()
+		private const string PLAYER_BUTTON_NAME = "SetPlayerButton";
+		private const string PLAYER_BUTTON_TEXT_MESSAGE_UPDATE = "Update Player";
+		private const string PLAYER_IMAGE_NAME = "PlayerImage";
+		private const int PLAYER_IMAGE_MARGIN = 10;
+
+		void Awake()
 		{
 			populateButtons();
 		}
-		
-		public void goToScene(string sceneName)
+
+		/*public void goToScene(string sceneName)
 		{
+			SceneManager.LoadScene(sceneName);
+		}*/
+
+		public void GoToButtonScene(string direction)
+		{
+			LoadArgs.setArgs(buttonSceneName, new Dictionary<string, string>()
+			{
+				{"direction", direction}
+			});
+
+			SceneManager.LoadScene(buttonSceneName);
+		}
+
+		public void GoToPlayerScene() {
+			GoToScene(playerSceneName);
+		}
+	
+		public void GoToScene(string sceneName, Dictionary<string, string> args = null)
+		{
+			if (args != null)
+			{
+				LoadArgs.setArgs(sceneName, args);
+			}
+			
 			SceneManager.LoadScene(sceneName);
 		}
 		
@@ -155,5 +179,9 @@ namespace DYG
 			//buttonText.transform.position = new Vector3(oldTextPos.x, updatedTextHeight, oldTextPos.z);
 			//buttonText.transform.SetAsLastSibling();
 		}
+
+		private string playerSceneName = "CreatePlayer";
+		private string buttonSceneName = "CreateButton";
+
 	}
 }

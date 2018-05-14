@@ -12,6 +12,7 @@ namespace DYG.utils
 	public class Data : MonoBehaviour {
 
 		private static Data _instance = null;
+		private static Object threadSafer = new Object();
 
 		private const string PLAYER_H_KEY = "playerH";
 		private const string PLAYER_W_KEY = "playerW";
@@ -25,43 +26,47 @@ namespace DYG.utils
 		{
 			get
 			{
-				// Check if the instance of this class doesn't exist either as a member or in the scene
-				if (findLocalInstanceOrSceneInstance() == null)
+				lock (threadSafer)
 				{
-					//Create anew instance if one doesn't exist
-					GameObject go = new GameObject(typeof(Data).ToString());
-					_instance = go.AddComponent<Data>();
+					// Check if the instance of this class doesn't exist either as a member or in the scene
+					if (findLocalInstanceOrSceneInstance() == null)
+					{
+						//Create anew instance if one doesn't exist
+						GameObject go = new GameObject(typeof(Data).ToString());
+						_instance = go.AddComponent<Data>();
+					}
+
+					return _instance;
 				}
-
-
-				return _instance;
 			}
 		}
 	
 		// Use this for one-time only initialization
 		void Awake() 
 		{
-			if (playerTexPath == null)
+			lock (threadSafer)
 			{
-				playerTexPath = Application.persistentDataPath + "/player.png";
-			}
+				if (playerTexPath == null)
+				{
+					playerTexPath = Application.persistentDataPath + "/player.png";
+				}
 
-			Data existingInstance = findLocalInstanceOrSceneInstance(); 
-			
-			if (existingInstance == null)
-			{
-				_instance = this;
-			} else if (existingInstance != this)
-			{
-				//gameObject.AddComponent(this);
-				Destroy(this);
-			}
-			else
-			{
-				_instance = existingInstance;
-				DontDestroyOnLoad(gameObject);
+				Data existingInstance = findLocalInstanceOrSceneInstance();
+				if (existingInstance == null)
+				{
+					_instance = this;
+				} else if (existingInstance != this)
+				{
+					//gameObject.AddComponent(this);
+					Destroy(this);
+				}
+				else
+				{
+					_instance = existingInstance;
+					DontDestroyOnLoad(gameObject);
 
-				loadSavedData();
+					loadSavedData();
+				}
 			}
 		}
 	
