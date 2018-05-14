@@ -58,6 +58,11 @@ namespace DYG.udt
         
         private void setButtonQuality(ButtonQuality quality)
         {
+            if (button.IsDestroyed())
+            {
+                return;
+            }
+            
             ColorBlock buttonColors = button.colors;
             Color textColor;
             

@@ -3,8 +3,8 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Experimental.UIElements;
 using UnityEngine.UI;
+using UnityEngine.XR;
 using Slider = UnityEngine.UI.Slider;
 using Button = UnityEngine.UI.Button;
 
@@ -26,6 +26,7 @@ namespace DYG
 		private void Awake()
 		{
 			DataLayer = Data.Instance;
+			//XRSettings.enabled = false;
 		}
 
 		// Use this for initialization
@@ -36,7 +37,12 @@ namespace DYG
 			initCam();
 			initCamTexture();
 		}
-	
+
+		private void OnDestroy()
+		{
+			webCamTexture.Stop();
+		}
+
 		public void OnCaptureClick()
 		{
 			Debug.Log("On Capture Click!");
