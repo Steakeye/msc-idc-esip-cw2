@@ -34,7 +34,6 @@ namespace DYG.udt
             get { return (m_TargetCounter - 1) % MAX_TARGETS; }
         }
 
-
         private const int MAX_TARGETS = 5;
         private UserDefinedTargetBuildingBehaviour targetBuildingBehaviour;
         private QualityDialog qualityDialog;
@@ -45,6 +44,8 @@ namespace DYG.udt
         private TrackableSource udtTS;
         private Image.PIXEL_FORMAT udtPixelFormat;
         private Image udtImage;
+        private DataSetTrackableBehaviour trackableBehaviour;
+        private string leftOrRightTracker;
 
         // DataSet that newly defined targets are added to
         DataSet m_UDT_DataSet;
@@ -85,7 +86,6 @@ namespace DYG.udt
                 qualityMsgWrapper.alpha = 0;
             }
         }
-
 
         /// <summary>
         /// Called when UserDefinedTargetBuildingBehaviour has been initialized successfully
@@ -128,6 +128,11 @@ namespace DYG.udt
             saveButton.gameObject.SetActive(true);
         }
 
+        public void SetDirection(string direction)
+        {
+            leftOrRightTracker = direction;
+        }
+        
         public void Capture()
         {
             if (QualityMeter.IsRetry)
@@ -152,7 +157,7 @@ namespace DYG.udt
             }
 
             createTrackableFromSource();
-            persistUDTSnapshot();
+            persistUDTTrackerAndSnapshot();
             
             History historyInstance = FindObjectOfType<History>();
 
@@ -214,7 +219,6 @@ namespace DYG.udt
             saveButton = buttons.FirstOrDefault((Button but) => but.name == "ButtonSave");
             
             return saveButton;
-
         }
 
         private void createTrackableFromSource()
@@ -248,7 +252,7 @@ namespace DYG.udt
             imageTargetCopy.gameObject.name = "UserDefinedTarget-" + m_TargetCounter;
 
             // Add the duplicated trackable to the data set and activate it
-            m_UDT_DataSet.CreateTrackable(udtTS, imageTargetCopy.gameObject);
+            trackableBehaviour = m_UDT_DataSet.CreateTrackable(udtTS, imageTargetCopy.gameObject);
 
             // Activate the dataset again
             objectTracker.ActivateDataSet(m_UDT_DataSet);
@@ -283,13 +287,26 @@ namespace DYG.udt
             udtImage = cam.GetCameraImage(udtPixelFormat);
         }
 
-        private void persistUDTSnapshot()
+        private void persistUDTTrackerAndSnapshot()
         {
-            //udtImage = m_Cam.GetCameraImage(Image.PIXEL_FORMAT.RGB888);
             Texture2D udtTex = new Texture2D(0, 0);
             udtImage.CopyToTexture(udtTex);
-            
-            Data.Instance.UDTTextureLeft = udtTex;
+
+            UDTData trackerAndSnapshot = new UDTData() { Texture = udtTex, TrackableBehaviour = trackableBehaviour };
+
+            switch (leftOrRightTracker)
+            {
+                case "Left":
+                {
+                    Data.Instance.UDTLeft = trackerAndSnapshot;
+                    break;
+                }
+                case "Right":
+                {
+                    Data.Instance.UDTRight = trackerAndSnapshot;
+                    break;
+                }
+            }
         }
 
         IEnumerator FadeOutQualityDialog()

@@ -25,7 +25,7 @@ namespace DYG
 
 		public void GoToButtonScene(string direction)
 		{
-			LoadArgs.setArgs(buttonSceneName, new Dictionary<string, string>()
+			LoadArgs.SetArgs(buttonSceneName, new Dictionary<string, string>()
 			{
 				{"direction", direction}
 			});
@@ -41,7 +41,7 @@ namespace DYG
 		{
 			if (args != null)
 			{
-				LoadArgs.setArgs(sceneName, args);
+				LoadArgs.SetArgs(sceneName, args);
 			}
 			
 			SceneManager.LoadScene(sceneName);

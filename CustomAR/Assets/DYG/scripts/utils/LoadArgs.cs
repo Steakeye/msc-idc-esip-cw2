@@ -10,12 +10,17 @@ namespace DYG.utils
 
 		private static Dictionary<string, ArgsHash> sceneArgsHash = new Dictionary<string, ArgsHash>();
 	
-		public static void setArgs(string sceneName, ArgsHash args)
+		public static bool HasArgs(string sceneName)
+		{
+			return sceneArgsHash.ContainsKey(sceneName);
+		}
+	
+		public static void SetArgs(string sceneName, ArgsHash args)
 		{
 			sceneArgsHash.Add(sceneName, args);
 		}
 
-		public static ArgsHash getArgs(string sceneName)
+		public static ArgsHash GetArgs(string sceneName)
 		{
 			//sceneArgsHash.
 			ArgsHash sceneArgs = null;

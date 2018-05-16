@@ -1,7 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using Vuforia;
+using Object = UnityEngine.Object;
 
 /*
  * Inspired by http://naplandgames.com/blog/2016/11/27/saving-data-in-unity-3d-serialization-for-beginners/
@@ -9,6 +12,12 @@ using UnityEngine;
 
 namespace DYG.utils
 {
+	public struct UDTData
+	{
+		public Texture2D Texture;
+		public DataSetTrackableBehaviour TrackableBehaviour;
+	}
+
 	public class Data : MonoBehaviour {
 
 		private static Data _instance = null;
@@ -94,16 +103,30 @@ namespace DYG.utils
 			}
 		}
 
-		public Texture2D UDTTextureLeft
+		public UDTData? UDTLeft
 		{
-			get { return udtLeftTex; }
+			get { return udtLeft; }
 			set
 			{
-				if (udtLeftTex == null || udtLeftTex.imageContentsHash != value.imageContentsHash)
+				if (udtLeft == null || (udtLeft != null && value == null) || ((UDTData)udtLeft).Texture.imageContentsHash != ((UDTData)value).Texture.imageContentsHash)
 				{
 					udtLeftTexUpdated = true;
 				}
-				udtLeftTex = value; 
+				udtLeft = value; 
+				
+			}
+		}
+		
+		public UDTData? UDTRight
+		{
+			get { return udtRight; }
+			set
+			{
+				if (udtRight == null || (udtRight != null && value == null) || ((UDTData)udtLeft).Texture.imageContentsHash != ((UDTData)value).Texture.imageContentsHash)
+				{
+					udtRightTexUpdated = true;
+				}
+				udtRight = value; 
 				
 			}
 		}
@@ -141,8 +164,8 @@ namespace DYG.utils
 		}
 
 		private Texture2D playerTex = null;
-		private Texture2D udtLeftTex = null;
-		private Texture2D udtRightTex = null;
+		private UDTData? udtLeft;
+		private UDTData? udtRight;
 		private bool playerTexUpdated = false;
 		private bool udtLeftTexUpdated = false;
 		private bool udtRightTexUpdated = false;
