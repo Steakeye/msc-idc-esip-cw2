@@ -14,8 +14,14 @@ namespace DYG
 	{
 
 		private const string PLAYER_BUTTON_NAME = "SetPlayerButton";
+		private const string LEFT_BUTTON_NAME = "LeftPlayerButton";
+		private const string RIGHT_BUTTON_NAME = "RightPlayerButton";
 		private const string PLAYER_BUTTON_TEXT_MESSAGE_UPDATE = "Update Player";
+		private const string LEFT_BUTTON_TEXT_MESSAGE_UPDATE = "Update Left Button";
+		private const string RIGHT_BUTTON_TEXT_MESSAGE_UPDATE = "Update Right Button";
 		private const string PLAYER_IMAGE_NAME = "PlayerImage";
+		private const string LEFT_BUTTON_IMAGE_NAME = "LeftButtonImage";
+		private const string RIGHT_BUTTON_IMAGE_NAME = "RightButtonImage";
 		private const int PLAYER_IMAGE_MARGIN = 10;
 
 		void Awake()
@@ -50,46 +56,113 @@ namespace DYG
 		private void populateButtons()
 		{
 			Button[] viewButtons = GetComponentsInChildren<Button>();
+
+			Texture2D texture = null;
+			string imageName = null, updatedTextValue = null;
+			UDTData? udtData;
 			
-			foreach (Button viewButton in viewButtons)
+			Action<Texture2D, string, string> assignValues = (Texture2D tex, string imgName, string updatedTextVal) =>
 			{
+				texture = tex;
+				imageName = imgName;
+				updatedTextValue = updatedTextVal;
+			};
+			
+			Action<UDTData?, string, string> assignValuesFromData = (UDTData? data, string imgName, string updatedTextVal) =>
+			{
+				if (data != null)
+				{
+					assignValues(((UDTData)data).Texture, imgName, updatedTextVal);
+				}
+			};
+
+
+			foreach (Button viewButton in viewButtons)
+			{				
 				switch (viewButton.name)
 				{
 					case PLAYER_BUTTON_NAME:
 					{
-						populatePlayerButtonImage(viewButton);
+						assignValues(Data.Instance.PlayerTexture, PLAYER_IMAGE_NAME, PLAYER_IMAGE_NAME);
+						break;
+					}
+					case LEFT_BUTTON_NAME:
+					{
+						assignValuesFromData(Data.Instance.UDTLeft.Value, LEFT_BUTTON_IMAGE_NAME, LEFT_BUTTON_TEXT_MESSAGE_UPDATE);
+						/*udtData = Data.Instance.UDTLeft.Value;
+
+						if (udtData != null)
+						{
+							texture = ((UDTData)udtData).Texture;
+							imageName = LEFT_BUTTON_IMAGE_NAME;
+							updatedTextValue = LEFT_BUTTON_TEXT_MESSAGE_UPDATE;
+						}*/
+						break;
+					}
+					case RIGHT_BUTTON_NAME:
+					{
+						assignValuesFromData(Data.Instance.UDTRight.Value, RIGHT_BUTTON_IMAGE_NAME, RIGHT_BUTTON_TEXT_MESSAGE_UPDATE);
+						/*udtData = Data.Instance.UDTLeft.Value;
+
+						if (udtData != null)
+						{
+							texture = ((UDTData)udtData).Texture;
+							imageName = RIGHT_BUTTON_IMAGE_NAME;
+							updatedTextValue = RIGHT_BUTTON_TEXT_MESSAGE_UPDATE;
+						}*/
 						break;
 					}
 				}
+
+				if (texture != null)
+				{
+					updateButton(viewButton, texture, imageName, updatedTextValue);
+				}
+				
+				texture = null;
+				imageName = null;
+				updatedTextValue = null;
+				udtData = null;
 			}
 		}
 
 		private void populatePlayerButtonImage(Button playerButton)
 		{
-			Texture2D playerYexture = Data.Instance.PlayerTexture; 
-			
-			if (playerYexture != null)
-			{
-				RawImage playerImage = createPlayerImage(playerYexture);
-				
-				playerImage.gameObject.layer = playerButton.gameObject.layer; //5
+			populateButtonImage(playerButton, Data.Instance.PlayerTexture, PLAYER_IMAGE_NAME); 
+			updateButtonText(playerButton, PLAYER_BUTTON_TEXT_MESSAGE_UPDATE);
+		}
 
-				setPlayerImageSizeAndPos(playerButton, playerImage);
-				
-				updatePlayerButtonText(playerButton);
+		private void updateButton(Button button, Texture2D texture, string imageName, string updatedTextValue)
+		{
+			if (texture != null)
+			{
+				populateButtonImage(button, texture, imageName);
+				updateButtonText(button, updatedTextValue);
 			}
 		}
 
-		private void setPlayerImageSizeAndPos(Button playerButton, RawImage playerImage)
+		private void populateButtonImage(Button button, Texture2D texture, string imageName)
 		{
-			playerImage.transform.position = playerButton.transform.position;
+//			if (texture != null)
+//			{
+				RawImage playerImage = createRawImageForButton(texture, imageName);
+				
+				playerImage.gameObject.layer = button.gameObject.layer; //5
 
-			RectTransform playerButtonRT = playerButton.GetComponent<RectTransform>();
-			RectTransform playerImageRT = playerImage.GetComponent<RectTransform>();
+				setImageSizeAndPos(button, playerImage);
+			//}
+		}
 
-			playerImageRT.SetParent(playerButton.transform);
+		private void setImageSizeAndPos(Button button, RawImage image)
+		{
+			image.transform.position = button.transform.position;
 
-			Texture playerTex = playerImage.texture; 
+			RectTransform playerButtonRT = button.GetComponent<RectTransform>();
+			RectTransform playerImageRT = image.GetComponent<RectTransform>();
+
+			playerImageRT.SetParent(button.transform);
+
+			Texture playerTex = image.texture; 
 			int playerImgW = playerTex.width;
 			int playerImgH = playerTex.height;
 			Rect buttonRect = playerButtonRT.rect;
@@ -140,31 +213,31 @@ namespace DYG
 			playerImageRT.sizeDelta = new Vector2(scaledImgW, scaledImgH);
 		}
 
-		private RawImage createPlayerImage(Texture2D playerYexture)
+		private RawImage createRawImageForButton(Texture2D texture, string name)
 		{
-			GameObject playerImageGO = new GameObject(PLAYER_IMAGE_NAME, typeof(RawImage));
+			GameObject imageGO = new GameObject(name, typeof(RawImage));
 
-			RawImage playerImage = playerImageGO.GetComponentInChildren<RawImage>();
+			RawImage image = imageGO.GetComponentInChildren<RawImage>();
 				
-			playerImage.texture = playerYexture;
+			image.texture = texture;
 
-			return playerImage;
-		}
-
-		private void updatePlayerButtonText(Button playerButton)
-		{
-			Text buttonText = playerButton.GetComponentInChildren<Text>();
-
-			repositionPlayerButtonText(buttonText);
-			updatePlayerButtonTextMessage(buttonText);
+			return image;
 		}
 		
-		private void updatePlayerButtonTextMessage(Text buttonText)
+		private void updateButtonText(Button button, string textValue)
 		{
-			buttonText.text = PLAYER_BUTTON_TEXT_MESSAGE_UPDATE;
+			Text buttonText = button.GetComponentInChildren<Text>();
+
+			repositionButtonText(buttonText);
+			updateButtonTextMessage(buttonText, textValue);
 		}
 		
-		private void repositionPlayerButtonText(Text buttonText)
+		private void updateButtonTextMessage(Text buttonText, string textValue)
+		{
+			buttonText.text = textValue;
+		}
+		
+		private void repositionButtonText(Text buttonText)
 		{
 			//buttonText.alignment = TextAnchor.UpperCenter;
 			Vector3 oldTextPos = buttonText.transform.position;

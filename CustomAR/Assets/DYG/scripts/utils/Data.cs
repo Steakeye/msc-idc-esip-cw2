@@ -108,7 +108,7 @@ namespace DYG.utils
 			get { return udtLeft; }
 			set
 			{
-				if (udtLeft == null || (udtLeft != null && value == null) || ((UDTData)udtLeft).Texture.imageContentsHash != ((UDTData)value).Texture.imageContentsHash)
+				if ((udtLeft == null && value != null) || (udtLeft != null && value == null) || ((UDTData)udtLeft).Texture.imageContentsHash != ((UDTData)value).Texture.imageContentsHash)
 				{
 					udtLeftTexUpdated = true;
 				}
@@ -122,12 +122,11 @@ namespace DYG.utils
 			get { return udtRight; }
 			set
 			{
-				if (udtRight == null || (udtRight != null && value == null) || ((UDTData)udtLeft).Texture.imageContentsHash != ((UDTData)value).Texture.imageContentsHash)
+				if ((udtRight == null && value != null) || (udtRight != null && value == null) || ((UDTData)udtLeft).Texture.imageContentsHash != ((UDTData)value).Texture.imageContentsHash)
 				{
 					udtRightTexUpdated = true;
 				}
 				udtRight = value; 
-				
 			}
 		}
 
