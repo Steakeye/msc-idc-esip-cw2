@@ -14,8 +14,8 @@ namespace DYG
 	{
 
 		private const string PLAYER_BUTTON_NAME = "SetPlayerButton";
-		private const string LEFT_BUTTON_NAME = "LeftPlayerButton";
-		private const string RIGHT_BUTTON_NAME = "RightPlayerButton";
+		private const string LEFT_BUTTON_NAME = "SetLeftButton";
+		private const string RIGHT_BUTTON_NAME = "SetRightButton";
 		private const string PLAYER_BUTTON_TEXT_MESSAGE_UPDATE = "Update Player";
 		private const string LEFT_BUTTON_TEXT_MESSAGE_UPDATE = "Update Left Button";
 		private const string RIGHT_BUTTON_TEXT_MESSAGE_UPDATE = "Update Right Button";
@@ -70,12 +70,11 @@ namespace DYG
 			
 			Action<UDTData?, string, string> assignValuesFromData = (UDTData? data, string imgName, string updatedTextVal) =>
 			{
-				if (data != null)
+				if (data.HasValue)
 				{
 					assignValues(((UDTData)data).Texture, imgName, updatedTextVal);
 				}
 			};
-
 
 			foreach (Button viewButton in viewButtons)
 			{				
@@ -83,33 +82,17 @@ namespace DYG
 				{
 					case PLAYER_BUTTON_NAME:
 					{
-						assignValues(Data.Instance.PlayerTexture, PLAYER_IMAGE_NAME, PLAYER_IMAGE_NAME);
+						assignValues(Data.Instance.PlayerTexture, PLAYER_IMAGE_NAME, PLAYER_BUTTON_TEXT_MESSAGE_UPDATE);
 						break;
 					}
 					case LEFT_BUTTON_NAME:
 					{
-						assignValuesFromData(Data.Instance.UDTLeft.Value, LEFT_BUTTON_IMAGE_NAME, LEFT_BUTTON_TEXT_MESSAGE_UPDATE);
-						/*udtData = Data.Instance.UDTLeft.Value;
-
-						if (udtData != null)
-						{
-							texture = ((UDTData)udtData).Texture;
-							imageName = LEFT_BUTTON_IMAGE_NAME;
-							updatedTextValue = LEFT_BUTTON_TEXT_MESSAGE_UPDATE;
-						}*/
+						assignValuesFromData(Data.Instance.UDTLeft, LEFT_BUTTON_IMAGE_NAME, LEFT_BUTTON_TEXT_MESSAGE_UPDATE);
 						break;
 					}
 					case RIGHT_BUTTON_NAME:
 					{
-						assignValuesFromData(Data.Instance.UDTRight.Value, RIGHT_BUTTON_IMAGE_NAME, RIGHT_BUTTON_TEXT_MESSAGE_UPDATE);
-						/*udtData = Data.Instance.UDTLeft.Value;
-
-						if (udtData != null)
-						{
-							texture = ((UDTData)udtData).Texture;
-							imageName = RIGHT_BUTTON_IMAGE_NAME;
-							updatedTextValue = RIGHT_BUTTON_TEXT_MESSAGE_UPDATE;
-						}*/
+						assignValuesFromData(Data.Instance.UDTRight, RIGHT_BUTTON_IMAGE_NAME, RIGHT_BUTTON_TEXT_MESSAGE_UPDATE);
 						break;
 					}
 				}
@@ -143,14 +126,11 @@ namespace DYG
 
 		private void populateButtonImage(Button button, Texture2D texture, string imageName)
 		{
-//			if (texture != null)
-//			{
-				RawImage playerImage = createRawImageForButton(texture, imageName);
-				
-				playerImage.gameObject.layer = button.gameObject.layer; //5
+			RawImage playerImage = createRawImageForButton(texture, imageName);
+			
+			playerImage.gameObject.layer = button.gameObject.layer; //5
 
-				setImageSizeAndPos(button, playerImage);
-			//}
+			setImageSizeAndPos(button, playerImage);
 		}
 
 		private void setImageSizeAndPos(Button button, RawImage image)

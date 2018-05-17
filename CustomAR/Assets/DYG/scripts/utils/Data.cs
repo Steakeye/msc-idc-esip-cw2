@@ -122,7 +122,9 @@ namespace DYG.utils
 			get { return udtRight; }
 			set
 			{
-				if ((udtRight == null && value != null) || (udtRight != null && value == null) || ((UDTData)udtLeft).Texture.imageContentsHash != ((UDTData)value).Texture.imageContentsHash)
+				if ((!udtRight.HasValue && value.HasValue) || 
+				    (udtRight.HasValue && !value.HasValue) || 
+				    ((UDTData)udtLeft).Texture.imageContentsHash != ((UDTData)value).Texture.imageContentsHash)
 				{
 					udtRightTexUpdated = true;
 				}
