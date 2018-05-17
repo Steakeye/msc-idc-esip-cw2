@@ -22,7 +22,7 @@ namespace DYG
 		private const string PLAYER_IMAGE_NAME = "PlayerImage";
 		private const string LEFT_BUTTON_IMAGE_NAME = "LeftButtonImage";
 		private const string RIGHT_BUTTON_IMAGE_NAME = "RightButtonImage";
-		private const int PLAYER_IMAGE_MARGIN = 10;
+		private const int BUTTON_IMAGE_MARGIN = 5;
 
 		void Awake()
 		{
@@ -59,6 +59,7 @@ namespace DYG
 
 			Texture2D texture = null;
 			string imageName = null, updatedTextValue = null;
+			bool flipOnY = false;
 			UDTData? udtData;
 			
 			Action<Texture2D, string, string> assignValues = (Texture2D tex, string imgName, string updatedTextVal) =>
@@ -88,18 +89,30 @@ namespace DYG
 					case LEFT_BUTTON_NAME:
 					{
 						assignValuesFromData(Data.Instance.UDTLeft, LEFT_BUTTON_IMAGE_NAME, LEFT_BUTTON_TEXT_MESSAGE_UPDATE);
+						flipOnY = true;
 						break;
 					}
 					case RIGHT_BUTTON_NAME:
 					{
 						assignValuesFromData(Data.Instance.UDTRight, RIGHT_BUTTON_IMAGE_NAME, RIGHT_BUTTON_TEXT_MESSAGE_UPDATE);
+						flipOnY = true;
 						break;
 					}
 				}
 
 				if (texture != null)
-				{
+				{					
 					updateButton(viewButton, texture, imageName, updatedTextValue);
+
+					if (flipOnY)
+					{
+						RawImage buttonImage = viewButton.GetComponentInChildren<RawImage>();
+
+						if (buttonImage)
+						{
+							buttonImage.uvRect = new Rect(0, 0, 1, -1);		
+						}
+					}
 				}
 				
 				texture = null;
@@ -107,12 +120,6 @@ namespace DYG
 				updatedTextValue = null;
 				udtData = null;
 			}
-		}
-
-		private void populatePlayerButtonImage(Button playerButton)
-		{
-			populateButtonImage(playerButton, Data.Instance.PlayerTexture, PLAYER_IMAGE_NAME); 
-			updateButtonText(playerButton, PLAYER_BUTTON_TEXT_MESSAGE_UPDATE);
 		}
 
 		private void updateButton(Button button, Texture2D texture, string imageName, string updatedTextValue)
@@ -126,35 +133,35 @@ namespace DYG
 
 		private void populateButtonImage(Button button, Texture2D texture, string imageName)
 		{
-			RawImage playerImage = createRawImageForButton(texture, imageName);
+			RawImage buttonImage = createRawImageForButton(texture, imageName);
 			
-			playerImage.gameObject.layer = button.gameObject.layer; //5
+			buttonImage.gameObject.layer = button.gameObject.layer; //5
 
-			setImageSizeAndPos(button, playerImage);
+			setImageSizeAndPos(button, buttonImage);
 		}
 
 		private void setImageSizeAndPos(Button button, RawImage image)
 		{
 			image.transform.position = button.transform.position;
 
-			RectTransform playerButtonRT = button.GetComponent<RectTransform>();
-			RectTransform playerImageRT = image.GetComponent<RectTransform>();
+			RectTransform buttonRT = button.GetComponent<RectTransform>();
+			RectTransform imageRT = image.GetComponent<RectTransform>();
 
-			playerImageRT.SetParent(button.transform);
+			imageRT.SetParent(button.transform);
 
 			Texture playerTex = image.texture; 
-			int playerImgW = playerTex.width;
-			int playerImgH = playerTex.height;
-			Rect buttonRect = playerButtonRT.rect;
-			float maxImageW = buttonRect.width - PLAYER_IMAGE_MARGIN * 2; 
-			float maxImageH = (buttonRect.height - PLAYER_IMAGE_MARGIN * 2) / 2; 
+			int imgW = playerTex.width;
+			int imgH = playerTex.height;
+			Rect buttonRect = buttonRT.rect;
+			float maxImageW = buttonRect.width - BUTTON_IMAGE_MARGIN * 2; 
+			float maxImageH = (buttonRect.height - BUTTON_IMAGE_MARGIN * 2) / 2; 
 
-			float scaleAmount = 0f;
+			//float scaleAmount = 0f;
 			
 			int imgDimension = 0;
 			float maxDimension = 0;
 			
-			AspectRatio aspectRatio = Dimensions.GetAspectRatio(playerImgW, playerImgH);
+			AspectRatio aspectRatio = Dimensions.GetAspectRatio(imgW, imgH);
 
 			switch (aspectRatio)
 			{
@@ -162,7 +169,7 @@ namespace DYG
 				case AspectRatio.Square:
 				{
 					//We know that we want to scale by height
-					imgDimension = playerImgH;
+					imgDimension = imgH;
 					maxDimension = maxImageH;
 				}
 					break;
@@ -171,26 +178,26 @@ namespace DYG
 					//We need to detgermine whether we can scale by width
 					//or still scale by height.
 					// If AR of the original texture is greater than button image area then scale by width
-					if (Dimensions.GetAspectRatioFloat(playerImgW, playerImgH) > Dimensions.GetAspectRatioFloat(maxImageW, maxImageH))
+					if (Dimensions.GetAspectRatioFloat(imgW, imgH) > Dimensions.GetAspectRatioFloat(maxImageW, maxImageH))
 					{
-						imgDimension = playerImgW;
+						imgDimension = imgW;
 						maxDimension = maxImageW;
 					}
 					else
 					{
-						imgDimension = playerImgH;
+						imgDimension = imgH;
 						maxDimension = maxImageH;
 					}
 				}
 					break;
 			}
 
-			scaleAmount = (float)imgDimension/maxDimension;
+			float scaleAmount = (float)imgDimension/maxDimension;
 			
-			int scaledImgW = (int)(playerImgW / scaleAmount);
-			int scaledImgH = (int)(playerImgH / scaleAmount);
+			int scaledImgW = (int)(imgW / scaleAmount);
+			int scaledImgH = (int)(imgH / scaleAmount);
 			
-			playerImageRT.sizeDelta = new Vector2(scaledImgW, scaledImgH);
+			imageRT.sizeDelta = new Vector2(scaledImgW, scaledImgH);
 		}
 
 		private RawImage createRawImageForButton(Texture2D texture, string name)
