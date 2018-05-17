@@ -67,15 +67,6 @@ namespace DYG.udt
                 Debug.Log("Registering User Defined Target event handler.");
             }
 
-            cam = CameraDevice.Instance;
-
-            if (cam != null)
-            {
-                setUDTPixelFormat();
-                //Allow the Vugforia camera to be used to take a snapshot image  
-                bool camFormatSet = cam.SetFrameFormat(udtPixelFormat, true);
-            }
-
             trackableSettings = FindObjectOfType<TrackableSettings>();
             qualityDialog = findQualityDialog();
             saveButton = findSaveButton();
@@ -92,6 +83,10 @@ namespace DYG.udt
         /// </summary>
         public void OnInitialized()
         {
+            Debug.Log("Calling UDTEH OnInitialized");
+            
+            setupCamForSnapshot();
+            
             objectTracker = TrackerManager.Instance.GetTracker<ObjectTracker>();
             if (objectTracker != null)
             {
@@ -167,6 +162,18 @@ namespace DYG.udt
             }
         }
 
+        private void setupCamForSnapshot()
+        {
+            Debug.Log("calling setupCamForSnapshot");
+            cam = CameraDevice.Instance;
+
+            if (cam != null)
+            {
+                setUDTPixelFormat();
+                //Allow the Vugforia camera to be used to take a snapshot image  
+                bool camFormatSet = cam.SetFrameFormat(udtPixelFormat, true);
+            }
+        }
 
         /// <summary>
         /// Instantiates a new user-defined target and is also responsible for dispatching callback to 

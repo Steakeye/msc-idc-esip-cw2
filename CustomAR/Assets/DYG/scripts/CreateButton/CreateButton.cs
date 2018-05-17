@@ -44,11 +44,14 @@ namespace DYG.scripts.CreateButton
         
         private void initVuforia()
         {
+            Debug.Log("Calling initVuforia");
+            //VuforiaConfiguration.Instance.Vuforia.DelayedInitialization = false;
             VuforiaRuntime.Instance.InitVuforia();
         }
 
         private void initVuforiaARCam()
         {
+            Debug.Log("Calling initVuforiaARCam");
             Camera mainCamera = Camera.main;
             if (mainCamera)
             {
