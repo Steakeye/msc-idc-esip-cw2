@@ -43,7 +43,11 @@ namespace DYG
 			GoToScene(playerSceneName);
 		}
 	
-		public void GoToScene(string sceneName, Dictionary<string, string> args = null)
+		public void GoToGameScene() {
+			GoToScene(gameSceneName);
+		}
+	
+		private void GoToScene(string sceneName, Dictionary<string, string> args = null)
 		{
 			if (args != null)
 			{
@@ -237,6 +241,7 @@ namespace DYG
 
 		private string playerSceneName = "CreatePlayer";
 		private string buttonSceneName = "CreateButton";
+		private string gameSceneName = "PlayGame";
 
 	}
 }

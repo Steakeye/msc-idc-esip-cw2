@@ -23,8 +23,8 @@ namespace DYG.udt
             button = GetComponent<Button>();
             ColorBlock buttonColors = button.colors;
             defaultButtonColor = buttonColors.normalColor;
+            defaultButtonHoverColor = buttonColors.highlightedColor;
             buttonText = GetComponentInChildren<Text>();
-            defaultButtonTextColor = buttonText.color;
         }
 
         public bool IsRetry
@@ -70,16 +70,15 @@ namespace DYG.udt
             if (quality == ButtonQuality.Good)
             {
                 buttonColors.normalColor = buttonColor;
-                textColor = buttonTextColor;
+                buttonColors.highlightedColor = buttonColor;
             }
             else
             {
                 buttonColors.normalColor = defaultButtonColor;
-                textColor = defaultButtonTextColor;
+                buttonColors.highlightedColor = defaultButtonHoverColor;
             }
             
             button.colors = buttonColors;
-            //GetComponentInChildren<Text>().color = textColor;
         }
 
         private Button button;
@@ -88,10 +87,9 @@ namespace DYG.udt
         private bool isRetry = false;
         
         private Color defaultButtonColor;
-        private Color defaultButtonTextColor;
+        private Color defaultButtonHoverColor;
         
         private Color buttonColor = Color.green;
-        private Color buttonTextColor = Color.white;
 
         private const string captureMsg = "Capture";
         private const string retryMsg = "Retry";
