@@ -4,7 +4,7 @@
 PlayerSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 14
-  productGUID: 00000000000000000000000000000000
+  productGUID: 5ff420c991e8c1144b803b03948ef13a
   AndroidProfiler: 0
   AndroidFilterTouchesWhenObscured: 0
   defaultScreenOrientation: 0
@@ -647,7 +647,7 @@ PlayerSettings:
   facebookSdkVersion: 7.9.4
   apiCompatibilityLevel: 2
   cloudProjectId: 2afad885-c1fc-492d-a5f9-9d71567e124f
-  projectName: 
+  projectName: VuforiaSamples
   organizationId: uow_aak
   cloudEnabled: 0
   enableNativePlatformBackendsForNewInputSystem: 0

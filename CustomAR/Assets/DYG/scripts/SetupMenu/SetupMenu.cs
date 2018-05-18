@@ -1,33 +1,48 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using DYG.utils;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using UnityEngine.XR;
 
 namespace DYG
 {
 	public class SetupMenu : MonoBehaviour {
-
-		// Use this for initialization
-		/*void Start () {
-		
-	}*/
-	
-		// Update is called once per frame
-		/*void Update () {
-		
-	}*/
-
-		public void goToScene(string sceneName)
+		private void Awake()
 		{
-			//Scene foundScene = SceneManager.GetSceneByName(sceneName);
-		
-			SceneManager.LoadScene(sceneName);
-			//SceneManager.LoadScene("1-About");
-		
-			/*if (foundScene.IsValid())
-		{
-			Application.LoadLevel(foundScene.buildIndex);
-		}*/
+			if (playButton == null)
+			{
+				playButton = findPlayButton();
+			}
 		}
+
+		public void AllDataPresent()
+		{
+			Debug.Log("calling AllDataPresent");
+			playButton.gameObject.SetActive(true);
+		}
+
+		public void PlayGame()
+		{
+			SceneManager.LoadScene(playSceneName);
+		}
+		
+		private Button findPlayButton()
+		{
+			Button[] buttons = GO.findAllElements<Button>();
+			Button playButton;
+
+			playButton = buttons.FirstOrDefault((but) =>
+			{
+				return but.name == "PlayButton";
+			});
+            
+			return playButton;
+		}
+
+		private const string playSceneName = "PlayGame";
+		private Button playButton;
 	}
 }

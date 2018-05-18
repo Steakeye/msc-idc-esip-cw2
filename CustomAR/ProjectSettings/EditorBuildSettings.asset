@@ -11,3 +11,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/DYG/scenes/CreatePlayer.unity
     guid: 894a40cc2be1e0948a4d10c27e3d9235
+  - enabled: 1
+    path: Assets/DYG/scenes/CreateButton.unity
+    guid: f24e4db44acf87f40bb509d234d2f6bf
+  - enabled: 1
+    path: Assets/DYG/scenes/PlayGame.unity
+    guid: a1b6dbc47a0d6544f9a5602fbbbcd3a5

@@ -3,13 +3,15 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Experimental.UIElements;
 using UnityEngine.UI;
+using UnityEngine.XR;
 using Slider = UnityEngine.UI.Slider;
 using Button = UnityEngine.UI.Button;
 
 namespace DYG
 {
+	using utils;
+	
 	public class CreatePlayer : MonoBehaviour
 	{
 		public GameObject CaptureButtonGO;
@@ -21,6 +23,12 @@ namespace DYG
 		public ImageProcessor ProcessImage;
 		public Data DataLayer;
 
+		private void Awake()
+		{
+			DataLayer = Data.Instance;
+			//XRSettings.enabled = false;
+		}
+
 		// Use this for initialization
 		void Start ()
 		{
@@ -29,7 +37,12 @@ namespace DYG
 			initCam();
 			initCamTexture();
 		}
-	
+
+		private void OnDestroy()
+		{
+			webCamTexture.Stop();
+		}
+
 		public void OnCaptureClick()
 		{
 			Debug.Log("On Capture Click!");
