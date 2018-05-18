@@ -132,11 +132,7 @@ namespace DYG
 
 			if (allDataPresent)
 			{
-				//SendMessageUpwards("AllDataPresent", SendMessageOptions.DontRequireReceiver);
-				//SendMessageUpwards("AllDataPresent");
 				transform.root.BroadcastMessage("AllDataPresent");
-				//parent
-				//gameObject.parent
 			}
 		}
 		
