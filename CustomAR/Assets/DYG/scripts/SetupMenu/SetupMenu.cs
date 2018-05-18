@@ -18,6 +18,11 @@ namespace DYG
 			}
 		}
 
+		public void AllDataPresent()
+		{
+			Debug.Log("calling AllDataPresent");
+		}
+
 		public void PlayGame()
 		{
 			SceneManager.LoadScene(playSceneName);
@@ -36,7 +41,7 @@ namespace DYG
 			return playButton;
 		}
 
-		private const string playSceneName = "PlayGamee";
+		private const string playSceneName = "PlayGame";
 		private Button playButton;
 	}
 }

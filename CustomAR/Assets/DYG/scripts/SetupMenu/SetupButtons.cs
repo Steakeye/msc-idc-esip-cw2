@@ -27,6 +27,7 @@ namespace DYG
 		void Awake()
 		{
 			populateButtons();
+			checkAllDataPresent();
 		}
 
 		public void GoToButtonScene(string direction)
@@ -41,10 +42,6 @@ namespace DYG
 
 		public void GoToPlayerScene() {
 			GoToScene(playerSceneName);
-		}
-	
-		public void GoToGameScene() {
-			GoToScene(gameSceneName);
 		}
 	
 		private void GoToScene(string sceneName, Dictionary<string, string> args = null)
@@ -126,6 +123,21 @@ namespace DYG
 			}
 		}
 
+		private void checkAllDataPresent()
+		{
+			Data dataInstance = Data.Instance;
+			bool allDataPresent = (dataInstance.PlayerTexture != null &&
+			                       dataInstance.UDTLeft.HasValue &&
+			                       dataInstance.UDTRight.HasValue);
+
+			if (allDataPresent)
+			{
+				SendMessageUpwards("AllDataPresent", SendMessageOptions.DontRequireReceiver);
+				//parent
+				//gameObject.parent
+			}
+		}
+		
 		private void updateButton(Button button, Texture2D texture, string imageName, string updatedTextValue)
 		{
 			if (texture != null)
@@ -241,7 +253,5 @@ namespace DYG
 
 		private string playerSceneName = "CreatePlayer";
 		private string buttonSceneName = "CreateButton";
-		private string gameSceneName = "PlayGame";
-
 	}
 }
