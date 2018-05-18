@@ -243,8 +243,6 @@ namespace DYG
 			//Botton right
 			outTex.FloodFillArea(width - borderMargin, height - borderMargin, Color.clear);
 		
-			outTex.alphaIsTransparency = true;
-
 			outTex.Apply();
 		
 			return outTex;

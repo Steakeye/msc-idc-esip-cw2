@@ -8,12 +8,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
-using UnityEngine.XR.WSA.WebCam;
 using Button = UnityEngine.UI.Button;
 using Vuforia;
 using DYG.utils;
-using Object = UnityEngine.Object;
 
 namespace DYG.udt
 {
