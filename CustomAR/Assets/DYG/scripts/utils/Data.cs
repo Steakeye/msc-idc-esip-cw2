@@ -38,12 +38,17 @@ namespace DYG.utils
 			{
 				lock (threadSafer)
 				{
+					Data existingInstance = findLocalInstanceOrSceneInstance();
 					// Check if the instance of this class doesn't exist either as a member or in the scene
-					if (findLocalInstanceOrSceneInstance() == null)
+					if (existingInstance == null)
 					{
 						//Create anew instance if one doesn't exist
 						GameObject go = new GameObject(typeof(Data).ToString());
 						_instance = go.AddComponent<Data>();
+					}
+					else if (_instance == null)
+					{
+						_instance = existingInstance;
 					}
 
 					return _instance;

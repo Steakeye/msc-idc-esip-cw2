@@ -62,6 +62,7 @@ namespace DYG
 			string imageName = null, updatedTextValue = null;
 			bool flipOnY = false;
 			UDTData? udtData;
+			Data dataCache = Data.Instance;
 			
 			Action<Texture2D, string, string> assignValues = (Texture2D tex, string imgName, string updatedTextVal) =>
 			{
@@ -70,7 +71,7 @@ namespace DYG
 				updatedTextValue = updatedTextVal;
 			};
 			
-			Action<UDTData?, string, string> assignValuesFromData = (UDTData? data, string imgName, string updatedTextVal) =>
+			Action<UDTData?, string, string> assignValuesFromData = (data, imgName, updatedTextVal) =>
 			{
 				if (data.HasValue)
 				{
@@ -84,18 +85,18 @@ namespace DYG
 				{
 					case PLAYER_BUTTON_NAME:
 					{
-						assignValues(Data.Instance.PlayerTexture, PLAYER_IMAGE_NAME, PLAYER_BUTTON_TEXT_MESSAGE_UPDATE);
+						assignValues(dataCache.PlayerTexture, PLAYER_IMAGE_NAME, PLAYER_BUTTON_TEXT_MESSAGE_UPDATE);
 						break;
 					}
 					case LEFT_BUTTON_NAME:
 					{
-						assignValuesFromData(Data.Instance.UDTLeft, LEFT_BUTTON_IMAGE_NAME, LEFT_BUTTON_TEXT_MESSAGE_UPDATE);
+						assignValuesFromData(dataCache.UDTLeft, LEFT_BUTTON_IMAGE_NAME, LEFT_BUTTON_TEXT_MESSAGE_UPDATE);
 						flipOnY = true;
 						break;
 					}
 					case RIGHT_BUTTON_NAME:
 					{
-						assignValuesFromData(Data.Instance.UDTRight, RIGHT_BUTTON_IMAGE_NAME, RIGHT_BUTTON_TEXT_MESSAGE_UPDATE);
+						assignValuesFromData(dataCache.UDTRight, RIGHT_BUTTON_IMAGE_NAME, RIGHT_BUTTON_TEXT_MESSAGE_UPDATE);
 						flipOnY = true;
 						break;
 					}
