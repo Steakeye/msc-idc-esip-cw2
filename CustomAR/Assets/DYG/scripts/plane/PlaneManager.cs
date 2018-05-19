@@ -10,11 +10,8 @@ namespace DYG.plane
     {
         public PlaneFinderBehaviour PlaneFinder;
         public GameObject PlaneAugmentation;
-        //public Text titleMode;
         public Text onScreenMessage;
-        public CanvasGroup ScreenReticleGround;
-        public GameObject TranslationIndicator;
-        public GameObject RotationIndicator;
+
         public Transform Floor;
 
         // Placement Augmentation Size Range
@@ -91,9 +88,6 @@ namespace DYG.plane
             {
                 // We got an automatic hit test this frame
 
-                // Hide the onscreen reticle when we get a hit test
-                ScreenReticleGround.alpha = 0;
-
                 // Set visibility of the surface indicator
                 SetSurfaceIndicatorVisible(true);
 
@@ -104,15 +98,13 @@ namespace DYG.plane
             }
             else
             {
-                // No automatic hit test, so set alpha based on which plane mode is active
-                ScreenReticleGround.alpha = 1;
 
                 SetSurfaceIndicatorVisible(false);
 
                 onScreenMessage.transform.parent.gameObject.SetActive(true);
                 onScreenMessage.enabled = true;
 
-                onScreenMessage.text = "Point device towards ground";
+                onScreenMessage.text = "Point device towards a flat surface";
             }
         }
 
@@ -167,15 +159,6 @@ namespace DYG.plane
             PlaneAugmentation.transform.localPosition = Vector3.zero;
             RotateTowardCamera(PlaneAugmentation);
         }
-
-        /*public void SetGroundMode(bool active)
-        {
-            if (active)
-            {
-                titleMode.text = TITLE_GROUNDPLANE;
-                PlaneFinder.gameObject.SetActive(true);
-            }
-        }*/
 
         public void ResetScene()
         {
