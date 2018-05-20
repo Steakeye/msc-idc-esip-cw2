@@ -40,7 +40,7 @@ namespace DYG.udt
         private string leftOrRightTracker;
 
         // DataSet that newly defined targets are added to
-        DataSet uDT_DataSet;
+        DataSet uDTDataSet;
 
         // Currently observed frame quality
         ImageTargetBuilder.FrameQuality frameQuality = ImageTargetBuilder.FrameQuality.FRAME_QUALITY_NONE;
@@ -94,9 +94,9 @@ namespace DYG.udt
         /// <summary>
         /// Updates the current frame quality
         /// </summary>
-        public void OnFrameQualityChanged(ImageTargetBuilder.FrameQuality frameQuality)
+        public void OnFrameQualityChanged(ImageTargetBuilder.FrameQuality updatedFrameQuality)
         {
-            frameQuality = frameQuality;
+            frameQuality = updatedFrameQuality;
 
             if (!QualityMeter.IsRetry)
             {
@@ -175,8 +175,8 @@ namespace DYG.udt
             if (objectTracker != null)
             {
                 // Create a new dataset
-                uDT_DataSet = objectTracker.CreateDataSet();
-                objectTracker.ActivateDataSet(uDT_DataSet);
+                uDTDataSet = objectTracker.CreateDataSet();
+                objectTracker.ActivateDataSet(uDTDataSet);
             }
         }
         
@@ -238,13 +238,13 @@ namespace DYG.udt
             targetCounter++;
 
             // Deactivates the dataset first
-            objectTracker.DeactivateDataSet(uDT_DataSet);
+            objectTracker.DeactivateDataSet(uDTDataSet);
 
             // Destroy the oldest target if the dataset is full or the dataset 
             // already contains five user-defined targets.
-            if (uDT_DataSet.HasReachedTrackableLimit() || uDT_DataSet.GetTrackables().Count() >= MAX_TARGETS)
+            if (uDTDataSet.HasReachedTrackableLimit() || uDTDataSet.GetTrackables().Count() >= MAX_TARGETS)
             {
-                IEnumerable<Trackable> trackables = uDT_DataSet.GetTrackables();
+                IEnumerable<Trackable> trackables = uDTDataSet.GetTrackables();
                 Trackable oldest = null;
                 foreach (Trackable trackable in trackables)
                 {
@@ -257,7 +257,7 @@ namespace DYG.udt
                 if (oldest != null)
                 {
                     Debug.Log("Destroying oldest trackable in UDT dataset: " + oldest.Name);
-                    uDT_DataSet.Destroy(oldest, true);
+                    uDTDataSet.Destroy(oldest, true);
                 }
             }
 
@@ -266,12 +266,12 @@ namespace DYG.udt
             imageTargetCopy.gameObject.name = "UserDefinedTarget-" + leftOrRightTracker + "-" + targetCounter;
 
             // Add the duplicated trackable to the data set and activate it
-            trackableBehaviour = uDT_DataSet.CreateTrackable(udtTS, imageTargetCopy.gameObject);
+            trackableBehaviour = uDTDataSet.CreateTrackable(udtTS, imageTargetCopy.gameObject);
 
             DontDestroyOnLoad(trackableBehaviour);
             
             // Activate the dataset again
-            objectTracker.ActivateDataSet(uDT_DataSet);
+            objectTracker.ActivateDataSet(uDTDataSet);
 
             // Extended Tracking with user defined targets only works with the most recently defined target.
             // If tracking is enabled on previous target, it will not work on newly defined target.
