@@ -61,6 +61,8 @@ namespace DYG.plane
 
             PlaneFinder.HitTestMode = HitTestMode.AUTOMATIC;
 
+            PlaneFinder.PlaneIndicator.transform.localScale = new Vector3(2, 1, 2);
+            
             placementAugmentationScale = VuforiaRuntimeUtilities.IsPlayMode() ? 0.1f : ProductSize;
             ProductScaleVector =
                 new Vector3(placementAugmentationScale,
@@ -162,6 +164,8 @@ namespace DYG.plane
 
             PlaneAugmentation.transform.SetParent(planeAnchor.transform);
             PlaneAugmentation.transform.localPosition = Vector3.zero;
+            PlaneAugmentation.transform.Rotate(90, 0, 0);
+            //PlaneAugmentation.transform.rotation;
             RotateTowardCamera(PlaneAugmentation);
         }
 
