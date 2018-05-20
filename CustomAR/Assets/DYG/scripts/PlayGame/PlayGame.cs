@@ -5,6 +5,7 @@ using DYG.plane;
 using DYG.utils;
 using UnityEngine;
 using UnityEngine.UI;
+using Vuforia;
 
 namespace DYG
 {
@@ -25,7 +26,9 @@ namespace DYG
 		void Start()
 		{
 			PlaneManager.OnPlaneInScene += PlaneInScene;
+			loadGameAssets();
 		}
+		
 		// Update is called once per frame
 		void Update () {
 		
@@ -37,7 +40,7 @@ namespace DYG
 				planeNeverInScene = false;
 				StartCoroutine(hideReadyMessage());
 				
-				loadGameAssets();
+				//loadGameAssets();
 			}
 		}
 
@@ -67,6 +70,7 @@ namespace DYG
 		{
 			Debug.Log("loadGameAssets called!");
 			addPlayerTextureToSprite();
+			setupButtons();
 		}
 
 		private void startGame()
@@ -78,29 +82,23 @@ namespace DYG
 		{
 			Debug.Log("addPlayerTextureToSprite called!");
 
-			float scale = 1;
+			//float scale = 1;
 			
 			Texture2D playerTex = Data.Instance.PlayerTexture;
-			Rect rec = new Rect(0, 0, playerTex.width/scale, playerTex.height/scale);
-			Sprite playerSprite = Sprite.Create(playerTex, rec, Vector2.zero, scale);
-			
-			//GamePlayerRenderer.sprite = playerSprite;
-			//playerTex
-			//Sprite playerSprite = new Sprite();
-
-			//playerSprite.
-			//playerSprite.tra
-
-			//GamePlayerRenderer.sprite = playerSprite;
-			/*MaterialPropertyBlock block = new MaterialPropertyBlock();
-			block.SetTexture("_MainTex", Data.Instance.PlayerTexture);
-			GamePlayerRenderer.SetPropertyBlock(block);*/
-
-			//GamePlayerRenderer.material.mainTexture = playerTex;
+			/*Rect rec = new Rect(0, 0, playerTex.width/scale, playerTex.height/scale);
+			Sprite playerSprite = Sprite.Create(playerTex, rec, Vector2.zero, scale);*/
 
 			Renderer quadRenderer = GamePlayerQuad.GetComponent<Renderer>();
 			quadRenderer.material.mainTexture = playerTex;
 			quadRenderer.material.shader = Shader.Find("Sprites/Default");
+		}
+
+		private void setupButtons()
+		{
+			Data data = Data.Instance;
+
+			DataSetTrackableBehaviour leftUDTB = data.UDTLeft.Value.TrackableBehaviour;
+			DataSetTrackableBehaviour rightUDTB = data.UDTRight.Value.TrackableBehaviour;
 		}
 
 		private bool planeNeverInScene = true;

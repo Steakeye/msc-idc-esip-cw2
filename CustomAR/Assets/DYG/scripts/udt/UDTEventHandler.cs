@@ -236,7 +236,9 @@ namespace DYG.udt
                 foreach (Trackable trackable in trackables)
                 {
                     if (oldest == null || trackable.ID < oldest.ID)
+                    {
                         oldest = trackable;
+                    }
                 }
 
                 if (oldest != null)
@@ -253,6 +255,8 @@ namespace DYG.udt
             // Add the duplicated trackable to the data set and activate it
             trackableBehaviour = m_UDT_DataSet.CreateTrackable(udtTS, imageTargetCopy.gameObject);
 
+            DontDestroyOnLoad(trackableBehaviour);
+            
             // Activate the dataset again
             objectTracker.ActivateDataSet(m_UDT_DataSet);
 
@@ -353,7 +357,9 @@ namespace DYG.udt
                 if (lastItb != null)
                 {
                     if (lastItb.ImageTarget.StartExtendedTracking())
+                    {
                         Debug.Log("Extended Tracking successfully enabled for " + lastItb.name);
+                    }
                 }
             }
         }
