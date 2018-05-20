@@ -94,7 +94,7 @@ namespace DYG.plane
                 onScreenMessage.transform.parent.gameObject.SetActive(true);
                 onScreenMessage.enabled = true;
 
-                onScreenMessage.text = "Tap to place WHAT??";
+                onScreenMessage.text = "Tap to place game area!";
             }
             else
             {
@@ -121,7 +121,7 @@ namespace DYG.plane
 
         public void HandleAutomaticHitTest(HitTestResult result)
         {
-            Debug.Log("HandleAutomaticHitTest() called.");
+            //Debug.Log("HandleAutomaticHitTest() called.");
 
             AutomaticHitTestFrameCount = Time.frameCount;
         }
@@ -134,7 +134,7 @@ namespace DYG.plane
 
             if (result == null)
             {
-                Debug.LogError("Invalid hit test result!");
+                Debug.LogError("Null hit test result");
                 return;
             }
 
@@ -153,6 +153,9 @@ namespace DYG.plane
                 // On initial run, unhide the augmentation
                 PlaneAugmentation.SetActive(true);
             }
+
+            //Clear message
+            onScreenMessage.text = "";
 
             Debug.Log("Positioning Plane Augmentation at: " + result.Position);
             // parent the augmentation to the anchor
