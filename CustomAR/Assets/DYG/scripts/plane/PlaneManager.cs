@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
@@ -11,12 +12,9 @@ namespace DYG.plane
         public PlaneFinderBehaviour PlaneFinder;
         public GameObject PlaneAugmentation;
         public Text onScreenMessage;
-
         public Transform Floor;
 
-        // Placement Augmentation Size Range
-        [Range(0.1f, 2.0f)]
-        public float ProductSize = 0.65f;
+        public Action OnPlaneInScene;
 
         private const string TITLE_GROUNDPLANE = "Ground Plane";
 
@@ -182,12 +180,10 @@ namespace DYG.plane
 
             planeAugmentationInScene = true;
             
-            gameObject.transform.root.BroadcastMessage("PlaneInScene");
-            gameObject.transform.root.SendMessage("PlaneInScene");
-            transform.root.SendMessage("PlaneInScene");
-            /*BroadcastMessage("PlaneInScene");
-            SendMessage("PlaneInScene");
-            SendMessageUpwards("PlaneInScene");*/
+            if (OnPlaneInScene != null)
+            {
+                OnPlaneInScene();
+            }
         }
 
         public void ResetScene()

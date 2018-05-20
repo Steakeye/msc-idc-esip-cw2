@@ -712,7 +712,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8fb32ec0de4073409ed94185a740b43, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  GamePlaneGO: {fileID: 2075176208}
+  GamePlayerRenderer: {fileID: 1690462480}
   ReadyText: {fileID: 418899483}
+  PlaneManager: {fileID: 1450881027}
 --- !u!1 &1193946493
 GameObject:
   m_ObjectHideFlags: 0
@@ -948,7 +951,6 @@ MonoBehaviour:
   PlaneAugmentation: {fileID: 46958536}
   onScreenMessage: {fileID: 1725672963}
   Floor: {fileID: 1835857074}
-  ProductSize: 0.65
 --- !u!1 &1671389284
 GameObject:
   m_ObjectHideFlags: 0
