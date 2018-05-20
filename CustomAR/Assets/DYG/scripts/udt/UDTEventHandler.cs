@@ -1,19 +1,11 @@
-/*============================================================================== 
- Copyright (c) 2016-2017 PTC Inc. All Rights Reserved.
- 
- Copyright (c) 2015 Qualcomm Connected Experiences, Inc. All Rights Reserved. 
- * ==============================================================================*/
 using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
-using UnityEngine.XR.WSA.WebCam;
 using Button = UnityEngine.UI.Button;
 using Vuforia;
 using DYG.utils;
-using Object = UnityEngine.Object;
 
 namespace DYG.udt
 {

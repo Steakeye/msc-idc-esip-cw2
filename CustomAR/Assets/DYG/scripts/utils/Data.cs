@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using Vuforia;
 using Object = UnityEngine.Object;
@@ -37,12 +38,17 @@ namespace DYG.utils
 			{
 				lock (threadSafer)
 				{
+					Data existingInstance = findLocalInstanceOrSceneInstance();
 					// Check if the instance of this class doesn't exist either as a member or in the scene
-					if (findLocalInstanceOrSceneInstance() == null)
+					if (existingInstance == null)
 					{
 						//Create anew instance if one doesn't exist
 						GameObject go = new GameObject(typeof(Data).ToString());
 						_instance = go.AddComponent<Data>();
+					}
+					else if (_instance == null)
+					{
+						_instance = existingInstance;
 					}
 
 					return _instance;
@@ -78,23 +84,15 @@ namespace DYG.utils
 				}
 			}
 		}
-	
-		// Use this for initialization
-		void Start () {
-		
-		}
-	
-		// Update is called once per frame
-		void Update () {
-		
-		}
 
 		public Texture2D PlayerTexture
 		{
 			get { return playerTex; }
 			set
 			{
-				if (playerTex == null || playerTex.imageContentsHash != value.imageContentsHash)
+				if ((playerTex == null && value != null) || 
+				    (playerTex != null && value == null) || 
+				    !playerTex.GetPixels().SequenceEqual(value.GetPixels()))
 				{
 					playerTexUpdated = true;
 				}
@@ -108,7 +106,9 @@ namespace DYG.utils
 			get { return udtLeft; }
 			set
 			{
-				if ((udtLeft == null && value != null) || (udtLeft != null && value == null) || ((UDTData)udtLeft).Texture.imageContentsHash != ((UDTData)value).Texture.imageContentsHash)
+				if ((!udtLeft.HasValue && value.HasValue) || 
+				    (udtLeft.HasValue && !value.HasValue) || 
+				    !((UDTData)udtLeft).Texture.GetPixels().SequenceEqual(((UDTData)value).Texture.GetPixels()))
 				{
 					udtLeftTexUpdated = true;
 				}
@@ -124,7 +124,7 @@ namespace DYG.utils
 			{
 				if ((!udtRight.HasValue && value.HasValue) || 
 				    (udtRight.HasValue && !value.HasValue) || 
-				    ((UDTData)udtLeft).Texture.imageContentsHash != ((UDTData)value).Texture.imageContentsHash)
+				    !((UDTData)udtRight).Texture.GetPixels().SequenceEqual(((UDTData)value).Texture.GetPixels()))
 				{
 					udtRightTexUpdated = true;
 				}

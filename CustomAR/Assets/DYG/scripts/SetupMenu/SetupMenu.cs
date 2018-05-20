@@ -20,7 +20,7 @@ namespace DYG
 
 		public void AllDataPresent()
 		{
-			Debug.Log("calling AllDataPresent");
+			//Debug.Log("calling AllDataPresent");
 			playButton.gameObject.SetActive(true);
 		}
 
