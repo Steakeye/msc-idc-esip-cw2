@@ -18,37 +18,33 @@ namespace DYG.plane
         [Range(0.1f, 2.0f)]
         public float ProductSize = 0.65f;
 
-        const string TITLE_GROUNDPLANE = "Ground Plane";
+        private const string TITLE_GROUNDPLANE = "Ground Plane";
 
-        const string unsupportedDeviceTitle = "Unsupported Device";
-        const string unsupportedDeviceBody =
+        private const string unsupportedDeviceTitle = "Unsupported Device";
+        private const string unsupportedDeviceBody =
             "This device has failed to start the Positional Device Tracker. " +
             "Please check the list of supported Ground Plane devices on our site: " +
             "\n\nhttps://library.vuforia.com/articles/Solution/ground-plane-supported-devices.html";
 
-        const string EMULATOR_GROUND_PLANE = "Emulator Ground Plane";
+        private const string EMULATOR_GROUND_PLANE = "Emulator Ground Plane";
 
-        Sprite iconGroundMode;
+        private StateManager stateManager;
+        private SmartTerrain smartTerrain;
+        private PositionalDeviceTracker positionalDeviceTracker;
 
-        StateManager stateManager;
-        SmartTerrain smartTerrain;
-        PositionalDeviceTracker positionalDeviceTracker;
+        private GameObject planeAnchor;
 
-        GameObject planeAnchor;
+        private bool planeAugmentationInScene = false;
+        private int AutomaticHitTestFrameCount;
+        private int anchorCounter;
 
-        float placementAugmentationScale;
-        int AutomaticHitTestFrameCount;
-        int anchorCounter;
-        Vector3 ProductScaleVector;
+        private GraphicRaycaster graphicRayCaster;
+        private PointerEventData pointerEventData;
+        private EventSystem eventSystem;
 
-        GraphicRaycaster graphicRayCaster;
-        PointerEventData pointerEventData;
-        EventSystem eventSystem;
-
-        Camera mainCamera;
-        Ray cameraToPlaneRay;
-        RaycastHit cameraToPlaneHit;
-
+        private Camera mainCamera;
+        private Ray cameraToPlaneRay;
+        private RaycastHit cameraToPlaneHit;
 
         void Start()
         {
@@ -62,17 +58,9 @@ namespace DYG.plane
             PlaneFinder.HitTestMode = HitTestMode.AUTOMATIC;
 
             PlaneFinder.PlaneIndicator.transform.localScale = new Vector3(2, 1, 2);
-            
-            placementAugmentationScale = VuforiaRuntimeUtilities.IsPlayMode() ? 0.1f : ProductSize;
-            ProductScaleVector =
-                new Vector3(placementAugmentationScale,
-                    placementAugmentationScale,
-                    placementAugmentationScale);
 
             // Enable floor collider if running on device; Disable if running in PlayMode
             Floor.gameObject.SetActive(!VuforiaRuntimeUtilities.IsPlayMode());
-
-            iconGroundMode = Resources.Load<Sprite>("icon_ground_mode");
 
             mainCamera = Camera.main;
             graphicRayCaster = FindObjectOfType<GraphicRaycaster>();
@@ -86,7 +74,7 @@ namespace DYG.plane
 
         void LateUpdate()
         {
-            if (AutomaticHitTestFrameCount == Time.frameCount)
+            /*if (AutomaticHitTestFrameCount == Time.frameCount)
             {
                 // We got an automatic hit test this frame
 
@@ -100,13 +88,35 @@ namespace DYG.plane
             }
             else
             {
-
+                planeAugmentationInScene = false;
                 SetSurfaceIndicatorVisible(false);
 
                 onScreenMessage.transform.parent.gameObject.SetActive(true);
                 onScreenMessage.enabled = true;
 
                 onScreenMessage.text = "Point device towards a flat surface";
+            }*/
+            if (AutomaticHitTestFrameCount != Time.frameCount)
+            {
+                planeAugmentationInScene = false;
+                SetSurfaceIndicatorVisible(false);
+
+                onScreenMessage.transform.parent.gameObject.SetActive(true);
+                onScreenMessage.enabled = true;
+
+                onScreenMessage.text = "Point device towards a flat surface";
+            }
+            else if (!planeAugmentationInScene)
+            {
+                // We got an automatic hit test this frame
+
+                // Set visibility of the surface indicator
+                SetSurfaceIndicatorVisible(true);
+
+                onScreenMessage.transform.parent.gameObject.SetActive(true);
+                onScreenMessage.enabled = true;
+
+                onScreenMessage.text = "Tap to place game area!";
             }
         }
 
@@ -157,6 +167,8 @@ namespace DYG.plane
             }
 
             //Clear message
+            onScreenMessage.transform.parent.gameObject.SetActive(false);
+            onScreenMessage.enabled = false;
             onScreenMessage.text = "";
 
             Debug.Log("Positioning Plane Augmentation at: " + result.Position);
@@ -167,6 +179,8 @@ namespace DYG.plane
             PlaneAugmentation.transform.Rotate(90, 0, 0);
             //PlaneAugmentation.transform.rotation;
             RotateTowardCamera(PlaneAugmentation);
+
+            planeAugmentationInScene = true;
         }
 
         public void ResetScene()
