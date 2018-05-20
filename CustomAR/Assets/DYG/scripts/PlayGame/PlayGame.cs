@@ -42,15 +42,15 @@ namespace DYG
 
 		IEnumerator hideReadyMessage()
 		{
-			yield return new WaitForSeconds(1f);
+			yield return new WaitForSeconds(1.5f);
 
 			float originalAlpha = ReadyText.color.a;
 			
-			for (; originalAlpha >= 0; originalAlpha -= 0.1f)
+			for (; originalAlpha >= 0; originalAlpha -= 0.05f)
 			{
 				Color currentColor = ReadyText.color;
 
-				originalAlpha = (float)Math.Round(originalAlpha, 1);
+				originalAlpha = (float)Math.Round(originalAlpha, 2);
 				currentColor.a = originalAlpha;
 				Debug.Log("FadeOut: " + originalAlpha);
 				ReadyText.color = currentColor;
@@ -77,14 +77,18 @@ namespace DYG
 		{
 			Debug.Log("addPlayerTextureToSprite called!");
 
-			Texture2D playerTex = Data.Instance.PlayerTexture;
+			/*Texture2D playerTex = Data.Instance.PlayerTexture;
 			Rect rec = new Rect(0, 0, playerTex.width, playerTex.height);
-			Sprite playerSprite = Sprite.Create(playerTex, rec, Vector2.zero, 1);
+			Sprite playerSprite = Sprite.Create(playerTex, rec, Vector2.zero, 1);*/
 			//Sprite playerSprite = new Sprite();
 
 			//playerSprite.
+			//playerSprite.tra
 			
-			GamePlayerRenderer.sprite = playerSprite;
+			//GamePlayerRenderer.sprite = playerSprite;
+			MaterialPropertyBlock block = new MaterialPropertyBlock();
+			block.AddTexture("_MainTex", Data.Instance.PlayerTexture);
+			GamePlayerRenderer.SetPropertyBlock(block);
 		}
 
 		private bool planeNeverInScene = true;
