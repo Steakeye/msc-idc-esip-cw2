@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using DYG.plane;
+using DYG.udt;
 using DYG.utils;
 using UnityEngine;
 using UnityEngine.UI;
@@ -95,12 +96,18 @@ namespace DYG
 
 		private void setupButtons()
 		{
+			udtEventHandler = GetComponent<UDTEventHandler>();
+			udtEventHandler.InitObjectTracker();
+			
 			Data data = Data.Instance;
 
-			DataSetTrackableBehaviour leftUDTB = data.UDTLeft.Value.TrackableBehaviour;
-			DataSetTrackableBehaviour rightUDTB = data.UDTRight.Value.TrackableBehaviour;
+			//DataSetTrackableBehaviour leftUDTB = data.UDTLeft.Value.TrackableBehaviour;
+			//DataSetTrackableBehaviour rightUDTB = data.UDTRight.Value.TrackableBehaviour;
+			UDTData leftUDTData = data.UDTLeft.GetValueOrDefault();
+			UDTData rightUDTData = data.UDTRight.GetValueOrDefault();
 		}
 
+		private UDTEventHandler udtEventHandler;
 		private bool planeNeverInScene = true;
 	}
 }

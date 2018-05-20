@@ -23,7 +23,7 @@ namespace DYG.udt
 
         public int LastTargetIndex
         {
-            get { return (m_TargetCounter - 1) % MAX_TARGETS; }
+            get { return (targetCounter - 1) % MAX_TARGETS; }
         }
 
         private const int MAX_TARGETS = 5;
@@ -40,13 +40,13 @@ namespace DYG.udt
         private string leftOrRightTracker;
 
         // DataSet that newly defined targets are added to
-        DataSet m_UDT_DataSet;
+        DataSet uDT_DataSet;
 
         // Currently observed frame quality
-        ImageTargetBuilder.FrameQuality m_FrameQuality = ImageTargetBuilder.FrameQuality.FRAME_QUALITY_NONE;
+        ImageTargetBuilder.FrameQuality frameQuality = ImageTargetBuilder.FrameQuality.FRAME_QUALITY_NONE;
 
         // Counter used to name newly created targets
-        int m_TargetCounter;
+        int targetCounter;
 
 
         void Start()
@@ -76,16 +76,19 @@ namespace DYG.udt
         public void OnInitialized()
         {
             Debug.Log("Calling UDTEH OnInitialized");
-            
+                
             setupCamForSnapshot();
             
             objectTracker = TrackerManager.Instance.GetTracker<ObjectTracker>();
-            if (objectTracker != null)
-            {
-                // Create a new dataset
-                m_UDT_DataSet = objectTracker.CreateDataSet();
-                objectTracker.ActivateDataSet(m_UDT_DataSet);
-            }
+
+            setupDataset();
+        }
+
+        public void InitObjectTracker()
+        {
+            objectTracker = TrackerManager.Instance.InitTracker<ObjectTracker>();
+
+            setupDataset();            
         }
 
         /// <summary>
@@ -93,7 +96,7 @@ namespace DYG.udt
         /// </summary>
         public void OnFrameQualityChanged(ImageTargetBuilder.FrameQuality frameQuality)
         {
-            m_FrameQuality = frameQuality;
+            frameQuality = frameQuality;
 
             if (!QualityMeter.IsRetry)
             {
@@ -167,18 +170,28 @@ namespace DYG.udt
             }
         }
 
+        private void setupDataset()
+        {
+            if (objectTracker != null)
+            {
+                // Create a new dataset
+                uDT_DataSet = objectTracker.CreateDataSet();
+                objectTracker.ActivateDataSet(uDT_DataSet);
+            }
+        }
+        
         /// <summary>
         /// Instantiates a new user-defined target and is also responsible for dispatching callback to 
         /// IUserDefinedTargetEventHandler::OnNewTrackableSource
         /// </summary>
         private void buildNewTarget()
         {
-            if (m_FrameQuality == Quality.FRAME_QUALITY_MEDIUM ||
-                m_FrameQuality == Quality.FRAME_QUALITY_HIGH)
+            if (frameQuality == Quality.FRAME_QUALITY_MEDIUM ||
+                frameQuality == Quality.FRAME_QUALITY_HIGH)
             {
                 // create the name of the next target.
                 // the TrackableName of the original, linked ImageTargetBehaviour is extended with a continuous number to ensure unique names
-                string targetName = string.Format("{0}-{1}", ImageTargetTemplate.TrackableName, m_TargetCounter);
+                string targetName = string.Format("{0}-{1}", ImageTargetTemplate.TrackableName, targetCounter);
 
                 // generate a new target:
                 targetBuildingBehaviour.BuildNewTarget(targetName, ImageTargetTemplate.GetSize().x);
@@ -222,16 +235,16 @@ namespace DYG.udt
 
         private void createTrackableFromSource()
         {
-            m_TargetCounter++;
+            targetCounter++;
 
             // Deactivates the dataset first
-            objectTracker.DeactivateDataSet(m_UDT_DataSet);
+            objectTracker.DeactivateDataSet(uDT_DataSet);
 
             // Destroy the oldest target if the dataset is full or the dataset 
             // already contains five user-defined targets.
-            if (m_UDT_DataSet.HasReachedTrackableLimit() || m_UDT_DataSet.GetTrackables().Count() >= MAX_TARGETS)
+            if (uDT_DataSet.HasReachedTrackableLimit() || uDT_DataSet.GetTrackables().Count() >= MAX_TARGETS)
             {
-                IEnumerable<Trackable> trackables = m_UDT_DataSet.GetTrackables();
+                IEnumerable<Trackable> trackables = uDT_DataSet.GetTrackables();
                 Trackable oldest = null;
                 foreach (Trackable trackable in trackables)
                 {
@@ -244,21 +257,21 @@ namespace DYG.udt
                 if (oldest != null)
                 {
                     Debug.Log("Destroying oldest trackable in UDT dataset: " + oldest.Name);
-                    m_UDT_DataSet.Destroy(oldest, true);
+                    uDT_DataSet.Destroy(oldest, true);
                 }
             }
 
             // Get predefined trackable and instantiate it
             ImageTargetBehaviour imageTargetCopy = Instantiate(ImageTargetTemplate);
-            imageTargetCopy.gameObject.name = "UserDefinedTarget-" + m_TargetCounter;
+            imageTargetCopy.gameObject.name = "UserDefinedTarget-" + leftOrRightTracker + "-" + targetCounter;
 
             // Add the duplicated trackable to the data set and activate it
-            trackableBehaviour = m_UDT_DataSet.CreateTrackable(udtTS, imageTargetCopy.gameObject);
+            trackableBehaviour = uDT_DataSet.CreateTrackable(udtTS, imageTargetCopy.gameObject);
 
             DontDestroyOnLoad(trackableBehaviour);
             
             // Activate the dataset again
-            objectTracker.ActivateDataSet(m_UDT_DataSet);
+            objectTracker.ActivateDataSet(uDT_DataSet);
 
             // Extended Tracking with user defined targets only works with the most recently defined target.
             // If tracking is enabled on previous target, it will not work on newly defined target.
@@ -285,7 +298,7 @@ namespace DYG.udt
 
         private void captureUDTSnapshot()
         {
-            //bool camFormatSet = m_Cam.SetFrameFormat(udtPixelFormat, true);
+            //bool camFormatSet = cam.SetFrameFormat(udtPixelFormat, true);
 
             udtImage = cam.GetCameraImage(udtPixelFormat);
         }
