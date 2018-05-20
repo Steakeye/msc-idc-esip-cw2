@@ -233,10 +233,14 @@ namespace DYG.plane
             Canvas[] canvas = PlaneFinder.PlaneIndicator.GetComponentsInChildren<Canvas>(true);
 
             foreach (Canvas c in canvas)
+            {
                 c.enabled = isVisible;
+            }
 
             foreach (Renderer r in renderers)
+            {
                 r.enabled = isVisible;
+            }
         }
 
         void RotateTowardCamera(GameObject augmentation)
@@ -260,9 +264,14 @@ namespace DYG.plane
             if (positionalDeviceTracker != null && smartTerrain != null)
             {
                 if (!positionalDeviceTracker.IsActive)
+                {
                     positionalDeviceTracker.Start();
+                }
+
                 if (positionalDeviceTracker.IsActive && !smartTerrain.IsActive)
+                {
                     smartTerrain.Start();
+                }
             }
             else
             {
@@ -283,7 +292,9 @@ namespace DYG.plane
             Debug.Log("OnVuforiaPaused(" + paused.ToString() + ") called.");
 
             if (paused)
+            {
                 ResetScene();
+            }
         }
 
 

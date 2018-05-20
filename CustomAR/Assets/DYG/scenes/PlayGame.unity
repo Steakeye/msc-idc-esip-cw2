@@ -125,6 +125,7 @@ GameObject:
   - component: {fileID: 466966989}
   - component: {fileID: 466966988}
   - component: {fileID: 466966987}
+  - component: {fileID: 466966992}
   m_Layer: 0
   m_Name: ARCamera
   m_TagString: Untagged
@@ -138,7 +139,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 466966986}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c47f92041efbb4b429a4eafca855ebe3, type: 3}
   m_Name: 
@@ -212,6 +213,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &466966992
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 466966986}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6382a69f212d8734dbf60ce2199f40c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &632039123
 GameObject:
   m_ObjectHideFlags: 0
@@ -308,9 +320,8 @@ GameObject:
   - component: {fileID: 965447232}
   - component: {fileID: 965447235}
   - component: {fileID: 965447234}
-  - component: {fileID: 965447233}
   m_Layer: 0
-  m_Name: Plane Finder
+  m_Name: PlaneFinder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -323,25 +334,13 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 965447231}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 2.125, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 632039125}
   m_Father: {fileID: 1450881026}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &965447233
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 965447231}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 2020821747, guid: bab6fa851cf5a1a4bba3cec5f191cb8e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  AnchorStage: {fileID: 632039123}
 --- !u!114 &965447234
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -821,12 +820,12 @@ MonoBehaviour:
     m_MinSize: 10
     m_MaxSize: 40
     m_Alignment: 4
-    m_AlignByGeometry: 0
+    m_AlignByGeometry: 1
     m_RichText: 1
-    m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
+    m_HorizontalOverflow: 1
+    m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Point device towards ground
+  m_Text: Point device towards flat surface
 --- !u!222 &1725672964
 CanvasRenderer:
   m_ObjectHideFlags: 0
