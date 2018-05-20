@@ -181,6 +181,13 @@ namespace DYG.plane
             RotateTowardCamera(PlaneAugmentation);
 
             planeAugmentationInScene = true;
+            
+            gameObject.transform.root.BroadcastMessage("PlaneInScene");
+            gameObject.transform.root.SendMessage("PlaneInScene");
+            transform.root.SendMessage("PlaneInScene");
+            /*BroadcastMessage("PlaneInScene");
+            SendMessage("PlaneInScene");
+            SendMessageUpwards("PlaneInScene");*/
         }
 
         public void ResetScene()
