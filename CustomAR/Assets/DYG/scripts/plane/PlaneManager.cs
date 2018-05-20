@@ -56,7 +56,7 @@ namespace DYG.plane
             PlaneFinder.HitTestMode = HitTestMode.AUTOMATIC;
 
             PlaneFinder.PlaneIndicator.transform.localScale = new Vector3(2, 1, 2);
-
+            
             // Enable floor collider if running on device; Disable if running in PlayMode
             Floor.gameObject.SetActive(!VuforiaRuntimeUtilities.IsPlayMode());
 
@@ -103,6 +103,8 @@ namespace DYG.plane
                 onScreenMessage.enabled = true;
 
                 onScreenMessage.text = "Point device towards a flat surface";
+                
+                PlaneFinder.PlaneIndicator.SetActive(true);
             }
             else if (!planeAugmentationInScene)
             {
@@ -178,6 +180,8 @@ namespace DYG.plane
             //PlaneAugmentation.transform.rotation;
             RotateTowardCamera(PlaneAugmentation);
 
+            PlaneFinder.PlaneIndicator.SetActive(false);
+            
             planeAugmentationInScene = true;
             
             if (OnPlaneInScene != null)

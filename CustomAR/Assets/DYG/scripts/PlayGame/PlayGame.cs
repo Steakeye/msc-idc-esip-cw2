@@ -12,6 +12,7 @@ namespace DYG
 	{
 		public GameObject GamePlaneGO;
 		public SpriteRenderer GamePlayerRenderer;
+		public GameObject GamePlayerQuad;
 		public TextMesh ReadyText;
 		public PlaneManager PlaneManager;
 		
@@ -77,18 +78,29 @@ namespace DYG
 		{
 			Debug.Log("addPlayerTextureToSprite called!");
 
-			/*Texture2D playerTex = Data.Instance.PlayerTexture;
-			Rect rec = new Rect(0, 0, playerTex.width, playerTex.height);
-			Sprite playerSprite = Sprite.Create(playerTex, rec, Vector2.zero, 1);*/
+			float scale = 1;
+			
+			Texture2D playerTex = Data.Instance.PlayerTexture;
+			Rect rec = new Rect(0, 0, playerTex.width/scale, playerTex.height/scale);
+			Sprite playerSprite = Sprite.Create(playerTex, rec, Vector2.zero, scale);
+			
+			//GamePlayerRenderer.sprite = playerSprite;
+			//playerTex
 			//Sprite playerSprite = new Sprite();
 
 			//playerSprite.
 			//playerSprite.tra
-			
+
 			//GamePlayerRenderer.sprite = playerSprite;
-			MaterialPropertyBlock block = new MaterialPropertyBlock();
-			block.AddTexture("_MainTex", Data.Instance.PlayerTexture);
-			GamePlayerRenderer.SetPropertyBlock(block);
+			/*MaterialPropertyBlock block = new MaterialPropertyBlock();
+			block.SetTexture("_MainTex", Data.Instance.PlayerTexture);
+			GamePlayerRenderer.SetPropertyBlock(block);*/
+
+			//GamePlayerRenderer.material.mainTexture = playerTex;
+
+			Renderer quadRenderer = GamePlayerQuad.GetComponent<Renderer>();
+			quadRenderer.material.mainTexture = playerTex;
+			quadRenderer.material.shader = Shader.Find("Sprites/Default");
 		}
 
 		private bool planeNeverInScene = true;
