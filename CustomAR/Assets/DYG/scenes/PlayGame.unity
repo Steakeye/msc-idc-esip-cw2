@@ -124,7 +124,6 @@ GameObject:
   - component: {fileID: 466966990}
   - component: {fileID: 466966989}
   - component: {fileID: 466966988}
-  - component: {fileID: 466966987}
   - component: {fileID: 466966992}
   m_Layer: 0
   m_Name: ARCamera
@@ -133,17 +132,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &466966987
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 466966986}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c47f92041efbb4b429a4eafca855ebe3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &466966988
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -180,9 +168,9 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 10
-  far clip plane: 100
-  field of view: 85.2
+  near clip plane: 0.05
+  far clip plane: 2000
+  field of view: 60
   orthographic: 0
   orthographic size: 5
   m_Depth: 1

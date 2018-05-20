@@ -121,6 +121,8 @@ namespace DYG.plane
 
         public void HandleAutomaticHitTest(HitTestResult result)
         {
+            Debug.Log("HandleAutomaticHitTest() called.");
+
             AutomaticHitTestFrameCount = Time.frameCount;
         }
 
