@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using DYG.plane;
 using DYG.udt;
 using DYG.utils;
@@ -45,7 +47,14 @@ namespace DYG
 			}
 		}
 
-		IEnumerator hideReadyMessage()
+		private static BindingFlags ReflectionFlags = BindingFlags.Instance
+		                                   | BindingFlags.GetProperty
+		                                   | BindingFlags.SetProperty
+		                                   | BindingFlags.GetField
+		                                   | BindingFlags.SetField
+		                                   | BindingFlags.NonPublic;
+		
+		private IEnumerator hideReadyMessage()
 		{
 			yield return new WaitForSeconds(1.5f);
 
@@ -101,13 +110,41 @@ namespace DYG
 			
 			Data data = Data.Instance;
 
+			Type trackableType = typeof(Trackable);
+			FieldInfo[] fields = trackableType.GetFields(ReflectionFlags);
+			PropertyInfo[] properties = trackableType.GetProperties(ReflectionFlags);
+			MemberInfo[] members = trackableType.GetMembers(ReflectionFlags);
+			
+			FieldInfo dataSetFieldInfo = fields.FirstOrDefault(feildInfo => feildInfo.Name == "DataSet");
+
 			//DataSetTrackableBehaviour leftUDTB = data.UDTLeft.Value.TrackableBehaviour;
 			//DataSetTrackableBehaviour rightUDTB = data.UDTRight.Value.TrackableBehaviour;
 			UDTData leftUDTData = data.UDTLeft.GetValueOrDefault();
 			UDTData rightUDTData = data.UDTRight.GetValueOrDefault();
+
+			DataSetTrackableBehaviour[] dataSetTrackableBehaviours = {
+				leftUDTData.TrackableBehaviour,
+				rightUDTData.TrackableBehaviour
+			};
+			
+			if (dataSetTrackableBehaviours.Any())
+			{
+				//dataSetTrackableBehaviours.Where()
+				IEnumerable<DataSetTrackableBehaviour> dataSetTrackableBehavioursEnumerable = dataSetTrackableBehaviours.Where(dstb => dstb != null);
+				Trackable[] trackables = dataSetTrackableBehavioursEnumerable.Select(dstb =>
+				{
+					
+					Trackable trackable = dstb.Trackable;
+
+					DataSet td = (DataSet)dataSetFieldInfo.GetValue(trackable);
+					
+					return trackable;
+				}).ToArray();
+			}
 		}
 
 		private UDTEventHandler udtEventHandler;
+
 		private bool planeNeverInScene = true;
 	}
 }

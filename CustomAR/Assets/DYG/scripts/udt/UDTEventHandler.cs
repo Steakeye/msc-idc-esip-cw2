@@ -88,7 +88,18 @@ namespace DYG.udt
         {
             objectTracker = TrackerManager.Instance.InitTracker<ObjectTracker>();
 
-            setupDataset();            
+            //setupDataset();            
+        }
+
+        public void ActivateDataSets(DataSet[] dataSets)
+        {
+            if (objectTracker != null)
+            {
+                foreach (DataSet dataSet in dataSets)
+                {
+                    objectTracker.ActivateDataSet(dataSet);
+                }
+            }
         }
 
         /// <summary>
@@ -191,7 +202,7 @@ namespace DYG.udt
             {
                 // create the name of the next target.
                 // the TrackableName of the original, linked ImageTargetBehaviour is extended with a continuous number to ensure unique names
-                string targetName = string.Format("{0}-{1}", ImageTargetTemplate.TrackableName, targetCounter);
+                string targetName = string.Format("{0}-{1}-{2}", ImageTargetTemplate.TrackableName, leftOrRightTracker, targetCounter);
 
                 // generate a new target:
                 targetBuildingBehaviour.BuildNewTarget(targetName, ImageTargetTemplate.GetSize().x);
