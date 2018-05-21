@@ -32,27 +32,12 @@ namespace DYG
 
 		public void GoToButtonScene(string direction)
 		{
-/*			LoadArgs.SetArgs(buttonSceneName, new Dictionary<string, string>()
+			LoadArgs.SetArgs(buttonSceneName, new Dictionary<string, string>()
 			{
 				{"direction", direction}
 			});
 
-			Scene[] scenes = SceneManager.GetAllScenes();
-
-			if (scenes.Any(scene => scene.name == buttonSceneName))
-			{
-				//scenes.Any(scene => scene.name == buttonSceneName);
-				SceneManager.SetActiveScene(SceneManager.GetSceneByName(buttonSceneName));
-			} else
-			{
-				SceneManager.LoadScene(buttonSceneName, LoadSceneMode.Additive);
-			}*/
-			Dictionary<string, string> buttonSceenArgs = new Dictionary<string, string>()
-			{
-				{"direction", direction}
-			};
-			
-			GoToScene(buttonSceneName, buttonSceenArgs);
+			SceneManager.LoadScene(buttonSceneName);
 		}
 
 		public void GoToPlayerScene() {
@@ -66,29 +51,7 @@ namespace DYG
 				LoadArgs.SetArgs(sceneName, args);
 			}
 			
-			//SceneManager.LoadScene(sceneName);
-			Scene[] scenes = SceneManager.GetAllScenes();
-			
-			foreach(GameObject gO in SceneManager.GetActiveScene().GetRootGameObjects()){
-				gO.SetActive(false);
-			}
-
-			if (scenes.Any(scene => scene.name == sceneName))
-			{
-				Scene sceneToActivate = SceneManager.GetSceneByName(sceneName);
-				//scenes.Any(scene => scene.name == buttonSceneName);
-				SceneManager.SetActiveScene(sceneToActivate);
-				foreach(GameObject gO in sceneToActivate.GetRootGameObjects()){
-					gO.SetActive(true);
-				}
-			} else
-			{
-				AsyncOperation loadSceneAsync = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
-				loadSceneAsync.completed += (asyncOp) =>
-				{
-					SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName));
-				};
-			}
+			SceneManager.LoadScene(sceneName);
 		}
 		
 		private void populateButtons()

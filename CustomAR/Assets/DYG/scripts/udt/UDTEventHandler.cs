@@ -147,12 +147,12 @@ namespace DYG.udt
             setupDataset();
         }
 
-        /*public void InitObjectTracker()
+        public void InitObjectTracker()
         {
-            //objectTracker = TrackerManager.Instance.InitTracker<ObjectTracker>();
+            objectTracker = TrackerManager.Instance.InitTracker<ObjectTracker>();
 
             //setupDataset();            
-        }*/
+        }
 
         public void ActivateDataSets(DataSet[] dataSets)
         {

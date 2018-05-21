@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using DYG.udt;
 using DYG.utils;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -17,19 +16,8 @@ namespace DYG
 			{
 				playButton = findPlayButton();
 			}
-
-			//checkUDTEH();
 		}
 
-		private void checkUDTEH()
-		{
-			UDTEventHandler udtEH = UDTEventHandler.Instance;
-
-			if (true)
-			{
-			}
-		}
-		
 		public void AllDataPresent()
 		{
 			//Debug.Log("calling AllDataPresent");
