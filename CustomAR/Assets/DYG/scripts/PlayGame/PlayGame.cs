@@ -105,42 +105,27 @@ namespace DYG
 
 		private void setupButtons()
 		{
-			udtEventHandler = GetComponent<UDTEventHandler>();
+			/*udtEventHandler = GetComponent<UDTEventHandler>();
 			udtEventHandler.InitObjectTracker();
 			
 			Data data = Data.Instance;
 
-			Type trackableType = typeof(Trackable);
-			FieldInfo[] fields = trackableType.GetFields(ReflectionFlags);
-			PropertyInfo[] properties = trackableType.GetProperties(ReflectionFlags);
-			MemberInfo[] members = trackableType.GetMembers(ReflectionFlags);
-			
-			FieldInfo dataSetFieldInfo = fields.FirstOrDefault(feildInfo => feildInfo.Name == "DataSet");
-
-			//DataSetTrackableBehaviour leftUDTB = data.UDTLeft.Value.TrackableBehaviour;
-			//DataSetTrackableBehaviour rightUDTB = data.UDTRight.Value.TrackableBehaviour;
 			UDTData leftUDTData = data.UDTLeft.GetValueOrDefault();
 			UDTData rightUDTData = data.UDTRight.GetValueOrDefault();
 
-			DataSetTrackableBehaviour[] dataSetTrackableBehaviours = {
-				leftUDTData.TrackableBehaviour,
-				rightUDTData.TrackableBehaviour
+			DataSet[] dataSets = {
+				leftUDTData.TrackableDataSet,
+				rightUDTData.TrackableDataSet
 			};
 			
-			if (dataSetTrackableBehaviours.Any())
+			if (dataSets.Any())
 			{
 				//dataSetTrackableBehaviours.Where()
-				IEnumerable<DataSetTrackableBehaviour> dataSetTrackableBehavioursEnumerable = dataSetTrackableBehaviours.Where(dstb => dstb != null);
-				Trackable[] trackables = dataSetTrackableBehavioursEnumerable.Select(dstb =>
-				{
-					
-					Trackable trackable = dstb.Trackable;
-
-					DataSet td = (DataSet)dataSetFieldInfo.GetValue(trackable);
-					
-					return trackable;
-				}).ToArray();
-			}
+				IEnumerable<DataSet> validDataSets = dataSets.Where(ds => ds != null);
+				DataSet[] validDataSetsArr = validDataSets.ToArray();
+				
+				udtEventHandler.ActivateDataSets(validDataSetsArr);
+			}*/
 		}
 
 		private UDTEventHandler udtEventHandler;

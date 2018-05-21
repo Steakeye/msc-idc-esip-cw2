@@ -16,6 +16,7 @@ namespace DYG.utils
 	public struct UDTData
 	{
 		public Texture2D Texture;
+		public DataSet TrackableDataSet;
 		public DataSetTrackableBehaviour TrackableBehaviour;
 	}
 

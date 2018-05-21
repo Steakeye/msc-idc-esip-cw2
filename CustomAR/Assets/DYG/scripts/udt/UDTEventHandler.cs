@@ -6,6 +6,7 @@ using System.Linq;
 using Button = UnityEngine.UI.Button;
 using Vuforia;
 using DYG.utils;
+using Object = UnityEngine.Object;
 
 namespace DYG.udt
 {
@@ -13,6 +14,60 @@ namespace DYG.udt
 
     public class UDTEventHandler : MonoBehaviour, IUserDefinedTargetEventHandler
     {
+        private static Data _instance = null;
+        private static readonly Object threadSafer = new Object();
+		
+        private static Data findLocalInstanceOrSceneInstance()
+        {
+            return _instance ?? FindObjectOfType<Data>(); 
+        }
+		
+        public static Data Instance
+        {
+            get
+            {
+                lock (threadSafer)
+                {
+                    Data existingInstance = findLocalInstanceOrSceneInstance();
+                    // Check if the instance of this class doesn't exist either as a member or in the scene
+                    if (existingInstance == null)
+                    {
+                        //Create anew instance if one doesn't exist
+                        GameObject go = new GameObject(typeof(Data).ToString());
+                        _instance = go.AddComponent<Data>();
+                    }
+                    else if (_instance == null)
+                    {
+                        _instance = existingInstance;
+                    }
+
+                    return _instance;
+                }
+            }
+        }
+	
+        // Use this for one-time only initialization
+        void Awake() 
+        {
+            lock (threadSafer)
+            {
+                Data existingInstance = findLocalInstanceOrSceneInstance();
+                if (existingInstance == null)
+                {
+                    _instance = this;
+                } else if (existingInstance != this)
+                {
+                    //gameObject.AddComponent(this);
+                    Destroy(this);
+                }
+                else
+                {
+                    _instance = existingInstance;
+                    DontDestroyOnLoad(gameObject);
+                }
+            }
+        }
+
         /// <summary>
         /// Can be set in the Unity inspector to reference an ImageTargetBehaviour 
         /// that is instantiated for augmentations of new User-Defined Targets.
@@ -41,13 +96,13 @@ namespace DYG.udt
 
         // DataSet that newly defined targets are added to
         DataSet uDTDataSet;
+        DataSet[] uDTDataSetArr;
 
         // Currently observed frame quality
         ImageTargetBuilder.FrameQuality frameQuality = ImageTargetBuilder.FrameQuality.FRAME_QUALITY_NONE;
 
         // Counter used to name newly created targets
         int targetCounter;
-
 
         void Start()
         {
@@ -95,6 +150,8 @@ namespace DYG.udt
         {
             if (objectTracker != null)
             {
+                uDTDataSetArr = dataSets;
+                    
                 foreach (DataSet dataSet in dataSets)
                 {
                     objectTracker.ActivateDataSet(dataSet);
@@ -188,6 +245,7 @@ namespace DYG.udt
                 // Create a new dataset
                 uDTDataSet = objectTracker.CreateDataSet();
                 objectTracker.ActivateDataSet(uDTDataSet);
+                //DontDestroyOnLoad(uDTDataSet);
             }
         }
         
@@ -319,7 +377,11 @@ namespace DYG.udt
             Texture2D udtTex = new Texture2D(0, 0);
             udtImage.CopyToTexture(udtTex);
 
-            UDTData trackerAndSnapshot = new UDTData() { Texture = udtTex, TrackableBehaviour = trackableBehaviour };
+            UDTData trackerAndSnapshot = new UDTData() { 
+                Texture = udtTex,
+                TrackableDataSet = uDTDataSet,
+                TrackableBehaviour = trackableBehaviour 
+            };
 
             switch (leftOrRightTracker)
             {
@@ -383,6 +445,29 @@ namespace DYG.udt
                     if (lastItb.ImageTarget.StartExtendedTracking())
                     {
                         Debug.Log("Extended Tracking successfully enabled for " + lastItb.name);
+                    }
+                }
+            }
+        }
+        
+        /**
+         * TODO: Add an OnDestroy method to clean up?
+          */
+        private void OnDestroy()
+        {
+            if (objectTracker != null)
+            {
+                objectTracker.Stop();
+                
+                if (uDTDataSet != null)
+                {
+                    objectTracker.DeactivateDataSet(uDTDataSet);
+                }
+                else if (uDTDataSetArr != null)
+                {
+                    foreach (DataSet dataSet in uDTDataSetArr)
+                    {
+                        objectTracker.DeactivateDataSet(dataSet);
                     }
                 }
             }
