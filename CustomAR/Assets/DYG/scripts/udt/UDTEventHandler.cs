@@ -14,27 +14,27 @@ namespace DYG.udt
 
     public class UDTEventHandler : MonoBehaviour, IUserDefinedTargetEventHandler
     {
-        private static Data _instance = null;
+        private static UDTEventHandler _instance = null;
         private static readonly Object threadSafer = new Object();
 		
-        private static Data findLocalInstanceOrSceneInstance()
+        private static UDTEventHandler findLocalInstanceOrSceneInstance()
         {
-            return _instance ?? FindObjectOfType<Data>(); 
+            return _instance ?? FindObjectOfType<UDTEventHandler>(); 
         }
 		
-        public static Data Instance
+        public static UDTEventHandler Instance
         {
             get
             {
                 lock (threadSafer)
                 {
-                    Data existingInstance = findLocalInstanceOrSceneInstance();
+                    UDTEventHandler existingInstance = findLocalInstanceOrSceneInstance();
                     // Check if the instance of this class doesn't exist either as a member or in the scene
                     if (existingInstance == null)
                     {
                         //Create anew instance if one doesn't exist
-                        GameObject go = new GameObject(typeof(Data).ToString());
-                        _instance = go.AddComponent<Data>();
+                        GameObject go = new GameObject(typeof(UDTEventHandler).ToString());
+                        _instance = go.AddComponent<UDTEventHandler>();
                     }
                     else if (_instance == null)
                     {
@@ -51,7 +51,7 @@ namespace DYG.udt
         {
             lock (threadSafer)
             {
-                Data existingInstance = findLocalInstanceOrSceneInstance();
+                UDTEventHandler existingInstance = findLocalInstanceOrSceneInstance();
                 if (existingInstance == null)
                 {
                     _instance = this;
@@ -59,6 +59,8 @@ namespace DYG.udt
                 {
                     //gameObject.AddComponent(this);
                     Destroy(this);
+                    _instance.startAgain();
+                    _instance.Start();
                 }
                 else
                 {
@@ -125,6 +127,12 @@ namespace DYG.udt
             }
         }
 
+        private void startAgain()
+        {
+            QualityMeter = FindObjectOfType<FrameQualityMeter>();
+            ImageTargetTemplate = FindObjectOfType<ImageTargetBehaviour>();
+        }
+        
         /// <summary>
         /// Called when UserDefinedTargetBuildingBehaviour has been initialized successfully
         /// </summary>
@@ -225,6 +233,15 @@ namespace DYG.udt
             }
         }
 
+        public void UnRegisterSelf()
+        {
+            if (targetBuildingBehaviour)
+            {
+                targetBuildingBehaviour.UnregisterEventHandler(this);
+                Debug.Log("Unregistering User Defined Target event handler.");
+            }
+        }
+        
         private void setupCamForSnapshot()
         {
             Debug.Log("calling setupCamForSnapshot");

@@ -424,8 +424,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 421156715}
-        m_MethodName: SaveTrackableSource
+      - m_Target: {fileID: 2139248052}
+        m_MethodName: SaveUDT
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1481,8 +1481,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 421156715}
-        m_MethodName: Capture
+      - m_Target: {fileID: 2139248052}
+        m_MethodName: CaptureUDT
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
