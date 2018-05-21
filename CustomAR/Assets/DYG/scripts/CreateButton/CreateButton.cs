@@ -19,10 +19,11 @@ namespace DYG.scripts.CreateButton
         private void Start()
         {
             UDTEventHandler udtEH = UDTEvtHandler;
-
-            if (udtEH == null)
+            UDTEventHandler singleton = UDTEventHandler.Instance;
+            
+            if (udtEH == null || udtEH != singleton)
             {
-                UDTEvtHandler = UDTEventHandler.Instance;
+                UDTEvtHandler = singleton;
                 passDirectionToUDTHandler();
             }
         }

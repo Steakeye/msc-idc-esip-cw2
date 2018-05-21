@@ -586,7 +586,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1003174838}
   - component: {fileID: 1003174839}
-  - component: {fileID: 1003174840}
   m_Layer: 0
   m_Name: SceneScript
   m_TagString: Untagged
@@ -623,19 +622,6 @@ MonoBehaviour:
   GamePlayerQuad: {fileID: 1507285421}
   ReadyText: {fileID: 418899483}
   PlaneManager: {fileID: 1450881027}
---- !u!114 &1003174840
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1003174837}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ce13c31bccf54b07b6101738ccb20951, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ImageTargetTemplate: {fileID: 0}
-  QualityMeter: {fileID: 0}
 --- !u!1 &1323459840
 GameObject:
   m_ObjectHideFlags: 0

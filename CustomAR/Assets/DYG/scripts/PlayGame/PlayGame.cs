@@ -22,6 +22,8 @@ namespace DYG
 		
 		// Use this for initialization
 		void Awake () {
+			udtEventHandler = UDTEventHandler.Instance;
+			
 			AR.initVuforia();
 			AR.initVuforiaARCam();
 		}
@@ -46,13 +48,6 @@ namespace DYG
 				//loadGameAssets();
 			}
 		}
-
-		private static BindingFlags ReflectionFlags = BindingFlags.Instance
-		                                   | BindingFlags.GetProperty
-		                                   | BindingFlags.SetProperty
-		                                   | BindingFlags.GetField
-		                                   | BindingFlags.SetField
-		                                   | BindingFlags.NonPublic;
 		
 		private IEnumerator hideReadyMessage()
 		{
@@ -105,8 +100,8 @@ namespace DYG
 
 		private void setupButtons()
 		{
-			/*udtEventHandler = GetComponent<UDTEventHandler>();
-			udtEventHandler.InitObjectTracker();
+			//*udtEventHandler = GetComponent<UDTEventHandler>();
+			//udtEventHandler.InitObjectTracker();
 			
 			Data data = Data.Instance;
 
@@ -125,7 +120,7 @@ namespace DYG
 				DataSet[] validDataSetsArr = validDataSets.ToArray();
 				
 				udtEventHandler.ActivateDataSets(validDataSetsArr);
-			}*/
+			}
 		}
 
 		private UDTEventHandler udtEventHandler;
