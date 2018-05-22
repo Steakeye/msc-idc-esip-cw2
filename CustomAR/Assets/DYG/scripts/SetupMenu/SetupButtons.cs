@@ -5,6 +5,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Vuforia;
 
 namespace DYG
 {
@@ -53,7 +54,7 @@ namespace DYG
 			
 			SceneManager.LoadScene(sceneName);
 		}
-		
+
 		private void populateButtons()
 		{
 			Button[] viewButtons = GetComponentsInChildren<Button>();

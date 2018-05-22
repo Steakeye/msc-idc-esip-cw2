@@ -68,6 +68,7 @@ namespace DYG
 
 		public void PlayGame()
 		{
+			ensureSmartTerrain();
 			SceneManager.LoadScene(playSceneName);
 		}
 		
@@ -84,6 +85,16 @@ namespace DYG
 			return playButton;
 		}
 
+
+		private void ensureSmartTerrain()
+		{
+			SmartTerrain smartTerrain = TrackerManager.Instance.GetTracker<SmartTerrain>();
+			
+			if (smartTerrain == null) {
+				smartTerrain = TrackerManager.Instance.InitTracker<SmartTerrain>();
+			}
+		}
+		
 		private const string playSceneName = "PlayGame";
 		private Button playButton;
 		private static bool vbCached = false;

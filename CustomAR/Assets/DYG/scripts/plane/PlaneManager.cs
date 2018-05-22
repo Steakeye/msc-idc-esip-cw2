@@ -44,6 +44,11 @@ namespace DYG.plane
         private Ray cameraToPlaneRay;
         private RaycastHit cameraToPlaneHit;
 
+        private void Awake()
+        {
+            Debug.Log("PlaneManager.Awake() called.");
+        }
+
         void Start()
         {
             Debug.Log("PlaneManager.Start() called.");
@@ -64,10 +69,10 @@ namespace DYG.plane
             graphicRayCaster = FindObjectOfType<GraphicRaycaster>();
             eventSystem = FindObjectOfType<EventSystem>();
 
-            if (VuforiaARController.Instance.HasStarted)
+            /*if (VuforiaARController.Instance.HasStarted)
             {
                 OnVuforiaStarted();
-            }
+            }*/
         }
 
         /*void Update()
@@ -273,6 +278,11 @@ namespace DYG.plane
             // Check trackers to see if started and start if necessary
             positionalDeviceTracker = TrackerManager.Instance.GetTracker<PositionalDeviceTracker>();
             smartTerrain = TrackerManager.Instance.GetTracker<SmartTerrain>();
+
+            if (smartTerrain == null)
+            {
+                smartTerrain = TrackerManager.Instance.InitTracker<SmartTerrain>();
+            }
 
             if (positionalDeviceTracker != null && smartTerrain != null)
             {
