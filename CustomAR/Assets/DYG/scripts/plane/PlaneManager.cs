@@ -46,7 +46,7 @@ namespace DYG.plane
 
         void Start()
         {
-            Debug.Log("Start() called.");
+            Debug.Log("PlaneManager.Start() called.");
 
             VuforiaARController.Instance.RegisterVuforiaStartedCallback(OnVuforiaStarted);
             VuforiaARController.Instance.RegisterOnPauseCallback(OnVuforiaPaused);
@@ -63,6 +63,11 @@ namespace DYG.plane
             mainCamera = Camera.main;
             graphicRayCaster = FindObjectOfType<GraphicRaycaster>();
             eventSystem = FindObjectOfType<EventSystem>();
+
+            if (VuforiaARController.Instance.HasStarted)
+            {
+                OnVuforiaStarted();
+            }
         }
 
         /*void Update()
@@ -72,28 +77,6 @@ namespace DYG.plane
 
         void LateUpdate()
         {
-            /*if (AutomaticHitTestFrameCount == Time.frameCount)
-            {
-                // We got an automatic hit test this frame
-
-                // Set visibility of the surface indicator
-                SetSurfaceIndicatorVisible(true);
-
-                onScreenMessage.transform.parent.gameObject.SetActive(true);
-                onScreenMessage.enabled = true;
-
-                onScreenMessage.text = "Tap to place game area!";
-            }
-            else
-            {
-                planeAugmentationInScene = false;
-                SetSurfaceIndicatorVisible(false);
-
-                onScreenMessage.transform.parent.gameObject.SetActive(true);
-                onScreenMessage.enabled = true;
-
-                onScreenMessage.text = "Point device towards a flat surface";
-            }*/
             if (AutomaticHitTestFrameCount != Time.frameCount)
             {
                 planeAugmentationInScene = false;
@@ -122,7 +105,7 @@ namespace DYG.plane
 
         void OnDestroy()
         {
-            Debug.Log("OnDestroy() called.");
+            Debug.Log("PlaneManager.OnDestroy() called.");
 
             VuforiaARController.Instance.UnregisterVuforiaStartedCallback(OnVuforiaStarted);
             VuforiaARController.Instance.UnregisterOnPauseCallback(OnVuforiaPaused);

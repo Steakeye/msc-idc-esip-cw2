@@ -129,7 +129,7 @@ namespace DYG.udt
                 qualityMsgWrapper.alpha = 0;
             }
 
-            if (imageTargetTrackableName == null)
+            if (imageTargetTrackableName == null && ImageTargetTemplate != null)
             {
                 imageTargetTrackableName = ImageTargetTemplate.TrackableName;
             }

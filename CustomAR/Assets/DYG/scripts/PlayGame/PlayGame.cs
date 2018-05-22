@@ -22,10 +22,12 @@ namespace DYG
 		
 		// Use this for initialization
 		void Awake () {
+			TrackerManager.Instance.GetStateManager().ReassociateTrackables();
+			
 			udtEventHandler = UDTEventHandler.Instance;
 			
-			AR.initVuforia();
-			AR.initVuforiaARCam();
+			/*AR.initVuforia();
+			AR.initVuforiaARCam();*/
 		}
 
 		void Start()
