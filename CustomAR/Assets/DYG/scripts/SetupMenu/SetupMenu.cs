@@ -10,15 +10,34 @@ using Vuforia;
 
 namespace DYG
 {
-	public class SetupMenu : MonoBehaviour {
+	public class SetupMenu : MonoBehaviour
+	{
+		private static GameObject ARCamGO;
+		private static bool ARCamCached = false;
+		
+		private static CameraDevice Cam;
+		
 		private void Awake()
 		{
-			//VuforiaBehaviour.Instance.enabled = false;
+			if (ARCamGO == null)
+			{
+				ARCamGO = Instantiate(Resources.Load("ARCam")) as GameObject; 
+			}
 			
-			if (!vbCached)
+			if (!ARCamCached)
 			{
 				preserveVuforiaBehaviour();
-				vbCached = true;
+				ARCamCached = true;
+			}
+			
+			if (Cam == null)
+			{
+				Cam = CameraDevice.Instance;
+			}
+
+			if (!Cam.IsActive())
+			{
+				Cam.Start();
 			}
 
 			//AR.disableVuforiaBehaviour();
@@ -27,13 +46,13 @@ namespace DYG
 			{
 				playButton = findPlayButton();
 			}
+
+			TrackerManager.Instance.GetStateManager().ReassociateTrackables();
 		}
 
 		private void preserveVuforiaBehaviour()
 		{
 			VuforiaBehaviour vb = VuforiaBehaviour.Instance;
-
-			vb = vb.GetComponent<VuforiaBehaviour>();
 			
 			DontDestroyOnLoad(vb);
 		}
@@ -41,7 +60,10 @@ namespace DYG
 		public void AllDataPresent()
 		{
 			//Debug.Log("calling AllDataPresent");
-			playButton.gameObject.SetActive(true);
+			if (playButton != null)
+			{
+				playButton.gameObject.SetActive(true);
+			}
 		}
 
 		public void PlayGame()
@@ -64,6 +86,6 @@ namespace DYG
 
 		private const string playSceneName = "PlayGame";
 		private Button playButton;
-		private bool vbCached = false;
+		private static bool vbCached = false;
 	}
 }

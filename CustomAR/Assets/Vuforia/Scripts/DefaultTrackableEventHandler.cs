@@ -18,9 +18,13 @@ public class DefaultTrackableEventHandler : MonoBehaviour, ITrackableEventHandle
 
     protected virtual void Start()
     {
+        //TrackerManager.Instance.GetStateManager().ReassociateTrackables();
+        
         mTrackableBehaviour = GetComponent<TrackableBehaviour>();
         if (mTrackableBehaviour)
             mTrackableBehaviour.RegisterTrackableEventHandler(this);
+        
+        TrackerManager.Instance.GetStateManager().ReassociateTrackables();
     }
 
     /// <summary>
@@ -31,6 +35,8 @@ public class DefaultTrackableEventHandler : MonoBehaviour, ITrackableEventHandle
         TrackableBehaviour.Status previousStatus,
         TrackableBehaviour.Status newStatus)
     {
+        //TrackerManager.Instance.GetStateManager().ReassociateTrackables();
+        
         if (newStatus == TrackableBehaviour.Status.DETECTED ||
             newStatus == TrackableBehaviour.Status.TRACKED ||
             newStatus == TrackableBehaviour.Status.EXTENDED_TRACKED)
@@ -51,6 +57,8 @@ public class DefaultTrackableEventHandler : MonoBehaviour, ITrackableEventHandle
             // Call OnTrackingLost() to hide the augmentations
             OnTrackingLost();
         }
+        
+        TrackerManager.Instance.GetStateManager().ReassociateTrackables();
     }
 
     protected virtual void OnTrackingFound()

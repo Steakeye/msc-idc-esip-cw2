@@ -76,13 +76,14 @@ namespace DYG.scripts.CreateButton
         private void OnDisable()
         {
             Debug.Log("CreateButton.OnDisable called");
-            AR.disableVuforiaBehaviour();
+            //AR.disableVuforiaBehaviour();
+            //UDTEvtHandler.UnRegisterSelf();
         }
 
-        private void OnDestroy()
+        /*private void OnDestroy()
         {
             UDTEvtHandler.UnRegisterSelf();
-        }
+        }*/
         
         private string directionValue;
         private const string argsDirectionKey = "direction";
