@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR;
+using Vuforia;
 using Slider = UnityEngine.UI.Slider;
 using Button = UnityEngine.UI.Button;
 
@@ -25,15 +26,18 @@ namespace DYG
 
 		private void Awake()
 		{
+			Debug.Log("CreatePlayer.Awake called");
 			DataLayer = Data.Instance;
 			//XRSettings.enabled = false;
+			TrackerManager.Instance.GetStateManager().ReassociateTrackables();
 		}
 
 		// Use this for initialization
 		void Start ()
 		{
-			Debug.Log("Start called.");
+			Debug.Log("CreatePlayer.Start called.");
 			initRawImg();
+			stopCurrentCam();
 			initCam();
 			initCamTexture();
 		}
@@ -109,6 +113,16 @@ namespace DYG
 		private void initCamTexture()
 		{
 			rawImg.texture = webCamTexture;
+		}
+
+		private void stopCurrentCam()
+		{
+			CameraDevice currentCam = CameraDevice.Instance;
+
+			if (currentCam.IsActive())
+			{
+				currentCam.Stop();
+			}
 		}
 
 		private void initCam()
