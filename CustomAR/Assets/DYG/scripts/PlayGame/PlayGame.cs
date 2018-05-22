@@ -7,11 +7,27 @@ using DYG.plane;
 using DYG.udt;
 using DYG.utils;
 using UnityEngine;
+using UnityEngine.Networking.NetworkSystem;
 using UnityEngine.UI;
 using Vuforia;
 
 namespace DYG
 {
+	public class TrackableStateHandler : ITrackableEventHandler
+	{
+		public TrackableStateHandler(TrackableBehaviour tb, Action<string, TrackableBehaviour.Status> occlusionAction)
+		{
+			trackableBehaviour = tb;
+		}
+		
+		public void OnTrackableStateChanged(TrackableBehaviour.Status previousStatus, TrackableBehaviour.Status newStatus)
+		{
+			Debug.Log("OnTrackableStateChanged");
+		}
+
+		private TrackableBehaviour trackableBehaviour;
+	}
+
 	public class PlayGame : MonoBehaviour
 	{
 		public GameObject GamePlaneGO;
@@ -37,8 +53,9 @@ namespace DYG
 		}
 		
 		// Update is called once per frame
-		void Update () {
-		
+		void Update ()
+		{
+			movePlayer();
 		}
 
 		public void PlaneInScene() {
@@ -102,31 +119,91 @@ namespace DYG
 
 		private void setupButtons()
 		{
-			//*udtEventHandler = GetComponent<UDTEventHandler>();
-			//udtEventHandler.InitObjectTracker();
+			//udtEventHandler = GetComponent<UDTEventHandler>();
+			udtEventHandler = UDTEventHandler.Instance;
 			
 			Data data = Data.Instance;
 
 			UDTData leftUDTData = data.UDTLeft.GetValueOrDefault();
 			UDTData rightUDTData = data.UDTRight.GetValueOrDefault();
 
-			DataSet[] dataSets = {
-				leftUDTData.TrackableDataSet,
-				rightUDTData.TrackableDataSet
+			TrackableBehaviour[] trackableBehaviours = {
+				leftUDTData.TrackableBehaviour,
+				rightUDTData.TrackableBehaviour
+			};
+
+			ObjectTracker objectTracker = TrackerManager.Instance.GetTracker<ObjectTracker>();
+
+			if (!objectTracker.IsActive)
+			{
+				objectTracker.Start();
 			};
 			
-			/*if (dataSets.Any())
+			if (trackableBehaviours.Any())
 			{
+				Action<string, TrackableBehaviour.Status> buttonAction = (trackerName, status) =>
+				{
+					if (trackerName.Contains("Left"))
+					{
+						if (status == TrackableBehaviour.Status.TRACKED || status == TrackableBehaviour.Status.NOT_FOUND)
+						{
+							leftButtonUp = true;
+						}
+						else
+						{
+							leftButtonUp = false;
+						}
+					}
+					else if (trackerName.Contains("Right"))
+					{
+						if (status == TrackableBehaviour.Status.TRACKED || status == TrackableBehaviour.Status.NOT_FOUND)
+						{
+							rightButtonUp = true;
+						}
+						else
+						{
+							rightButtonUp = false;
+						}
+					}
+				};
 				//dataSetTrackableBehaviours.Where()
-				IEnumerable<DataSet> validDataSets = dataSets.Where(ds => ds != null);
-				DataSet[] validDataSetsArr = validDataSets.ToArray();
-				
-				udtEventHandler.ActivateDataSets(validDataSetsArr);
-			}*/
+				IEnumerable<TrackableBehaviour> validTrackableBehaviours = trackableBehaviours.Where(ds => ds != null);
+				TrackableBehaviour[] validArr = validTrackableBehaviours.ToArray();
+
+				foreach (TrackableBehaviour tb in validArr)
+				{
+					tb.RegisterTrackableEventHandler(new TrackableStateHandler(tb, buttonAction)); 					
+				}
+			}
+		}
+
+		private void movePlayer()
+		{
+			if (planeNeverInScene || leftButtonUp && rightButtonUp || (!leftButtonUp && !rightButtonUp))
+			{
+				return;
+			}
+
+			Rect playerRect = GamePlayerQuad.GetComponent<Rect>();
+
+			Vector2 rectPos = playerRect.position;
+			
+			if (!leftButtonUp)
+			{
+				rectPos.x += .5f;
+			}
+			if (!rightButtonUp)
+			{
+				rectPos.x -= .5f;
+			}
+
+			playerRect.position = rectPos;
 		}
 
 		private UDTEventHandler udtEventHandler;
 
+		bool leftButtonUp = true;
+		bool rightButtonUp = true;
 		private bool planeNeverInScene = true;
 	}
 }
