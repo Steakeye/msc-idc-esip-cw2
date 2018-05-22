@@ -8,6 +8,7 @@ using UnityEngine.XR;
 using Vuforia;
 using Slider = UnityEngine.UI.Slider;
 using Button = UnityEngine.UI.Button;
+using Image = Vuforia.Image;
 
 namespace DYG
 {
@@ -30,6 +31,8 @@ namespace DYG
 			DataLayer = Data.Instance;
 			//XRSettings.enabled = false;
 			TrackerManager.Instance.GetStateManager().ReassociateTrackables();
+			currentCam = CameraDevice.Instance;
+			setUDTPixelFormat();
 		}
 
 		// Use this for initialization
@@ -37,14 +40,16 @@ namespace DYG
 		{
 			Debug.Log("CreatePlayer.Start called.");
 			initRawImg();
-			stopCurrentCam();
-			initCam();
+			//stopCurrentCam();
+			//initCam();
 			initCamTexture();
 		}
 
 		private void OnDestroy()
 		{
-			webCamTexture.Stop();
+
+			//webCamTexture.Stop();
+
 		}
 
 		public void OnCaptureClick()
@@ -97,22 +102,27 @@ namespace DYG
 			// Debug.Log("Reset Image!");
 			ProcessImage.RemoveThreshold();
 			
-			rawImg.color = Color.white;
-			rawImg.texture = webCamTexture;				
+			//rawImg.color = Color.white;
+			rawImg.color = Color.clear;
+			//rawImg.texture = webCamTexture;				
 			
 			FinalImage.gameObject.SetActive(false);
 			
-			webCamTexture.Play();
+			//webCamTexture.Play();
+			currentCam.Start();
 		}
 
 		private void initRawImg()
 		{
 			rawImg = RawImgGO.GetComponent<RawImage>();
+			rawImg.color = Color.clear;
 		}
 
 		private void initCamTexture()
 		{
-			rawImg.texture = webCamTexture;
+			//rawImg.texture = webCamTexture;
+			//currentCam.GetCameraImage()
+			//rawImg.texture = webCamTexture;
 		}
 
 		private void stopCurrentCam()
@@ -135,7 +145,16 @@ namespace DYG
 
 		private void captureImage()
 		{
-			webCamTexture.Pause();
+			//webCamTexture.Pause();
+			currentCam.Stop();
+			Image udtImage = currentCam.GetCameraImage(udtPixelFormat);
+
+			Texture2D udtTex = new Texture2D(0, 0);
+			udtImage.CopyToTexture(udtTex);
+
+			rawImg.color = Color.white;
+			
+			rawImg.texture = udtTex;
 		}
 	
 		private void processImage()
@@ -336,7 +355,21 @@ namespace DYG
 				ProcessSlider.value = thresholdStart;
 			}
 		}
-	
+
+		        
+		private void setUDTPixelFormat()
+		{
+			#if UNITY_EDITOR
+			udtPixelFormat = Image.PIXEL_FORMAT.GRAYSCALE;        //Need Grayscale for Editor
+			#else
+            udtPixelFormat = Image.PIXEL_FORMAT.RGB888;               //Need RGB888 for mobile
+            #endif      
+			
+			bool camFormatSet = currentCam.SetFrameFormat(udtPixelFormat, true);
+		}
+		
+		private Image.PIXEL_FORMAT udtPixelFormat;
+		private CameraDevice currentCam;
 		private string buttonTextCapture = "Capture";
 		private string buttonTextRetry = "Retry";
 		private string buttonTextProcess = "Process";
@@ -347,6 +380,5 @@ namespace DYG
 		private string deviceName;
 		private RawImage rawImg;
 		private const float thresholdStart = 0.5f;
-
 	}
 }
