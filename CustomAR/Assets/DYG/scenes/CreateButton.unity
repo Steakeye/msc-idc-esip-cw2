@@ -165,7 +165,6 @@ GameObject:
   - component: {fileID: 193362620}
   - component: {fileID: 193362624}
   - component: {fileID: 193362623}
-  - component: {fileID: 193362622}
   - component: {fileID: 193362621}
   - component: {fileID: 193362625}
   m_Layer: 0
@@ -200,19 +199,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c47f92041efbb4b429a4eafca855ebe3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &193362622
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 193362619}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -1826476478, guid: bab6fa851cf5a1a4bba3cec5f191cb8e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mWorldCenterMode: 1
-  mWorldCenter: {fileID: 0}
 --- !u!81 &193362623
 AudioListener:
   m_ObjectHideFlags: 0
@@ -277,7 +263,6 @@ GameObject:
   - component: {fileID: 421156714}
   - component: {fileID: 421156713}
   - component: {fileID: 421156712}
-  - component: {fileID: 421156715}
   m_Layer: 0
   m_Name: UserDefinedTargetBuilder
   m_TagString: Untagged
@@ -323,19 +308,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &421156715
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 421156710}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ce13c31bccf54b07b6101738ccb20951, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ImageTargetTemplate: {fileID: 1377688835}
-  QualityMeter: {fileID: 2040289182}
 --- !u!1 &503454900
 GameObject:
   m_ObjectHideFlags: 0
@@ -1695,7 +1667,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09bb5d109e694809b44543763e45c946, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UDTEvtHandler: {fileID: 421156715}
+  UDTEvtHandler: {fileID: 0}
 --- !u!4 &2139248053
 Transform:
   m_ObjectHideFlags: 0

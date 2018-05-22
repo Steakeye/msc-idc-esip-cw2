@@ -58,7 +58,7 @@ namespace DYG.udt
         
         private void setButtonQuality(ButtonQuality quality)
         {
-            if (button.IsDestroyed())
+            if (button == null || button.IsDestroyed())
             {
                 return;
             }

@@ -10,10 +10,12 @@ namespace DYG.scripts.CreateButton
     {
         private void Awake()
         {
+            //AR.enableVuforiaBehaviour();
             loadSceneArgs();
+            setupUDTEH();
             passDirectionToUDTHandler();
-            AR.initVuforia();
-            AR.initVuforiaARCam();
+            /*AR.initVuforia();
+            AR.initVuforiaARCam();*/
         }
         
         private void Start()
@@ -28,9 +30,15 @@ namespace DYG.scripts.CreateButton
             }
         }
 
-        public void CaptureUDT()
+        private void setupUDTEH()
         {
             UDTEvtHandler = UDTEventHandler.Instance;
+            UDTEvtHandler.StartFromScript();
+        }
+        
+        public void CaptureUDT()
+        {
+            //UDTEvtHandler = UDTEventHandler.Instance;
             UDTEvtHandler.Capture();
         }
         
@@ -63,6 +71,12 @@ namespace DYG.scripts.CreateButton
         private void passDirectionToUDTHandler()
         {
             UDTEvtHandler.SetDirection(directionValue);
+        }
+
+        private void OnDisable()
+        {
+            Debug.Log("CreateButton.OnDisable called");
+            AR.disableVuforiaBehaviour();
         }
 
         private void OnDestroy()

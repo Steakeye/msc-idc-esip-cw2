@@ -113,14 +113,14 @@ namespace DYG
 				rightUDTData.TrackableDataSet
 			};
 			
-			if (dataSets.Any())
+			/*if (dataSets.Any())
 			{
 				//dataSetTrackableBehaviours.Where()
 				IEnumerable<DataSet> validDataSets = dataSets.Where(ds => ds != null);
 				DataSet[] validDataSetsArr = validDataSets.ToArray();
 				
 				udtEventHandler.ActivateDataSets(validDataSetsArr);
-			}
+			}*/
 		}
 
 		private UDTEventHandler udtEventHandler;

@@ -6,18 +6,38 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.XR;
+using Vuforia;
 
 namespace DYG
 {
 	public class SetupMenu : MonoBehaviour {
 		private void Awake()
 		{
+			//VuforiaBehaviour.Instance.enabled = false;
+			
+			if (!vbCached)
+			{
+				preserveVuforiaBehaviour();
+				vbCached = true;
+			}
+
+			//AR.disableVuforiaBehaviour();
+			
 			if (playButton == null)
 			{
 				playButton = findPlayButton();
 			}
 		}
 
+		private void preserveVuforiaBehaviour()
+		{
+			VuforiaBehaviour vb = VuforiaBehaviour.Instance;
+
+			vb = vb.GetComponent<VuforiaBehaviour>();
+			
+			DontDestroyOnLoad(vb);
+		}
+		
 		public void AllDataPresent()
 		{
 			//Debug.Log("calling AllDataPresent");
@@ -44,5 +64,6 @@ namespace DYG
 
 		private const string playSceneName = "PlayGame";
 		private Button playButton;
+		private bool vbCached = false;
 	}
 }
