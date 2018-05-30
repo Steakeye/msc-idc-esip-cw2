@@ -20,6 +20,7 @@ namespace DYG
 		public GameObject ProcessButtonGO;
 		public GameObject RawImgGO;
 		public RawImage FinalImage;
+		public Material FlipMaterial;
 		public Material CutoutMaterial;
 		public Slider ProcessSlider;
 		public ImageProcessor ProcessImage;
@@ -139,14 +140,6 @@ namespace DYG
 			}
 		}
 
-		private void initCam()
-		{
-			WebCamDevice[] devices = WebCamTexture.devices;
-			deviceName = devices[0].name;
-			webCamTexture = new WebCamTexture(deviceName, Screen.width, Screen.height, 24);
-			webCamTexture.Play();		
-		}
-
 		private void captureImage()
 		{
 			//webCamTexture.Pause();
@@ -162,7 +155,7 @@ namespace DYG
 			
 			rawImg.color = Color.white;
 			
-			rawImg.texture = udtTex;
+			rawImg.texture = flipTexture(udtTex);
 		}
 
 		#if UNITY_EDITOR
@@ -189,6 +182,30 @@ namespace DYG
 			return outTex;
 		}
 		#endif 
+
+		private Texture2D flipTexture(Texture2D texToflip)
+		{
+			int width = texToflip.width;
+			int height = texToflip.height;
+
+			RenderTexture renderTex = new RenderTexture(width, height, 0);
+			Texture2D outTex = new Texture2D(width, height);
+
+			FlipMaterial.SetTexture("_MainTex", texToflip);
+			FlipMaterial.SetInt("_FlipY", 1);
+			
+			//Apply material (and child shader) to the texture to mimic webcam effect
+			Graphics.Blit(texToflip, renderTex, FlipMaterial);
+		
+			//Set this texture as the active texture in order to set this data onto another texture
+			RenderTexture.active = renderTex;
+		
+			outTex.ReadPixels(new Rect(0, 0, width, height), 0, 0, false);
+		
+			outTex.Apply();
+
+			return outTex;
+		}
 
 		private void processImage()
 		{

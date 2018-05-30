@@ -1,8 +1,10 @@
-﻿Shader "Hidden/AlphaToRGB"
+﻿Shader "Hidden/Flip"
 {
 	Properties
 	{
 		_MainTex ("Texture", 2D) = "white" {}
+        [MaterialToggle] _FlipX ("FlipX", Range(0, 1)) = 0
+        [MaterialToggle] _FlipY ("FlipY", Range(0, 1)) = 0
 	}
 	SubShader
 	{
@@ -29,11 +31,18 @@
 				float4 vertex : SV_POSITION;
 			};
 
+            float _FlipX;
+            float _FlipY;
+
 			v2f vert (appdata v)
 			{
 				v2f o;
 				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.uv = v.uv;
+				
+				o.uv.x = _FlipX > 0 ? _FlipX - v.uv.x : v.uv.x; 
+				o.uv.y = _FlipY > 0 ? _FlipY - v.uv.y :v.uv.y; 
+				
 				return o;
 			}
 			
@@ -42,13 +51,6 @@
 			fixed4 frag (v2f i) : SV_Target
 			{
 				fixed4 col = tex2D(_MainTex, i.uv);
-
-                const float alphaVal = col.a;
-
-				col.rgb = float3(alphaVal, alphaVal, alphaVal);
-                    
-                //Make alpha opaque
-                col.a = 1.0;
 
 				return col;
 			}
