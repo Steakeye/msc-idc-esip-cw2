@@ -87,6 +87,7 @@ namespace DYG
 					case PLAYER_BUTTON_NAME:
 					{
 						assignValues(dataCache.PlayerTexture, PLAYER_IMAGE_NAME, PLAYER_BUTTON_TEXT_MESSAGE_UPDATE);
+						flipOnY = false;
 						break;
 					}
 					case LEFT_BUTTON_NAME:
