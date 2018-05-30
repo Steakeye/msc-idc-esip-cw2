@@ -2,6 +2,8 @@
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.Configuration;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR;
@@ -45,9 +47,6 @@ namespace DYG
 		{
 			Debug.Log("CreatePlayer.Start called.");
 			initRawImg();
-			//stopCurrentCam();
-			//initCam();
-			initCamTexture();
 		}
 
 		private void OnDestroy()
@@ -123,13 +122,6 @@ namespace DYG
 			rawImg.color = Color.clear;
 		}
 
-		private void initCamTexture()
-		{
-			//rawImg.texture = webCamTexture;
-			//currentCam.GetCameraImage()
-			//rawImg.texture = webCamTexture;
-		}
-
 		private void stopCurrentCam()
 		{
 			CameraDevice currentCam = CameraDevice.Instance;
@@ -142,23 +134,65 @@ namespace DYG
 
 		private void captureImage()
 		{
-			//webCamTexture.Pause();
 			currentCam.Stop();
 			Image udtImage = currentCam.GetCameraImage(udtPixelFormat);
 
 			Texture2D udtTex = new Texture2D(0, 0);
 			udtImage.CopyToTexture(udtTex);
+			
+			resolveDimensions(udtTex);
 
 			#if UNITY_EDITOR
 			udtTex = fixGreyscaleTexture(udtTex);
 			#endif
-			
+		
 			rawImg.color = Color.white;
 			
 			rawImg.texture = flipTexture(udtTex);
 		}
 
-		#if UNITY_EDITOR
+		private void resolveDimensions(Texture2D originalTex)
+		{
+			int screenW = Screen.width;
+			int screenH = Screen.height;
+			float screenAspectRatio = (float)screenW / (float)screenH;
+
+			int texW = originalTex.width;
+			int texH = originalTex.height;
+			float texAspectRatio = (float)texW / (float)texH;
+
+			float ratioModifier = screenAspectRatio / texAspectRatio;
+
+			int nextXPos = 0;
+			int nextYPos = 0;
+
+			Action doCrop = () =>
+			{
+				Color[] croppedPixels = originalTex.GetPixels(nextXPos, nextYPos, texW, texH); 
+				originalTex.Resize(texW, texH);
+				originalTex.SetPixels(croppedPixels);
+				originalTex.Apply();
+			};
+			
+			if (ratioModifier < 1)
+			{
+				//Width needs cropping
+				int oldW = texW;
+				texW = (int)(texW / ratioModifier);
+				nextXPos = (oldW - texW) / 2;
+				doCrop();
+			}
+			else if (ratioModifier > 1)
+			{
+				//Height needs cropping
+				int oldH = texH;
+				texH = (int)(texH / ratioModifier);
+				nextYPos = (oldH - texH) / 2;
+				doCrop();
+			}
+		}
+
+#if UNITY_EDITOR
 		private Texture2D fixGreyscaleTexture(Texture2D originalTex)
 		{
 			int width = originalTex.width;
@@ -217,17 +251,18 @@ namespace DYG
 
 		private void saveImage()
 		{
-			Texture2D camTexture = getTextureFromCam(); 
-		
-			Texture2D processedTexture = makeProcessedTexture(camTexture);
+			//Texture2D camTexture = getTextureFromCam(); 
+			Texture2D capturedTexture = (Texture2D)rawImg.texture; 
+			
+			Texture2D processedTexture = makeProcessedTexture(capturedTexture);
 
-			Texture2D updateCamTexture = cutoutCamTextureWithProcessed(camTexture, processedTexture);
+			Texture2D alphaAddedTexture = cutoutCamTextureWithProcessed(capturedTexture, processedTexture);
 
 			Destroy(processedTexture);
 		
-			Texture2D croppedTexture = createCroppedTexture(updateCamTexture);
+			Texture2D croppedTexture = createCroppedTexture(alphaAddedTexture);
 
-			Destroy(updateCamTexture);
+			Destroy(alphaAddedTexture);
 		
 			DataLayer.PlayerTexture = croppedTexture;
 		}
@@ -290,21 +325,7 @@ namespace DYG
 			return cropTex;
 		}
 
-		private Texture2D getTextureFromCam()
-		{
-			int width = webCamTexture.width;
-			int height = webCamTexture.height;
-			Texture2D sourceTex = new Texture2D(width, height);
-			Color[] pixels = webCamTexture.GetPixels();
 
-			// Set webcam data to texture into the texture
-			sourceTex.SetPixels(pixels);
-		
-			sourceTex.Apply();
-
-			return sourceTex;
-		}
-	
 		private Texture2D makeProcessedTexture(Texture2D sourceTex)
 		{
 			const int borderMargin = 10;
@@ -426,7 +447,6 @@ namespace DYG
 		private string buttonTextSave = "Save";
 		private bool captureRequested = false;
 		private bool processRequested = false;
-		private WebCamTexture webCamTexture;
 		private string deviceName;
 		private RawImage rawImg;
 		private const float thresholdStart = 0.5f;
