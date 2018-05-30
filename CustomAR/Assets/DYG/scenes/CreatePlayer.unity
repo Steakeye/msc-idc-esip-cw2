@@ -937,6 +937,8 @@ MonoBehaviour:
   ProcessSlider: {fileID: 1655261300}
   ProcessImage: {fileID: 959971217}
   DataLayer: {fileID: 379049426}
+  GrayScaleFixMaterial: {fileID: 2100000, guid: 44b66c42de921594c829b4b729d99b3c,
+    type: 2}
 --- !u!1 &1092199511
 GameObject:
   m_ObjectHideFlags: 0

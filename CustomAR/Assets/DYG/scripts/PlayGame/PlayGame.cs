@@ -80,7 +80,7 @@ namespace DYG
 
 				originalAlpha = (float)Math.Round(originalAlpha, 2);
 				currentColor.a = originalAlpha;
-				Debug.Log("FadeOut: " + originalAlpha);
+				Debug.Log(("FadeOut: " + originalAlpha.ToString()));
 				ReadyText.color = currentColor;
 				yield return null;
 			}

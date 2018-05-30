@@ -1,9 +1,8 @@
-﻿Shader "Hidden/Threshold"
+﻿Shader "Hidden/AlphaToRGB"
 {
 	Properties
 	{
 		_MainTex ("Texture", 2D) = "white" {}
-        _ThresholdPoint ("Threshold point", Range(0.0, 1.0)) = 0.5
 	}
 	SubShader
 	{
@@ -39,23 +38,21 @@
 			}
 			
 			sampler2D _MainTex;
-			float _ThresholdPoint;
 
 			fixed4 frag (v2f i) : SV_Target
 			{
 				const float redSensitivity = 0.3;
 				const float greenSensitivity = 0.59;
 				const float blueSensitivity = 0.11;
-				const float3 perceptionSensitivities = float3(redSensitivity, greenSensitivity, blueSensitivity);
-				
-				float3 black = float3(0, 0, 0);
-				float3 white = float3(1, 1, 1);
-				
+
 				fixed4 col = tex2D(_MainTex, i.uv);
-				
-				float rgbDotProd = dot(col.rgb, perceptionSensitivities);
-				
-                col.rgb = rgbDotProd >= _ThresholdPoint ? white: black; 
+
+                const float alphaVal = col.a;
+
+				col.rgb = float3(alphaVal / redSensitivity, alphaVal / greenSensitivity, alphaVal / blueSensitivity);
+                    
+                //Make alpha opaque
+                col.a = 1.0;
 
 				return col;
 			}

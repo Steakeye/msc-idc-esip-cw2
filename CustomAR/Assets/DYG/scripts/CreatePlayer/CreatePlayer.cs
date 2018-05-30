@@ -25,6 +25,10 @@ namespace DYG
 		public ImageProcessor ProcessImage;
 		public Data DataLayer;
 
+		#if UNITY_EDITOR
+		public Material GrayScaleFixMaterial;
+		#endif
+		
 		private void Awake()
 		{
 			Debug.Log("CreatePlayer.Awake called");
@@ -152,11 +156,40 @@ namespace DYG
 			Texture2D udtTex = new Texture2D(0, 0);
 			udtImage.CopyToTexture(udtTex);
 
+			#if UNITY_EDITOR
+			udtTex = fixGreyscaleTexture(udtTex);
+			#endif
+			
 			rawImg.color = Color.white;
 			
 			rawImg.texture = udtTex;
 		}
-	
+
+		#if UNITY_EDITOR
+		private Texture2D fixGreyscaleTexture(Texture2D originalTex)
+		{
+			int width = originalTex.width;
+			int height = originalTex.height;
+
+			RenderTexture renderTex = new RenderTexture(width, height, 0);
+			Texture2D outTex = new Texture2D(width, height);
+
+			GrayScaleFixMaterial.SetTexture("_MainTex", originalTex);
+			
+			//Apply material (and child shader) to the texture to mimic webcam effect
+			Graphics.Blit(originalTex, renderTex, GrayScaleFixMaterial);
+		
+			//Set this texture as the active texture in order to set this data onto another texture
+			RenderTexture.active = renderTex;
+		
+			outTex.ReadPixels(new Rect(0, 0, width, height), 0, 0, false);
+		
+			outTex.Apply();
+
+			return outTex;
+		}
+		#endif 
+
 		private void processImage()
 		{
 			//Debug.Log("ProcessImage!");
