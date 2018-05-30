@@ -114,6 +114,10 @@ namespace DYG
 
 						if (buttonImage)
 						{
+							#if UNITY_EDITOR
+							Material alphaToRGBMat = (Material)Resources.Load("AlphaToRGB", typeof(Material));
+							buttonImage.material = alphaToRGBMat;
+							#endif
 							buttonImage.uvRect = new Rect(0, 0, 1, -1);		
 						}
 					}
