@@ -14,9 +14,11 @@ using Vuforia;
 
 namespace DYG
 {
+	using TrackableAction = Action<string, TrackableBehaviour.Status, TrackableBehaviour.Status>;
+	
 	public class TrackableStateHandler : ITrackableEventHandler
 	{
-		public TrackableStateHandler(TrackableBehaviour tb, Action<string, TrackableBehaviour.Status> occlusionAction)
+		public TrackableStateHandler(TrackableBehaviour tb, TrackableAction occlusionAction)
 		{
 			trackableBehaviour = tb;
 			action = occlusionAction;
@@ -25,11 +27,11 @@ namespace DYG
 		public void OnTrackableStateChanged(TrackableBehaviour.Status previousStatus, TrackableBehaviour.Status newStatus)
 		{
 			//Debug.Log("TrackableStateHandler.OnTrackableStateChanged");
-			action(trackableBehaviour.TrackableName, newStatus);
+			action(trackableBehaviour.TrackableName, previousStatus, newStatus);
 		}
 
 		private TrackableBehaviour trackableBehaviour;
-		private Action<string, TrackableBehaviour.Status> action;
+		private TrackableAction action;
 	}
 
 	public class PlayGame : MonoBehaviour
@@ -45,9 +47,6 @@ namespace DYG
 			TrackerManager.Instance.GetStateManager().ReassociateTrackables();
 			
 			udtEventHandler = UDTEventHandler.Instance;
-			
-			/*AR.initVuforia();
-			AR.initVuforiaARCam();*/
 		}
 
 		void Start()
@@ -84,7 +83,7 @@ namespace DYG
 
 				originalAlpha = (float)Math.Round(originalAlpha, 2);
 				currentColor.a = originalAlpha;
-				Debug.Log(("FadeOut: " + originalAlpha.ToString()));
+				//Debug.Log(("FadeOut: " + originalAlpha));
 				ReadyText.color = currentColor;
 				yield return null;
 			}
@@ -109,9 +108,7 @@ namespace DYG
 		private void addPlayerTextureToSprite()
 		{
 			Debug.Log("addPlayerTextureToSprite called!");
-
-			//float scale = 1;
-			
+		
 			Texture2D playerTex = Data.Instance.PlayerTexture;
 			/*Rect rec = new Rect(0, 0, playerTex.width/scale, playerTex.height/scale);
 			Sprite playerSprite = Sprite.Create(playerTex, rec, Vector2.zero, scale);*/
@@ -145,28 +142,29 @@ namespace DYG
 			
 			if (trackableBehaviours.Any())
 			{
-				Action<string, TrackableBehaviour.Status> buttonAction = (trackerName, status) =>
+				TrackableAction buttonAction = (trackerName, oldStatus, newStatus) =>
 				{
-					if (trackerName.Contains("Left"))
+					Nullable<bool> nextUpVal = null;
+					
+					if (newStatus == TrackableBehaviour.Status.TRACKED)
 					{
-						if (status == TrackableBehaviour.Status.TRACKED || status == TrackableBehaviour.Status.NOT_FOUND)
-						{
-							leftButtonUp = true;
-						}
-						else
-						{
-							leftButtonUp = false;
-						}
+						nextUpVal = true;
 					}
-					else if (trackerName.Contains("Right"))
+					else if (newStatus == TrackableBehaviour.Status.NOT_FOUND && oldStatus == TrackableBehaviour.Status.TRACKED)
 					{
-						if (status == TrackableBehaviour.Status.TRACKED || status == TrackableBehaviour.Status.NOT_FOUND)
+						nextUpVal = false;
+					}
+
+					if (nextUpVal.HasValue)
+					{
+						bool up = nextUpVal.Value;
+						if (trackerName.Contains("Left"))
 						{
-							rightButtonUp = true;
+							leftButtonUp = up;
 						}
-						else
+						else if (trackerName.Contains("Right"))
 						{
-							rightButtonUp = false;
+							rightButtonUp = up;
 						}
 					}
 				};
@@ -188,9 +186,10 @@ namespace DYG
 				return;
 			}
 
-			Rect playerRect = GamePlayerQuad.GetComponent<Rect>();
+			RectTransform playerRectT = GamePlayerQuad.GetComponent<RectTransform>();
+			//GamePlayerQuad
 
-			Vector2 rectPos = playerRect.position;
+			Vector3 rectPos = playerRectT.localPosition;
 			
 			if (!leftButtonUp)
 			{
@@ -201,7 +200,7 @@ namespace DYG
 				rectPos.x -= .5f;
 			}
 
-			playerRect.position = rectPos;
+			playerRectT.localPosition = rectPos;
 		}
 
 		private UDTEventHandler udtEventHandler;
