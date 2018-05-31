@@ -100,7 +100,6 @@ namespace DYG.udt
         
         // DataSet that newly defined targets are added to
         DataSet uDTDataSet;
-        DataSet[] uDTDataSetArr;
 
         // Currently observed frame quality
         ImageTargetBuilder.FrameQuality frameQuality = ImageTargetBuilder.FrameQuality.FRAME_QUALITY_NONE;
@@ -175,26 +174,6 @@ namespace DYG.udt
 
             setupDataset();
         }
-
-        /*public void InitObjectTracker()
-        {
-            objectTracker = TrackerManager.Instance.InitTracker<ObjectTracker>();
-
-            //setupDataset();            
-        }*/
-
-        /*public void ActivateDataSets(DataSet[] dataSets)
-        {
-            if (objectTracker != null)
-            {
-                uDTDataSetArr = dataSets;
-                    
-                foreach (DataSet dataSet in dataSets)
-                {
-                    objectTracker.ActivateDataSet(dataSet);
-                }
-            }
-        }*/
 
         /// <summary>
         /// Updates the current frame quality
@@ -295,8 +274,9 @@ namespace DYG.udt
                     uDTDataSet = objectTracker.CreateDataSet();
                 }
 
-                if (objectTracker.GetDataSets().Contains(uDTDataSet))
+                if (!objectTracker.GetActiveDataSets().Contains(uDTDataSet) && objectTracker.GetDataSets().Contains(uDTDataSet))
                 {
+                    
                     objectTracker.ActivateDataSet(uDTDataSet);                    
                 }
                 
@@ -504,9 +484,6 @@ namespace DYG.udt
             }
         }
         
-        /**
-         * TODO: Add an OnDestroy method to clean up?
-          */
         private void OnDestroy()
         {
             if (objectTracker != null)
@@ -520,14 +497,6 @@ namespace DYG.udt
                 {
                     objectTracker.DeactivateDataSet(uDTDataSet);
                 }
-                /*
-                else if (uDTDataSetArr != null)
-                {
-                    foreach (DataSet dataSet in uDTDataSetArr)
-                    {
-                        objectTracker.DeactivateDataSet(dataSet);
-                    }
-                }*/
             }
         }
     }

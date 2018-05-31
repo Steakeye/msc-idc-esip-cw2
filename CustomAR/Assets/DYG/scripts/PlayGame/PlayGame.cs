@@ -6,6 +6,7 @@ using System.Reflection;
 using DYG.plane;
 using DYG.udt;
 using DYG.utils;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking.NetworkSystem;
 using UnityEngine.UI;
@@ -18,14 +19,17 @@ namespace DYG
 		public TrackableStateHandler(TrackableBehaviour tb, Action<string, TrackableBehaviour.Status> occlusionAction)
 		{
 			trackableBehaviour = tb;
+			action = occlusionAction;
 		}
 		
 		public void OnTrackableStateChanged(TrackableBehaviour.Status previousStatus, TrackableBehaviour.Status newStatus)
 		{
-			Debug.Log("OnTrackableStateChanged");
+			//Debug.Log("TrackableStateHandler.OnTrackableStateChanged");
+			action(trackableBehaviour.TrackableName, newStatus);
 		}
 
 		private TrackableBehaviour trackableBehaviour;
+		private Action<string, TrackableBehaviour.Status> action;
 	}
 
 	public class PlayGame : MonoBehaviour

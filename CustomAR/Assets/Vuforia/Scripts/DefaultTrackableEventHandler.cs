@@ -58,7 +58,12 @@ public class DefaultTrackableEventHandler : MonoBehaviour, ITrackableEventHandle
             OnTrackingLost();
         }
         
-        TrackerManager.Instance.GetStateManager().ReassociateTrackables();
+        //TODO: Check we need this or not
+        if (!trackablesReassociated)
+        {
+            trackablesReassociated = true;
+            TrackerManager.Instance.GetStateManager().ReassociateTrackables();
+        }
     }
 
     protected virtual void OnTrackingFound()
@@ -99,4 +104,6 @@ public class DefaultTrackableEventHandler : MonoBehaviour, ITrackableEventHandle
         foreach (var component in canvasComponents)
             component.enabled = false;
     }
+    
+    private bool trackablesReassociated = false;
 }

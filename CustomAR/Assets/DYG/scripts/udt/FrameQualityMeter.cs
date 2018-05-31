@@ -66,7 +66,7 @@ namespace DYG.udt
             ColorBlock buttonColors = button.colors;
             Color textColor;
             
-            Debug.Log("calling setButtonQuality");
+            //Debug.Log("calling setButtonQuality");
             if (quality == ButtonQuality.Good)
             {
                 buttonColors.normalColor = buttonColor;

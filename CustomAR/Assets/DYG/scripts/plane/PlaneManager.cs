@@ -68,11 +68,6 @@ namespace DYG.plane
             mainCamera = Camera.main;
             graphicRayCaster = FindObjectOfType<GraphicRaycaster>();
             eventSystem = FindObjectOfType<EventSystem>();
-
-            /*if (VuforiaARController.Instance.HasStarted)
-            {
-                OnVuforiaStarted();
-            }*/
         }
 
         /*void Update()
