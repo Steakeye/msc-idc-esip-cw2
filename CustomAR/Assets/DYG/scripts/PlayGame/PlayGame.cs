@@ -186,21 +186,20 @@ namespace DYG
 				return;
 			}
 
-			RectTransform playerRectT = GamePlayerQuad.GetComponent<RectTransform>();
-			//GamePlayerQuad
+			Transform playerTransform = GamePlayerQuad.transform;
 
-			Vector3 rectPos = playerRectT.localPosition;
+			Vector3 rectPos = playerTransform.localPosition;
 			
 			if (!leftButtonUp)
 			{
-				rectPos.x += .5f;
+				rectPos.x -= .05f;
 			}
 			if (!rightButtonUp)
 			{
-				rectPos.x -= .5f;
+				rectPos.x += .05f;
 			}
 
-			playerRectT.localPosition = rectPos;
+			playerTransform.localPosition = rectPos;
 		}
 
 		private UDTEventHandler udtEventHandler;
