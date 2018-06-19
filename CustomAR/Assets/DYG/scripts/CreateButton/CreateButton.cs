@@ -10,12 +10,43 @@ namespace DYG.scripts.CreateButton
     {
         private void Awake()
         {
+            //AR.enableVuforiaBehaviour();
             loadSceneArgs();
+            setupUDTEH();
             passDirectionToUDTHandler();
-            AR.initVuforia();
-            AR.initVuforiaARCam();
+            /*AR.initVuforia();
+            AR.initVuforiaARCam();*/
+        }
+        
+        private void Start()
+        {
+            UDTEventHandler udtEH = UDTEvtHandler;
+            UDTEventHandler singleton = UDTEventHandler.Instance;
+            
+            if (udtEH == null || udtEH != singleton)
+            {
+                UDTEvtHandler = singleton;
+                passDirectionToUDTHandler();
+            }
         }
 
+        private void setupUDTEH()
+        {
+            UDTEvtHandler = UDTEventHandler.Instance;
+            UDTEvtHandler.StartFromScript();
+        }
+        
+        public void CaptureUDT()
+        {
+            //UDTEvtHandler = UDTEventHandler.Instance;
+            UDTEvtHandler.Capture();
+        }
+        
+        public void SaveUDT()
+        {
+            UDTEvtHandler.SaveTrackableSource();
+        }
+        
         public UDTEventHandler UDTEvtHandler;
         
         private void loadSceneArgs()
@@ -42,6 +73,18 @@ namespace DYG.scripts.CreateButton
             UDTEvtHandler.SetDirection(directionValue);
         }
 
+        private void OnDisable()
+        {
+            Debug.Log("CreateButton.OnDisable called");
+            //AR.disableVuforiaBehaviour();
+            //UDTEvtHandler.UnRegisterSelf();
+        }
+
+        /*private void OnDestroy()
+        {
+            UDTEvtHandler.UnRegisterSelf();
+        }*/
+        
         private string directionValue;
         private const string argsDirectionKey = "direction";
         private const string argsDirectionValLeft = "Left";

@@ -18,9 +18,13 @@ public class DefaultTrackableEventHandler : MonoBehaviour, ITrackableEventHandle
 
     protected virtual void Start()
     {
+        //TrackerManager.Instance.GetStateManager().ReassociateTrackables();
+        
         mTrackableBehaviour = GetComponent<TrackableBehaviour>();
         if (mTrackableBehaviour)
             mTrackableBehaviour.RegisterTrackableEventHandler(this);
+        
+        TrackerManager.Instance.GetStateManager().ReassociateTrackables();
     }
 
     /// <summary>
@@ -31,6 +35,8 @@ public class DefaultTrackableEventHandler : MonoBehaviour, ITrackableEventHandle
         TrackableBehaviour.Status previousStatus,
         TrackableBehaviour.Status newStatus)
     {
+        //TrackerManager.Instance.GetStateManager().ReassociateTrackables();
+        
         if (newStatus == TrackableBehaviour.Status.DETECTED ||
             newStatus == TrackableBehaviour.Status.TRACKED ||
             newStatus == TrackableBehaviour.Status.EXTENDED_TRACKED)
@@ -50,6 +56,13 @@ public class DefaultTrackableEventHandler : MonoBehaviour, ITrackableEventHandle
             // Vuforia is starting, but tracking has not been lost or found yet
             // Call OnTrackingLost() to hide the augmentations
             OnTrackingLost();
+        }
+        
+        //TODO: Check we need this or not
+        if (!trackablesReassociated)
+        {
+            trackablesReassociated = true;
+            TrackerManager.Instance.GetStateManager().ReassociateTrackables();
         }
     }
 
@@ -91,4 +104,6 @@ public class DefaultTrackableEventHandler : MonoBehaviour, ITrackableEventHandle
         foreach (var component in canvasComponents)
             component.enabled = false;
     }
+    
+    private bool trackablesReassociated = false;
 }

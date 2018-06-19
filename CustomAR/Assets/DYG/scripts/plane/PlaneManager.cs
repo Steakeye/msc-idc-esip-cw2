@@ -44,9 +44,14 @@ namespace DYG.plane
         private Ray cameraToPlaneRay;
         private RaycastHit cameraToPlaneHit;
 
+        private void Awake()
+        {
+            Debug.Log("PlaneManager.Awake() called.");
+        }
+
         void Start()
         {
-            Debug.Log("Start() called.");
+            Debug.Log("PlaneManager.Start() called.");
 
             VuforiaARController.Instance.RegisterVuforiaStartedCallback(OnVuforiaStarted);
             VuforiaARController.Instance.RegisterOnPauseCallback(OnVuforiaPaused);
@@ -56,7 +61,7 @@ namespace DYG.plane
             PlaneFinder.HitTestMode = HitTestMode.AUTOMATIC;
 
             PlaneFinder.PlaneIndicator.transform.localScale = new Vector3(2, 1, 2);
-
+            
             // Enable floor collider if running on device; Disable if running in PlayMode
             Floor.gameObject.SetActive(!VuforiaRuntimeUtilities.IsPlayMode());
 
@@ -72,28 +77,6 @@ namespace DYG.plane
 
         void LateUpdate()
         {
-            /*if (AutomaticHitTestFrameCount == Time.frameCount)
-            {
-                // We got an automatic hit test this frame
-
-                // Set visibility of the surface indicator
-                SetSurfaceIndicatorVisible(true);
-
-                onScreenMessage.transform.parent.gameObject.SetActive(true);
-                onScreenMessage.enabled = true;
-
-                onScreenMessage.text = "Tap to place game area!";
-            }
-            else
-            {
-                planeAugmentationInScene = false;
-                SetSurfaceIndicatorVisible(false);
-
-                onScreenMessage.transform.parent.gameObject.SetActive(true);
-                onScreenMessage.enabled = true;
-
-                onScreenMessage.text = "Point device towards a flat surface";
-            }*/
             if (AutomaticHitTestFrameCount != Time.frameCount)
             {
                 planeAugmentationInScene = false;
@@ -103,6 +86,8 @@ namespace DYG.plane
                 onScreenMessage.enabled = true;
 
                 onScreenMessage.text = "Point device towards a flat surface";
+                
+                PlaneFinder.PlaneIndicator.SetActive(true);
             }
             else if (!planeAugmentationInScene)
             {
@@ -120,7 +105,7 @@ namespace DYG.plane
 
         void OnDestroy()
         {
-            Debug.Log("OnDestroy() called.");
+            Debug.Log("PlaneManager.OnDestroy() called.");
 
             VuforiaARController.Instance.UnregisterVuforiaStartedCallback(OnVuforiaStarted);
             VuforiaARController.Instance.UnregisterOnPauseCallback(OnVuforiaPaused);
@@ -178,6 +163,8 @@ namespace DYG.plane
             //PlaneAugmentation.transform.rotation;
             RotateTowardCamera(PlaneAugmentation);
 
+            PlaneFinder.PlaneIndicator.SetActive(false);
+            
             planeAugmentationInScene = true;
             
             if (OnPlaneInScene != null)
@@ -286,6 +273,11 @@ namespace DYG.plane
             // Check trackers to see if started and start if necessary
             positionalDeviceTracker = TrackerManager.Instance.GetTracker<PositionalDeviceTracker>();
             smartTerrain = TrackerManager.Instance.GetTracker<SmartTerrain>();
+
+            if (smartTerrain == null)
+            {
+                smartTerrain = TrackerManager.Instance.InitTracker<SmartTerrain>();
+            }
 
             if (positionalDeviceTracker != null && smartTerrain != null)
             {

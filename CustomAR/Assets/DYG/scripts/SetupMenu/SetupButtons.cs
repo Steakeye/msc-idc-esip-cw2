@@ -5,6 +5,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Vuforia;
 
 namespace DYG
 {
@@ -53,7 +54,7 @@ namespace DYG
 			
 			SceneManager.LoadScene(sceneName);
 		}
-		
+
 		private void populateButtons()
 		{
 			Button[] viewButtons = GetComponentsInChildren<Button>();
@@ -86,6 +87,7 @@ namespace DYG
 					case PLAYER_BUTTON_NAME:
 					{
 						assignValues(dataCache.PlayerTexture, PLAYER_IMAGE_NAME, PLAYER_BUTTON_TEXT_MESSAGE_UPDATE);
+						flipOnY = false;
 						break;
 					}
 					case LEFT_BUTTON_NAME:
@@ -112,6 +114,10 @@ namespace DYG
 
 						if (buttonImage)
 						{
+							#if UNITY_EDITOR
+							Material alphaToRGBMat = (Material)Resources.Load("AlphaToRGB", typeof(Material));
+							buttonImage.material = alphaToRGBMat;
+							#endif
 							buttonImage.uvRect = new Rect(0, 0, 1, -1);		
 						}
 					}

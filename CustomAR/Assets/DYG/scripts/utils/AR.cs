@@ -12,6 +12,34 @@ namespace DYG.utils
             VuforiaRuntime.Instance.InitVuforia();
         }
 
+        public static void disableVuforiaBehaviour()
+        {
+            Debug.Log("Calling disableVuforiaBehaviour");
+            setVuforiaBehaviour(false);
+        }
+        
+        public static void enableVuforiaBehaviour()
+        {
+            Debug.Log("Calling enableVuforiaBehaviour");
+            setVuforiaBehaviour(true);
+        }
+        
+        private static void setVuforiaBehaviour(bool enabled)
+        {
+            Debug.Log("Calling setVuforiaBehaviour");
+
+            VuforiaBehaviour vbInstance = VuforiaBehaviour.Instance;
+
+            if (vbInstance != null)
+            {
+                bool currentState = vbInstance.enabled;
+                if (currentState != enabled)
+                {
+                    vbInstance.enabled = enabled;
+                }
+            }
+        }
+
         public  static void initVuforiaARCam()
         {
             Debug.Log("Calling initVuforiaARCam");

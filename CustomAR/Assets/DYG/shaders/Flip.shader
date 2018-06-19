@@ -1,9 +1,10 @@
-﻿Shader "Hidden/Threshold"
+﻿Shader "Hidden/Flip"
 {
 	Properties
 	{
 		_MainTex ("Texture", 2D) = "white" {}
-        _ThresholdPoint ("Threshold point", Range(0.0, 1.0)) = 0.5
+        [MaterialToggle] _FlipX ("FlipX", Range(0, 1)) = 0
+        [MaterialToggle] _FlipY ("FlipY", Range(0, 1)) = 0
 	}
 	SubShader
 	{
@@ -30,32 +31,26 @@
 				float4 vertex : SV_POSITION;
 			};
 
+            float _FlipX;
+            float _FlipY;
+
 			v2f vert (appdata v)
 			{
 				v2f o;
 				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.uv = v.uv;
+				
+				o.uv.x = _FlipX > 0 ? _FlipX - v.uv.x : v.uv.x; 
+				o.uv.y = _FlipY > 0 ? _FlipY - v.uv.y :v.uv.y; 
+				
 				return o;
 			}
 			
 			sampler2D _MainTex;
-			float _ThresholdPoint;
 
 			fixed4 frag (v2f i) : SV_Target
 			{
-				const float redSensitivity = 0.3;
-				const float greenSensitivity = 0.59;
-				const float blueSensitivity = 0.11;
-				const float3 perceptionSensitivities = float3(redSensitivity, greenSensitivity, blueSensitivity);
-				
-				float3 black = float3(0, 0, 0);
-				float3 white = float3(1, 1, 1);
-				
 				fixed4 col = tex2D(_MainTex, i.uv);
-				
-				float rgbDotProd = dot(col.rgb, perceptionSensitivities);
-				
-                col.rgb = rgbDotProd >= _ThresholdPoint ? white: black; 
 
 				return col;
 			}

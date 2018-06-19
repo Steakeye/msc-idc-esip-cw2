@@ -6,26 +6,69 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.XR;
+using Vuforia;
 
 namespace DYG
 {
-	public class SetupMenu : MonoBehaviour {
+	public class SetupMenu : MonoBehaviour
+	{
+		private static GameObject ARCamGO;
+		private static bool ARCamCached = false;
+		
+		private static CameraDevice Cam;
+		
 		private void Awake()
 		{
+			if (ARCamGO == null)
+			{
+				ARCamGO = Instantiate(Resources.Load("ARCam")) as GameObject; 
+			}
+			
+			if (!ARCamCached)
+			{
+				preserveVuforiaBehaviour();
+				ARCamCached = true;
+			}
+			
+			if (Cam == null)
+			{
+				Cam = CameraDevice.Instance;
+			}
+
+			if (!Cam.IsActive())
+			{
+				Cam.Start();
+			}
+
+			//AR.disableVuforiaBehaviour();
+			
 			if (playButton == null)
 			{
 				playButton = findPlayButton();
 			}
+
+			TrackerManager.Instance.GetStateManager().ReassociateTrackables();
 		}
 
+		private void preserveVuforiaBehaviour()
+		{
+			VuforiaBehaviour vb = VuforiaBehaviour.Instance;
+			
+			DontDestroyOnLoad(vb);
+		}
+		
 		public void AllDataPresent()
 		{
 			//Debug.Log("calling AllDataPresent");
-			playButton.gameObject.SetActive(true);
+			if (playButton != null)
+			{
+				playButton.gameObject.SetActive(true);
+			}
 		}
 
 		public void PlayGame()
 		{
+			ensureSmartTerrain();
 			SceneManager.LoadScene(playSceneName);
 		}
 		
@@ -42,7 +85,18 @@ namespace DYG
 			return playButton;
 		}
 
+
+		private void ensureSmartTerrain()
+		{
+			SmartTerrain smartTerrain = TrackerManager.Instance.GetTracker<SmartTerrain>();
+			
+			if (smartTerrain == null) {
+				smartTerrain = TrackerManager.Instance.InitTracker<SmartTerrain>();
+			}
+		}
+		
 		private const string playSceneName = "PlayGame";
 		private Button playButton;
+		private static bool vbCached = false;
 	}
 }

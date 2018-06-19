@@ -2,11 +2,15 @@
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.Configuration;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR;
+using Vuforia;
 using Slider = UnityEngine.UI.Slider;
 using Button = UnityEngine.UI.Button;
+using Image = Vuforia.Image;
 
 namespace DYG
 {
@@ -18,29 +22,38 @@ namespace DYG
 		public GameObject ProcessButtonGO;
 		public GameObject RawImgGO;
 		public RawImage FinalImage;
+		public Material FlipMaterial;
 		public Material CutoutMaterial;
 		public Slider ProcessSlider;
 		public ImageProcessor ProcessImage;
 		public Data DataLayer;
 
+		#if UNITY_EDITOR
+		public Material GrayScaleFixMaterial;
+		#endif
+		
 		private void Awake()
 		{
+			Debug.Log("CreatePlayer.Awake called");
 			DataLayer = Data.Instance;
 			//XRSettings.enabled = false;
+			TrackerManager.Instance.GetStateManager().ReassociateTrackables();
+			currentCam = CameraDevice.Instance;
+			setUDTPixelFormat();
 		}
 
 		// Use this for initialization
 		void Start ()
 		{
-			Debug.Log("Start called.");
+			Debug.Log("CreatePlayer.Start called.");
 			initRawImg();
-			initCam();
-			initCamTexture();
 		}
 
 		private void OnDestroy()
 		{
-			webCamTexture.Stop();
+
+			//webCamTexture.Stop();
+
 		}
 
 		public void OnCaptureClick()
@@ -93,37 +106,141 @@ namespace DYG
 			// Debug.Log("Reset Image!");
 			ProcessImage.RemoveThreshold();
 			
-			rawImg.color = Color.white;
-			rawImg.texture = webCamTexture;				
+			//rawImg.color = Color.white;
+			rawImg.color = Color.clear;
+			//rawImg.texture = webCamTexture;				
 			
 			FinalImage.gameObject.SetActive(false);
 			
-			webCamTexture.Play();
+			//webCamTexture.Play();
+			currentCam.Start();
 		}
 
 		private void initRawImg()
 		{
 			rawImg = RawImgGO.GetComponent<RawImage>();
+			rawImg.color = Color.clear;
 		}
 
-		private void initCamTexture()
+		private void stopCurrentCam()
 		{
-			rawImg.texture = webCamTexture;
-		}
+			CameraDevice currentCam = CameraDevice.Instance;
 
-		private void initCam()
-		{
-			WebCamDevice[] devices = WebCamTexture.devices;
-			deviceName = devices[0].name;
-			webCamTexture = new WebCamTexture(deviceName, Screen.width, Screen.height, 24);
-			webCamTexture.Play();		
+			if (currentCam.IsActive())
+			{
+				currentCam.Stop();
+			}
 		}
 
 		private void captureImage()
 		{
-			webCamTexture.Pause();
+			currentCam.Stop();
+			Image udtImage = currentCam.GetCameraImage(udtPixelFormat);
+
+			Texture2D udtTex = new Texture2D(0, 0);
+			udtImage.CopyToTexture(udtTex);
+			
+			resolveDimensions(udtTex);
+
+			#if UNITY_EDITOR
+			udtTex = fixGreyscaleTexture(udtTex);
+			#endif
+		
+			rawImg.color = Color.white;
+			
+			rawImg.texture = flipTexture(udtTex);
 		}
-	
+
+		private void resolveDimensions(Texture2D originalTex)
+		{
+			int screenW = Screen.width;
+			int screenH = Screen.height;
+			float screenAspectRatio = (float)screenW / (float)screenH;
+
+			int texW = originalTex.width;
+			int texH = originalTex.height;
+			float texAspectRatio = (float)texW / (float)texH;
+
+			float ratioModifier = screenAspectRatio / texAspectRatio;
+
+			int nextXPos = 0;
+			int nextYPos = 0;
+
+			Action doCrop = () =>
+			{
+				Color[] croppedPixels = originalTex.GetPixels(nextXPos, nextYPos, texW, texH); 
+				originalTex.Resize(texW, texH);
+				originalTex.SetPixels(croppedPixels);
+				originalTex.Apply();
+			};
+			
+			if (ratioModifier < 1)
+			{
+				//Width needs cropping
+				int oldW = texW;
+				texW = (int)(texW / ratioModifier);
+				nextXPos = (oldW - texW) / 2;
+				doCrop();
+			}
+			else if (ratioModifier > 1)
+			{
+				//Height needs cropping
+				int oldH = texH;
+				texH = (int)(texH / ratioModifier);
+				nextYPos = (oldH - texH) / 2;
+				doCrop();
+			}
+		}
+
+#if UNITY_EDITOR
+		private Texture2D fixGreyscaleTexture(Texture2D originalTex)
+		{
+			int width = originalTex.width;
+			int height = originalTex.height;
+
+			RenderTexture renderTex = new RenderTexture(width, height, 0);
+			Texture2D outTex = new Texture2D(width, height);
+
+			GrayScaleFixMaterial.SetTexture("_MainTex", originalTex);
+			
+			//Apply material (and child shader) to the texture to mimic webcam effect
+			Graphics.Blit(originalTex, renderTex, GrayScaleFixMaterial);
+		
+			//Set this texture as the active texture in order to set this data onto another texture
+			RenderTexture.active = renderTex;
+		
+			outTex.ReadPixels(new Rect(0, 0, width, height), 0, 0, false);
+		
+			outTex.Apply();
+
+			return outTex;
+		}
+		#endif 
+
+		private Texture2D flipTexture(Texture2D texToflip)
+		{
+			int width = texToflip.width;
+			int height = texToflip.height;
+
+			RenderTexture renderTex = new RenderTexture(width, height, 0);
+			Texture2D outTex = new Texture2D(width, height);
+
+			FlipMaterial.SetTexture("_MainTex", texToflip);
+			FlipMaterial.SetInt("_FlipY", 1);
+			
+			//Apply material (and child shader) to the texture to mimic webcam effect
+			Graphics.Blit(texToflip, renderTex, FlipMaterial);
+		
+			//Set this texture as the active texture in order to set this data onto another texture
+			RenderTexture.active = renderTex;
+		
+			outTex.ReadPixels(new Rect(0, 0, width, height), 0, 0, false);
+		
+			outTex.Apply();
+
+			return outTex;
+		}
+
 		private void processImage()
 		{
 			//Debug.Log("ProcessImage!");
@@ -134,17 +251,18 @@ namespace DYG
 
 		private void saveImage()
 		{
-			Texture2D camTexture = getTextureFromCam(); 
-		
-			Texture2D processedTexture = makeProcessedTexture(camTexture);
+			//Texture2D camTexture = getTextureFromCam(); 
+			Texture2D capturedTexture = (Texture2D)rawImg.texture; 
+			
+			Texture2D processedTexture = makeProcessedTexture(capturedTexture);
 
-			Texture2D updateCamTexture = cutoutCamTextureWithProcessed(camTexture, processedTexture);
+			Texture2D alphaAddedTexture = cutoutCamTextureWithProcessed(capturedTexture, processedTexture);
 
 			Destroy(processedTexture);
 		
-			Texture2D croppedTexture = createCroppedTexture(updateCamTexture);
+			Texture2D croppedTexture = createCroppedTexture(alphaAddedTexture);
 
-			Destroy(updateCamTexture);
+			Destroy(alphaAddedTexture);
 		
 			DataLayer.PlayerTexture = croppedTexture;
 		}
@@ -207,21 +325,7 @@ namespace DYG
 			return cropTex;
 		}
 
-		private Texture2D getTextureFromCam()
-		{
-			int width = webCamTexture.width;
-			int height = webCamTexture.height;
-			Texture2D sourceTex = new Texture2D(width, height);
-			Color[] pixels = webCamTexture.GetPixels();
 
-			// Set webcam data to texture into the texture
-			sourceTex.SetPixels(pixels);
-		
-			sourceTex.Apply();
-
-			return sourceTex;
-		}
-	
 		private Texture2D makeProcessedTexture(Texture2D sourceTex)
 		{
 			const int borderMargin = 10;
@@ -322,17 +426,29 @@ namespace DYG
 				ProcessSlider.value = thresholdStart;
 			}
 		}
-	
+
+		        
+		private void setUDTPixelFormat()
+		{
+			#if UNITY_EDITOR
+			udtPixelFormat = Image.PIXEL_FORMAT.GRAYSCALE;        //Need Grayscale for Editor
+			#else
+            udtPixelFormat = Image.PIXEL_FORMAT.RGB888;               //Need RGB888 for mobile
+            #endif      
+			
+			bool camFormatSet = currentCam.SetFrameFormat(udtPixelFormat, true);
+		}
+		
+		private Image.PIXEL_FORMAT udtPixelFormat;
+		private CameraDevice currentCam;
 		private string buttonTextCapture = "Capture";
 		private string buttonTextRetry = "Retry";
 		private string buttonTextProcess = "Process";
 		private string buttonTextSave = "Save";
 		private bool captureRequested = false;
 		private bool processRequested = false;
-		private WebCamTexture webCamTexture;
 		private string deviceName;
 		private RawImage rawImg;
 		private const float thresholdStart = 0.5f;
-
 	}
 }
